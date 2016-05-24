@@ -1,0 +1,6 @@
+{
+  "name": "PDF Annotation",
+  "tagline": "PDF Annotation using canvas",
+  "body": "### Welcome to PDF Annotation\r\nPDF annotation module is used to in-browser PDF annotation. User can open PDF file in browser itself and annotate it. Annotation is based on Canvas image tool. PDF will be converted into Canvas image and user can used different tools to annotate PDF. Below list of tools have been implemented to annotate PDF.\r\n\r\n### Tools Implemented:\r\n1. Free Hand drawing\r\n2. Square drawing\r\n3. Circle drawing\r\n4. Line drawing\r\n5. Arrow drawing\r\n6. Image attachment\r\n7. Text writing\r\n8. Undo/Redo functionality\r\n9. Save PDF to local\r\n\r\n### Future Enhancement\r\n- Object movement\r\n",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
