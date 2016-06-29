@@ -1,0 +1,11 @@
+{
+  "name": "jspdf-debug",
+  "_cacheHeaders": {
+    "Last-Modified": "Wed, 22 Jun 2016 20:04:30 GMT",
+    "Content-Type": "application/javascript; charset=utf-8"
+  },
+  "main": "index.js",
+  "_source": "https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.2.61/jspdf.debug.js",
+  "_target": "*",
+  "_originalSource": "https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.2.61/jspdf.debug.js"
+}
