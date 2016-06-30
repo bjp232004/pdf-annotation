@@ -3,7 +3,7 @@
   "main": "pdf-annotation.js",
   "homepage": "https://github.com/bjp232004/pdf-annotation",
   "authors": [
-    "Bhargav <bhargav.j.patel@accenture.com>"
+    "Bhargav <bjp232004@gmail.com>"
   ],
   "description": "PDF Annotation using canvas image rendering tool.",
   "keywords": [
@@ -15,14 +15,14 @@
     "Square",
     "Circle",
     "Pencil",
-    "Ellipse"
+    "Ellipse",
+    "Undo",
+    "Redo",
+    "Line",
+    "Arrow"
   ],
   "dependencies": {
-      "angular": "~1.4.0",
-      "pdfjs-bower": "~1.0.233",
-	  "jquery": "https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js",
-	  "jquery-bxslider": "https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.5/jquery.bxslider.min.js",
-	  "jspdf-debug": "https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.2.61/jspdf.debug.js"
+      "angular": "~1.4.0"
   },
   "license": "MIT",
   "private": true,
