@@ -17,7 +17,7 @@
         options: '='
       },
       transclude: true,
-      templateUrl: 'src/directives/directive.html',
+      templateUrl: 'bower_components/pdf-annotation/src/directives/directive.html',
       link: function (scope, element, attrs, ctrl) {
 
         pdfAnnotationFactory.options.toolsObj.loading = angular.element(document.querySelector('#loading'))[0];
