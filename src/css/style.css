@@ -86,36 +86,36 @@ body img {max-width: 28px;}
 #controllers select {font-size: 18px;}
 
 span.btn-icn, span.btn-icn:hover {padding: 5px 10px; background-repeat: no-repeat; background-size: 40px; width: 21px; height: 31px;}
-#pencil {background-image: url(images/icn-pencil.png); }
-#pencil:hover, #pencil.active {background-image: url(images/icn-pencil-act.png); }
+#pencil {background-image: url(../images/icn-pencil.png); }
+#pencil:hover, #pencil.active {background-image: url(../images/icn-pencil-act.png); }
 
-#square {background-image: url(images/icn-square.png); }
-#square:hover, #square.active {background-image: url(images/icn-square-act.png); }
+#square {background-image: url(../images/icn-square.png); }
+#square:hover, #square.active {background-image: url(../images/icn-square-act.png); }
 
-#circle {background-image: url(images/icn-circle.png); }
-#circle:hover, #circle.active {background-image: url(images/icn-circle-act.png); }
+#circle {background-image: url(../images/icn-circle.png); }
+#circle:hover, #circle.active {background-image: url(../images/icn-circle-act.png); }
 
-#ellipse {background-image: url(images/icn-ellipse.png); }
-#ellipse:hover, #ellipse.active {background-image: url(images/icn-ellipse-act.png); }
+#ellipse {background-image: url(../images/icn-ellipse.png); }
+#ellipse:hover, #ellipse.active {background-image: url(../images/icn-ellipse-act.png); }
 
-#text {background-image: url(images/icn-text.png); }
-#text:hover, #text.active {background-image: url(images/icn-text-act.png); }
+#text {background-image: url(../images/icn-text.png); }
+#text:hover, #text.active {background-image: url(../images/icn-text-act.png); }
 
-#arrow {background-image: url(images/icn-arrow.png); }
-#arrow:hover, #arrow.active {background-image: url(images/icn-arrow-act.png); }
+#arrow {background-image: url(../images/icn-arrow.png); }
+#arrow:hover, #arrow.active {background-image: url(../images/icn-arrow-act.png); }
 
-#line {background-image: url(images/icn-line.png); }
-#line:hover, #line.active {background-image: url(images/icn-line-act.png); }
+#line {background-image: url(../images/icn-line.png); }
+#line:hover, #line.active {background-image: url(../images/icn-line-act.png); }
 
-#undo {background-image: url(images/icn-undo-act.png); background-color: #0A0947 !important;}
-#undo:hover, #undo.active {background-image: url(images/icn-undo-act.png); }
+#undo {background-image: url(../images/icn-undo-act.png); background-color: #0A0947 !important;}
+#undo:hover, #undo.active {background-image: url(../images/icn-undo-act.png); }
 
-#redo {background-image: url(images/icn-redo-act.png); background-color: #0A0947 !important;}
-#redo:hover, #redo.active {background-image: url(images/icn-redo-act.png); }
+#redo {background-image: url(../images/icn-redo-act.png); background-color: #0A0947 !important;}
+#redo:hover, #redo.active {background-image: url(../images/icn-redo-act.png); }
 
-#save {background-image: url(images/icn-save.png); }
-#save:hover, #save.active {background-image: url(images/icn-save-act.png); }
+#save {background-image: url(../images/icn-save.png); }
+#save:hover, #save.active {background-image: url(../images/icn-save-act.png); }
 
 .cur_disable{cursor: not-allowed !important;}
-#undo.cur_disable{background-image: url(images/icn-undo.png); background-color: #0E86E2 !important;}
-#redo.cur_disable{background-image: url(images/icn-redo.png); background-color: #0E86E2 !important;}
+#undo.cur_disable{background-image: url(../images/icn-undo.png); background-color: #0E86E2 !important;}
+#redo.cur_disable{background-image: url(../images/icn-redo.png); background-color: #0E86E2 !important;}
