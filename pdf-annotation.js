@@ -52,6 +52,17 @@
           if(scope.options.url !== '') {
             pdfAnnotationFactory.history.initial_canvas_url = [];
             pdfAnnotationFactory.history.final_canvas_url = [];
+            pdfAnnotationFactory.history.final_canvas_url = [];
+            pdfAnnotationFactory.history.redo_list = [];
+            pdfAnnotationFactory.history.undo_list = [];
+            pdfAnnotationFactory.history.raw_undo_list = [];
+            pdfAnnotationFactory.history.raw_redo_list = [];
+            pdfAnnotationFactory.history.raw_undo_ver_list = [];
+            pdfAnnotationFactory.history.raw_redo_ver_list = [];
+            pdfAnnotationFactory.history.tmp_raw_undo_list = '';
+            pdfAnnotationFactory.history.options.activePage = 0;
+            pdfAnnotationFactory.history.manageActiveBtn('');
+            pdfAnnotationFactory.history.setButtonStyle();
 
             pdfAnnotationFactory.options.toolsObj.canvasContainer.innerHTML = '';
             pdfAnnotationFactory.options.bindFlag = '';
@@ -68,7 +79,7 @@
     }
   });
 
-  module.factory('pdfAnnotationFactory', function() {console.log('in factory')
+  module.factory('pdfAnnotationFactory', function() {
     var factoryObj = {};
 
     factoryObj.options = {
@@ -132,15 +143,20 @@
         this.options.lineWidth = document.getElementById('linewidth').value;
       },
       setButtonStyle: function() {
-        if(this.raw_undo_ver_list[this.options.activePage].length > 0 || this.raw_undo_list[this.options.activePage].length > 0) {
-          factoryObj.options.toolsObj.undo.classList.remove('cur_disable');
+        if(this.raw_undo_ver_list.length > 0) {
+          if(this.raw_undo_ver_list[this.options.activePage].length > 0 || this.raw_undo_list[this.options.activePage].length > 0) {
+            factoryObj.options.toolsObj.undo.classList.remove('cur_disable');
+          } else {
+            factoryObj.options.toolsObj.undo.className += ' cur_disable';
+          }
+
+          if(this.raw_redo_ver_list[this.options.activePage].length > 0) {
+            factoryObj.options.toolsObj.redo.classList.remove('cur_disable');
+          } else {
+            factoryObj.options.toolsObj.redo.className += ' cur_disable';
+          }
         } else {
           factoryObj.options.toolsObj.undo.className += ' cur_disable';
-        }
-
-        if(this.raw_redo_ver_list[this.options.activePage].length > 0) {
-          factoryObj.options.toolsObj.redo.classList.remove('cur_disable');
-        } else {
           factoryObj.options.toolsObj.redo.className += ' cur_disable';
         }
       },
@@ -204,8 +220,10 @@
           //var tmpArrUndoData = JSON.parse(JSON.stringify(this.options.arrData));
           var tmpArrUndoData = angular.copy(this.options.arrData);
 
-          this.raw_undo_list[this.options.activePage][this.raw_undo_list[this.options.activePage].length] = tmpArrUndoData;
-          this.options.undoFlag = true;
+          if(tmpArrUndoData.name && tmpArrUndoData.name != '') {
+            this.raw_undo_list[this.options.activePage][this.raw_undo_list[this.options.activePage].length] = tmpArrUndoData;
+            this.options.undoFlag = true;
+          }
 
           factoryObj.options.optionArrData = this.options.arrData = {
             startX: [],
@@ -1719,9 +1737,9 @@
       factoryObj.history.options.canvas_width = canvas_rand.width;
       factoryObj.history.options.canvas_height = canvas_rand.height;
       factoryObj.options.toolsObj.canvasContainer.appendChild(canvas_rand);
-      console.log('render page')
+      
       task = page.render(renderContext);
-      task.promise.then(function(){console.log('in task promise', page.transport.numPages, factoryObj.options.bindCnt)
+      task.promise.then(function(){
         factoryObj.options.bindCnt++;
         if(factoryObj.options.bindFlag === '' && page.transport.numPages == factoryObj.options.bindCnt) {
           //save pdf object for paging related stuff
@@ -1733,7 +1751,7 @@
       });
     }
 
-    factoryObj.bindEvent = function(page) {console.log('in bindevent')
+    factoryObj.bindEvent = function(page) {
       if(factoryObj.options.bindFlag == '') {
         factoryObj.options.bindFlag = 'true';
         factoryObj.history.options.PrevPage = page;
@@ -1741,13 +1759,12 @@
         factoryObj.options.canvas = factoryObj.options.toolsObj.canvas;
         factoryObj.options.ctx = factoryObj.options.canvas.getContext('2d');
 
-        if (!factoryObj.history.initial_canvas_url.hasOwnProperty(page)) {console.log('in binf if')
+        if (!factoryObj.history.initial_canvas_url.hasOwnProperty(page)) {
           var tmpImgObj = document.getElementById('page' + page);
           factoryObj.history.initial_canvas_url[page] = tmpImgObj.toDataURL();
-          console.log(factoryObj.history.options.activePage)
           factoryObj.history.final_canvas_url[factoryObj.history.options.activePage] = factoryObj.history.initial_canvas_url[factoryObj.history.options.activePage];
           factoryObj.options.imgURL = factoryObj.history.initial_canvas_url[factoryObj.history.options.activePage];
-        } else {console.log('in binf else')
+        } else {
           factoryObj.options.imgURL = factoryObj.history.final_canvas_url[factoryObj.history.options.activePage];
         }
 
@@ -1877,7 +1894,7 @@
       }
     }
 
-    factoryObj.renderPages = function(pdfDoc) {console.log('renderpages')
+    factoryObj.renderPages = function(pdfDoc) {
       factoryObj.history.options.numPages = pdfDoc.numPages;
       for(var num = 1; num <= pdfDoc.numPages; num++)
         pdfDoc.getPage(num).then(factoryObj.renderPage);
