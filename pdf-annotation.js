@@ -305,7 +305,9 @@
             this.undo_list[this.options.activePage].push(restore_state);
           }
 
-          var img = new Element('img', {'src':imgSrc});
+          //var img = new Element('img', {'src':imgSrc});
+          var img = document.createElement("img");
+          img.src = imgSrc;
           img.onload = function() {
             ctx.clearRect(0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
             ctx.drawImage(img, 0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
@@ -367,7 +369,9 @@
       drawingState: function(canvas, ctx,  pop) {
         if(pop[this.options.activePage].length) {
           var restore_state = pop[this.options.activePage][pop[this.options.activePage].length-1];
-          var img = new Element('img', {'src':restore_state});
+          //var img = new Element('img', {'src':restore_state});
+          var img = document.createElement("img");
+          img.src = restore_state;
           img.onload = function() {
             ctx.clearRect(0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
             ctx.drawImage(img, 0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
@@ -378,7 +382,9 @@
       redrawState: function(canvas, ctx) {
         if(this.initial_canvas_url[this.options.activePage]) {
           var restore_state = this.initial_canvas_url[this.options.activePage];
-          var img = new Element('img', {'src':restore_state});
+          //var img = new Element('img', {'src':restore_state});
+          var img = document.createElement("img");
+          img.src = restore_state;
           img.onload = function() {
             ctx.clearRect(0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
             ctx.drawImage(img, 0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
@@ -409,17 +415,17 @@
       },
       init: function(canvas, ctx) {
         this.canvas = canvas;
-        this.canvas_coords = this.canvas.getCoordinates();
+        this.canvas_coords = this.canvas.getBoundingClientRect();
         this.ctx = ctx;
         this.ctx.strokeColor = this.options.stroke_color;
         this.paging();
         this.addCanvasEvents();
       },
       addCanvasEvents: function() {
-        this.canvas.addEvent('mousedown', this.start.bind(this));
-        this.canvas.addEvent('mousemove', this.stroke.bind(this));
-        this.canvas.addEvent('mouseup', this.stop.bind(this));
-        this.canvas.addEvent('mouseout', this.stop.bind(this));
+        this.canvas.addEventListener('mousedown', this.start.bind(this));
+        this.canvas.addEventListener('mousemove', this.stroke.bind(this));
+        this.canvas.addEventListener('mouseup', this.stop.bind(this));
+        this.canvas.addEventListener('mouseout', this.stop.bind(this));
       },
       start: function(evt) {
         if(factoryObj.history.raw_undo_list[factoryObj.history.options.activePage].length > 0) {
@@ -508,9 +514,9 @@
       },
       start: function(evt) {
         if(!this.options.flag) return;
-        this.canvas_coords = this.canvas.getCoordinates();
-        var x = evt.page.x - this.canvas_coords.left;
-        var y = evt.page.y - this.canvas_coords.top;
+        this.canvas_coords = this.canvas.getBoundingClientRect();
+        var x = evt.pageX - this.canvas_coords.left;
+        var y = evt.pageY - this.canvas_coords.top;
 
         this.options.startX = x;
         this.options.startY = y;
@@ -527,8 +533,8 @@
       stroke: function(evt) {
         if(!this.options.flag) return;
         if(this.drawing) {
-          var x = evt.page.x - this.canvas_coords.left;
-          var y = evt.page.y - this.canvas_coords.top;
+          var x = evt.pageX - this.canvas_coords.left;
+          var y = evt.pageY - this.canvas_coords.top;
           this.options.endX = x;
           this.options.endY = y;
         }
@@ -737,9 +743,9 @@
         this.drawing = false;
       },
       start: function(evt) {
-        this.canvas_coords = this.canvas.getCoordinates();
-        var x = evt.page.x - this.canvas_coords.left;
-        var y = evt.page.y - this.canvas_coords.top;
+        this.canvas_coords = this.canvas.getBoundingClientRect();
+        var x = evt.pageX - this.canvas_coords.left;
+        var y = evt.pageY - this.canvas_coords.top;
 
         this.options.startX = x;
         this.options.startY = y;
@@ -754,8 +760,8 @@
         if(this.drawing) {
           factoryObj.history.drawingState(this.canvas, this.ctx, factoryObj.history.undo_list);
 
-          var x = evt.page.x - this.canvas_coords.left;
-          var y = evt.page.y - this.canvas_coords.top;
+          var x = evt.pageX - this.canvas_coords.left;
+          var y = evt.pageY - this.canvas_coords.top;
 
           this.options.endX = x;
           this.options.endY = y;
@@ -818,9 +824,9 @@
         this.drawing = false;
       },
       start: function(evt) {
-        this.canvas_coords = this.canvas.getCoordinates();
-        var x = evt.page.x - this.canvas_coords.left;
-        var y = evt.page.y - this.canvas_coords.top;
+        this.canvas_coords = this.canvas.getBoundingClientRect();
+        var x = evt.pageX - this.canvas_coords.left;
+        var y = evt.pageY - this.canvas_coords.top;
 
         this.options.startX = x;
         this.options.startY = y;
@@ -835,8 +841,8 @@
         if(this.drawing) {
           factoryObj.history.drawingState(this.canvas, this.ctx, factoryObj.history.undo_list);
 
-          var x = evt.page.x - this.canvas_coords.left;
-          var y = evt.page.y - this.canvas_coords.top;
+          var x = evt.pageX - this.canvas_coords.left;
+          var y = evt.pageY - this.canvas_coords.top;
 
           this.options.endX = x;
           this.options.endY = y;
@@ -889,9 +895,9 @@
         this.drawing = false;
       },
       start: function(evt) {
-        this.canvas_coords = this.canvas.getCoordinates();
-        var x = evt.page.x - this.canvas_coords.left;
-        var y = evt.page.y - this.canvas_coords.top;
+        this.canvas_coords = this.canvas.getBoundingClientRect();
+        var x = evt.pageX - this.canvas_coords.left;
+        var y = evt.pageY - this.canvas_coords.top;
 
         this.options.startX = x;
         this.options.startY = y;
@@ -906,8 +912,8 @@
         if(this.drawing) {
           factoryObj.history.drawingState(this.canvas, this.ctx, factoryObj.history.undo_list);
 
-          var x = evt.page.x - this.canvas_coords.left;
-          var y = evt.page.y - this.canvas_coords.top;
+          var x = evt.pageX - this.canvas_coords.left;
+          var y = evt.pageY - this.canvas_coords.top;
 
           this.options.endX = x;
           this.options.endY = y;
@@ -967,9 +973,9 @@
         this.drawing = false;
       },
       start: function(evt) {
-        this.canvas_coords = this.canvas.getCoordinates();
-        var x = evt.page.x - this.canvas_coords.left;
-        var y = evt.page.y - this.canvas_coords.top;
+        this.canvas_coords = this.canvas.getBoundingClientRect();
+        var x = evt.pageX - this.canvas_coords.left;
+        var y = evt.pageY - this.canvas_coords.top;
 
         this.options.startX = x;
         this.options.startY = y;
@@ -982,8 +988,8 @@
       },
       stroke: function(evt) {
         if(this.drawing) {
-          var x = evt.page.x - this.canvas_coords.left;
-          var y = evt.page.y - this.canvas_coords.top;
+          var x = evt.pageX - this.canvas_coords.left;
+          var y = evt.pageY - this.canvas_coords.top;
           this.options.endX = x;
           this.options.endY = y;
           factoryObj.history.drawingState(this.canvas, this.ctx, factoryObj.history.undo_list);
@@ -1042,9 +1048,9 @@
         this.drawing = false;
       },
       start: function(evt) {
-        this.canvas_coords = this.canvas.getCoordinates();
-        var x = evt.page.x - this.canvas_coords.left;
-        var y = evt.page.y - this.canvas_coords.top;
+        this.canvas_coords = this.canvas.getBoundingClientRect();
+        var x = evt.pageX - this.canvas_coords.left;
+        var y = evt.pageY - this.canvas_coords.top;
 
         this.options.startX = x;
         this.options.startY = y;
@@ -1057,8 +1063,8 @@
       },
       stroke: function(evt) {
         if(this.drawing) {
-          var x = evt.page.x - this.canvas_coords.left;
-          var y = evt.page.y - this.canvas_coords.top;
+          var x = evt.pageX - this.canvas_coords.left;
+          var y = evt.pageY - this.canvas_coords.top;
           this.options.endX = x;
           this.options.endY = y;
           factoryObj.history.drawingState(this.canvas, this.ctx, factoryObj.history.undo_list);
@@ -1115,9 +1121,9 @@
       },
       start: function(evt) {
         factoryObj.history.setStyleElement(this.canvas, this.ctx);
-        this.canvas_coords = this.canvas.getCoordinates();
-        var x = evt.page.x - this.canvas_coords.left;
-        var y = evt.page.y - this.canvas_coords.top;
+        this.canvas_coords = this.canvas.getBoundingClientRect();
+        var x = evt.pageX - this.canvas_coords.left;
+        var y = evt.pageY - this.canvas_coords.top;
         this.options.startX = x;
         this.options.startY = y;
 
@@ -1130,8 +1136,8 @@
       },
       stroke: function(evt) {
         if(this.drawing) {
-          var x = evt.page.x - this.canvas_coords.left;
-          var y = evt.page.y - this.canvas_coords.top;
+          var x = evt.pageX - this.canvas_coords.left;
+          var y = evt.pageY - this.canvas_coords.top;
           this.options.startX = x;
           this.options.startY = y;
           this.options.endX = 0;
@@ -1178,18 +1184,18 @@
       },
       init: function(canvas, ctx) {
         this.canvas = canvas;
-        this.canvas_coords = this.canvas.getCoordinates();
+        this.canvas_coords = this.canvas.getBoundingClientRect();
         this.ctx = ctx;
         this.drawing = false;
       },
       start: function(evt) {
-        var x = evt.page.x - this.canvas_coords.left;
-        var y = evt.page.y - this.canvas_coords.top;
+        var x = evt.pageX - this.canvas_coords.left;
+        var y = evt.pageY - this.canvas_coords.top;
         this.options.startX = x;
         this.options.startY = y;
 
-        this.options.startDiffX = evt.page.x;
-        this.options.startDiffY = evt.page.y;
+        this.options.startDiffX = evt.pageX;
+        this.options.startDiffY = evt.pageY;
         this.options.cursorStyle = 'move';
 
         this.hitTest();
@@ -1205,14 +1211,14 @@
       },
       stroke: function(evt) {
         if(this.drawing) {
-          var x = evt.page.x - this.canvas_coords.left;
-          var y = evt.page.y - this.canvas_coords.top;
+          var x = evt.pageX - this.canvas_coords.left;
+          var y = evt.pageY - this.canvas_coords.top;
 
           this.options.endX = x;
           this.options.endY = y;
 
-          this.options.endDiffX = evt.page.x;
-          this.options.endDiffY = evt.page.y;
+          this.options.endDiffX = evt.pageX;
+          this.options.endDiffY = evt.pageY;
 
           this.options.diffX = this.options.endDiffX - this.options.startDiffX;
           this.options.diffY = this.options.endDiffY - this.options.startDiffY;
@@ -1657,9 +1663,9 @@
         this.drawing = false;
       },
       start: function(evt) {
-        this.canvas_coords = this.canvas.getCoordinates();
-        var x = evt.page.x - this.canvas_coords.left;
-        var y = evt.page.y - this.canvas_coords.top;
+        this.canvas_coords = this.canvas.getBoundingClientRect();
+        var x = evt.pageX - this.canvas_coords.left;
+        var y = evt.pageY - this.canvas_coords.top;
         this.options.startX = x;
         this.options.startY = y;
 
@@ -1674,8 +1680,8 @@
           factoryObj.history.drawingState(this.canvas, this.ctx, factoryObj.history.undo_list);
           this.ctx.beginPath();
 
-          var x = evt.page.x - this.canvas_coords.left;
-          var y = evt.page.y - this.canvas_coords.top;
+          var x = evt.pageX - this.canvas_coords.left;
+          var y = evt.pageY - this.canvas_coords.top;
 
           this.options.endX = x;
           this.options.endY = y;
@@ -1737,7 +1743,7 @@
       factoryObj.history.options.canvas_width = canvas_rand.width;
       factoryObj.history.options.canvas_height = canvas_rand.height;
       factoryObj.options.toolsObj.canvasContainer.appendChild(canvas_rand);
-      
+
       task = page.render(renderContext);
       task.promise.then(function(){
         factoryObj.options.bindCnt++;
@@ -1771,9 +1777,12 @@
         factoryObj.options.canvas.height = factoryObj.history.options.canvas_height;
         factoryObj.options.canvas.width = factoryObj.history.options.canvas_width; //viewport.width;
 
-        var img = new Element('img', {'src': factoryObj.options.imgURL});
+        //var img = new Element('img', {'src': factoryObj.options.imgURL});
+        var img = document.createElement("img");
+        img.src = factoryObj.options.imgURL;
         img.onload = function () {
-          factoryObj.options.canvas_coords = factoryObj.options.canvas.getCoordinates();
+          console.log(factoryObj.options.canvas)
+          factoryObj.options.canvas_coords = factoryObj.options.canvas.getBoundingClientRect();
           factoryObj.history.options.canvas_coords = factoryObj.options.canvas_coords;
           factoryObj.options.ctx.clearRect(0, 0, factoryObj.options.canvas.width, factoryObj.options.canvas.height);
           factoryObj.options.ctx.drawImage(img, 0, 0, factoryObj.options.canvas.width, factoryObj.options.canvas.height);
@@ -1887,8 +1896,9 @@
             factoryObj.options.toolsObj.fillstyle.value = factoryObj.history.options.fillStyle;
             factoryObj.options.toolsObj.linewidth.value = factoryObj.history.options.lineWidth;
           }
-
+          console.log('before event', factoryObj.options.canvas)
           factoryObj.event.init(factoryObj.options.canvas, factoryObj.options.ctx);
+          console.log('after event')
           factoryObj.history.setButtonStyle();
         }
       }
@@ -1915,17 +1925,17 @@
 
 }));
 
-$(window).scroll(function(){ 
+$(window).scroll(function(){
   var a = 90;
   var pos = $(window).scrollTop();
   if(pos > a) {
     $("#controllers").css({
-        position: 'fixed'
-      });
-    }
-    else {
-      $("#controllers").css({
-        position: 'relative'
-      });
-    }
+      position: 'fixed'
+    });
+  }
+  else {
+    $("#controllers").css({
+      position: 'relative'
+    });
+  }
 });

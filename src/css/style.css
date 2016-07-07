@@ -85,7 +85,7 @@ body img {max-width: 28px;}
 
 #controllers select {font-size: 18px;}
 
-span.btn-icn, span.btn-icn:hover {padding: 5px 10px; background-repeat: no-repeat; background-size: 40px; width: 21px; height: 31px;}
+span.btn-icn, span.btn-icn:hover {padding: 5px 10px; background-repeat: no-repeat; background-size: 40px; width: 43px; height: 40px;}
 #pencil {background-image: url(../images/icn-pencil.png); }
 #pencil:hover, #pencil.active {background-image: url(../images/icn-pencil-act.png); }
 
