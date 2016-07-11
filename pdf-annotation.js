@@ -476,9 +476,8 @@
           var dataurl = doc.output('datauristring');
           var blob = this.dataURLtoBlob(dataurl);
           
-          //factoryObj.options.callbackFn();
-          if(factoryObj.options.callback) {
-            factoryObj.options.callback();
+          if(typeof(factoryObj.options.callbackFn) == "function") {
+            factoryObj.options.callbackFn({blob: blob});
           } else {
             doc.save();
           }
