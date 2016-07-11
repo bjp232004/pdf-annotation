@@ -14,12 +14,14 @@
     return {
       restrict: 'E',
       scope: {
-        options: '='
+        options: '=',
+        callbackFn: '&'
       },
       transclude: true,
       templateUrl: 'bower_components/pdf-annotation/src/directives/directive.html',
       link: function (scope, element, attrs, ctrl) {
-
+ 
+        pdfAnnotationFactory.options.callbackFn = scope.callbackFn;
         pdfAnnotationFactory.options.toolsObj.loading = angular.element(document.querySelector('#loading'))[0];
         pdfAnnotationFactory.options.toolsObj.pencil = angular.element(document.querySelector('#pencil'))[0];
         pdfAnnotationFactory.options.toolsObj.square = angular.element(document.querySelector('#square'))[0];
@@ -307,7 +309,7 @@
 
           //var img = new Element('img', {'src':imgSrc});
           var img = document.createElement("img");
-          img.src = imgSrc;
+          img.src = imgSrc;
           img.onload = function() {
             ctx.clearRect(0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
             ctx.drawImage(img, 0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
@@ -371,7 +373,7 @@
           var restore_state = pop[this.options.activePage][pop[this.options.activePage].length-1];
           //var img = new Element('img', {'src':restore_state});
           var img = document.createElement("img");
-          img.src = restore_state;
+          img.src = restore_state;
           img.onload = function() {
             ctx.clearRect(0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
             ctx.drawImage(img, 0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
@@ -384,7 +386,7 @@
           var restore_state = this.initial_canvas_url[this.options.activePage];
           //var img = new Element('img', {'src':restore_state});
           var img = document.createElement("img");
-          img.src = restore_state;
+          img.src = restore_state;
           img.onload = function() {
             ctx.clearRect(0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
             ctx.drawImage(img, 0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
@@ -451,6 +453,7 @@
         }
       },
       savepdf: function() {
+          
         var m = confirm("Are you sure to Save ");
         if (m) {
           var doc = new jsPDF('p', 'mm', 'a4');
@@ -468,9 +471,32 @@
               }
             }
           }
-          doc.save();
+          //console.log('hi',doc.output())
+          //doc.save();
+          var dataurl = doc.output('datauristring');
+          var blob = this.dataURLtoBlob(dataurl);
+          
+          //factoryObj.options.callbackFn();
+          if(factoryObj.options.callback) {
+            factoryObj.options.callback();
+          } else {
+            doc.save();
+          }
+          
+          /*var fd = new FormData();
+          fd.append("files", blob, "hello.pdf");
+          fd.append("user", {parameters: {accountId: '12345'}});
+          */
         }
       },
+      dataURLtoBlob: function(dataurl) {
+        var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+            bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+        while(n--){
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], {type:mime});
+    },
       paging: function() {
         factoryObj.history.options.totalPage = factoryObj.history.options.pdfobj.transport.numPages;
         factoryObj.options.toolsObj.activePage.textContent = factoryObj.history.options.activePage + 1;
@@ -1743,7 +1769,7 @@
       factoryObj.history.options.canvas_width = canvas_rand.width;
       factoryObj.history.options.canvas_height = canvas_rand.height;
       factoryObj.options.toolsObj.canvasContainer.appendChild(canvas_rand);
-
+      
       task = page.render(renderContext);
       task.promise.then(function(){
         factoryObj.options.bindCnt++;
@@ -1781,7 +1807,7 @@
         var img = document.createElement("img");
         img.src = factoryObj.options.imgURL;
         img.onload = function () {
-          console.log(factoryObj.options.canvas)
+            console.log(factoryObj.options.canvas)
           factoryObj.options.canvas_coords = factoryObj.options.canvas.getBoundingClientRect();
           factoryObj.history.options.canvas_coords = factoryObj.options.canvas_coords;
           factoryObj.options.ctx.clearRect(0, 0, factoryObj.options.canvas.width, factoryObj.options.canvas.height);
@@ -1896,7 +1922,7 @@
             factoryObj.options.toolsObj.fillstyle.value = factoryObj.history.options.fillStyle;
             factoryObj.options.toolsObj.linewidth.value = factoryObj.history.options.lineWidth;
           }
-          console.log('before event', factoryObj.options.canvas)
+console.log('before event', factoryObj.options.canvas)
           factoryObj.event.init(factoryObj.options.canvas, factoryObj.options.ctx);
           console.log('after event')
           factoryObj.history.setButtonStyle();
@@ -1913,7 +1939,7 @@
     factoryObj.renderPDF = function(url, canvasContainer, options) {
       this.options.pdfOptions = options || {scale: 2};
       factoryObj.options.toolsObj.loading.textContent = 'Wait while loading PDF file...';
-
+      
       PDFJS.disableWorker = false;
       PDFJS.getDocument(url).then(factoryObj.renderPages);
     }
@@ -1925,17 +1951,17 @@
 
 }));
 
-$(window).scroll(function(){
+$(window).scroll(function(){ 
   var a = 90;
   var pos = $(window).scrollTop();
   if(pos > a) {
     $("#controllers").css({
-      position: 'fixed'
-    });
-  }
-  else {
-    $("#controllers").css({
-      position: 'relative'
-    });
-  }
+        position: 'fixed'
+      });
+    }
+    else {
+      $("#controllers").css({
+        position: 'relative'
+      });
+    }
 });
