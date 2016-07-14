@@ -68,6 +68,7 @@
 
             pdfAnnotationFactory.options.toolsObj.canvasContainer.innerHTML = '';
             pdfAnnotationFactory.options.bindFlag = '';
+			pdfAnnotationFactory.options.btnFlag = false;
             pdfAnnotationFactory.options.bindCnt = 0;
             scope.errorURL = false;
             pdfAnnotationFactory.renderPDF(scope.options.url, pdfAnnotationFactory.options.toolsObj.canvasContainer);
