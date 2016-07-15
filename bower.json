@@ -1,6 +1,6 @@
 {
   "name": "pdf-annotation",
-  "main": {"src/js/jquery-2.2.3.min.js", "src/js/jquery.bxslider.js", "src/js/pdf.js", "src/js/jspdf.debug.js","pdf-annotation.js", "src/css/style.css", "src/css/jquery.bxslider.css"},
+  "main": {"javascript": ["src/js/jquery-2.2.3.min.js", "src/js/jquery.bxslider.js", "src/js/pdf.js", "src/js/jspdf.debug.js","pdf-annotation.js"],"css": ["src/css/style.css", "src/css/jquery.bxslider.css"]},
   "homepage": "https://github.com/bjp232004/pdf-annotation",
   "authors": [
     "Bhargav <bjp232004@gmail.com>"
