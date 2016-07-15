@@ -15,12 +15,14 @@
       restrict: 'E',
       scope: {
         options: '=',
-        callbackFn: '&'
+        callbackFn: '&',
+        closeFn: '&'
       },
       transclude: true,
       templateUrl: 'bower_components/pdf-annotation/src/directives/directive.html',
       link: function (scope, element, attrs, ctrl) {
- 
+
+        pdfAnnotationFactory.options.closeFn = scope.closeFn;
         pdfAnnotationFactory.options.callbackFn = scope.callbackFn;
         pdfAnnotationFactory.options.toolsObj.loading = angular.element(document.querySelector('#loading'))[0];
         pdfAnnotationFactory.options.toolsObj.pencil = angular.element(document.querySelector('#pencil'))[0];
@@ -47,8 +49,15 @@
         pdfAnnotationFactory.options.toolsObj.currentPage = angular.element(document.querySelector('#currentPage'))[0];
         pdfAnnotationFactory.options.toolsObj.totalPage = angular.element(document.querySelector('#totalPage'))[0];
         pdfAnnotationFactory.options.toolsObj.canvas = angular.element(document.querySelector('#canvas'))[0];
+        pdfAnnotationFactory.options.toolsObj.close = angular.element(document.querySelector('#close'))[0];
 
         pdfAnnotationFactory.options.toolsObj.canvasContainer = angular.element(document.querySelector('#canvas-container'))[0];
+        
+        pdfAnnotationFactory.options.toolsObj.close.addEventListener('click', function () {
+            pdfAnnotationFactory.event.options.activeTool = '';
+            pdfAnnotationFactory.history.manageActiveBtn('');
+            pdfAnnotationFactory.event.closepdf();
+        });
 
         scope.$watch('options', function(newValue, oldValue) {
           if(scope.options.url !== '') {
@@ -453,9 +462,12 @@
           this.options.activeTool.stop(evt);
         }
       },
+      closepdf: function() {
+        factoryObj.options.closeFn();
+      },
       savepdf: function() {
           
-        var m = confirm("Are you sure to Save ");
+        var m = confirm("Are you sure to you want to save file?");
         if (m) {
           var doc = new jsPDF('p', 'mm', 'a4');
           for(i = 0; i < parseInt(factoryObj.history.options.totalPage); i++) {
@@ -472,8 +484,7 @@
               }
             }
           }
-          //console.log('hi',doc.output())
-          //doc.save();
+          
           var dataurl = doc.output('datauristring');
           var blob = this.dataURLtoBlob(dataurl);
           
@@ -482,11 +493,6 @@
           } else {
             doc.save();
           }
-          
-          /*var fd = new FormData();
-          fd.append("files", blob, "hello.pdf");
-          fd.append("user", {parameters: {accountId: '12345'}});
-          */
         }
       },
       dataURLtoBlob: function(dataurl) {
@@ -1807,7 +1813,6 @@
         var img = document.createElement("img");
         img.src = factoryObj.options.imgURL;
         img.onload = function () {
-            console.log(factoryObj.options.canvas)
           factoryObj.options.canvas_coords = factoryObj.options.canvas.getBoundingClientRect();
           factoryObj.history.options.canvas_coords = factoryObj.options.canvas_coords;
           factoryObj.options.ctx.clearRect(0, 0, factoryObj.options.canvas.width, factoryObj.options.canvas.height);
@@ -1890,7 +1895,7 @@
               factoryObj.history.manageActiveBtn('');
               factoryObj.event.savepdf();
             });
-
+            
             factoryObj.options.toolsObj.fontsize.addEventListener('change', function () {
               factoryObj.history.options.font_size = this.value;
             });
@@ -1922,9 +1927,8 @@
             factoryObj.options.toolsObj.fillstyle.value = factoryObj.history.options.fillStyle;
             factoryObj.options.toolsObj.linewidth.value = factoryObj.history.options.lineWidth;
           }
-console.log('before event', factoryObj.options.canvas)
+
           factoryObj.event.init(factoryObj.options.canvas, factoryObj.options.ctx);
-          console.log('after event')
           factoryObj.history.setButtonStyle();
         }
       }
