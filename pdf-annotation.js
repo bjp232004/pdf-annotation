@@ -342,7 +342,7 @@
               this.raw_undo_list[this.options.activePage] = undoData;
             }
           } else {
-            if(this.options.undoFlag == true) {
+            if(this.options.undoFlag === true) {
               //var tmpArrUndoData = JSON.parse(JSON.stringify(pageData));
               var tmpArrUndoData = angular.copy(pageData);
               this.raw_redo_ver_list[this.options.activePage].push(tmpArrUndoData);
@@ -367,7 +367,7 @@
               this.raw_undo_list[this.options.activePage] = redoData;
             }
           } else {
-            if(this.options.redoFlag == true) {
+            if(this.options.redoFlag === true) {
               //var tmpArrRedoData = JSON.parse(JSON.stringify(this.raw_redo_ver_list[this.options.activePage].pop()));
               var tmpArrRedoData = angular.copy(this.raw_redo_ver_list[this.options.activePage].pop());
               var redoData = tmpArrRedoData;
@@ -622,14 +622,15 @@
         // Needed vars for automatic line break;
         var splittedText, xAux, textLines = [], boxWidth = textInfo.boxWidth;
         // Declaration of needed vars.
-        var proFont = [], properties, property, propertyName, propertyValue, atribute;
-        var classDefinition, proColor, proText, proShadow;
+        //var proFont = [], properties, property, propertyName, propertyValue, atribute;
+        //var classDefinition, proColor, proText, proShadow;
+          var proText, k, n, m;
         // Loop vars
-        var i, j, k, n, m;
+        //var i, j, k, n, m;
 
         // The main regex. Looks for <style>, <class> or <br /> tags.
         var match = text.match(/<\s*br\s*\/>|<\s*class=["|']([^"|']+)["|']\s*\>([^>]+)<\s*\/class\s*\>|<\s*style=["|']([^"|']+)["|']\s*\>([^>]+)<\s*\/style\s*\>|[^<]+/g);
-        var innerMatch = null;
+        //var innerMatch = null;
 
         // Let's draw something for each match found.
         for (m = 0; m < match.length; m++) {
@@ -974,7 +975,7 @@
 
         factoryObj.history.setStyleElement(this.canvas, this.ctx);
 
-        var angle = Math.atan2(this.options.endY - this.options.startY, this.options.endX - this.options.startX);
+        //var angle = Math.atan2(this.options.endY - this.options.startY, this.options.endX - this.options.startX);
         this.ctx.moveTo(this.options.startX, this.options.startY);
         this.ctx.lineTo(this.options.endX, this.options.endY);
         this.ctx.stroke();
@@ -984,7 +985,7 @@
 
         factoryObj.history.setStyleElement(this.canvas, this.ctx);
 
-        var angle = Math.atan2(this.options.endY - this.options.startY, this.options.endX - this.options.startX);
+        //var angle = Math.atan2(this.options.endY - this.options.startY, this.options.endX - this.options.startX);
         this.ctx.moveTo(this.options.startX, this.options.startY);
         this.ctx.lineTo(this.options.endX, this.options.endY);
         this.ctx.stroke();
@@ -1398,26 +1399,26 @@
 
               this.options.currentDrawTool.drawing = true;
 
-              if(this.options.movedObject == i && this.options.isResize == true) {
-                if(this.options.arrResize.startX == true) {
+              if(this.options.movedObject == i && this.options.isResize === true) {
+                if(this.options.arrResize.startX === true) {
                   this.options.currentDrawTool.options.startX = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].startX[0] + this.options.diffX;
                 } else {
                   this.options.currentDrawTool.options.startX = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].startX[0];
                 }
 
-                if(this.options.arrResize.startY == true) {
+                if(this.options.arrResize.startY === true) {
                   this.options.currentDrawTool.options.startY = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].startY[0] + this.options.diffY;
                 } else {
                   this.options.currentDrawTool.options.startY = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].startY[0];
                 }
 
-                if(this.options.arrResize.endX == true) {
+                if(this.options.arrResize.endX === true) {
                   this.options.currentDrawTool.options.endX = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].endX[0] + this.options.diffX;
                 } else {
                   this.options.currentDrawTool.options.endX = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].endX[0];
                 }
 
-                if(this.options.arrResize.endY == true) {
+                if(this.options.arrResize.endY === true) {
                   this.options.currentDrawTool.options.endY = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].endY[0] + this.options.diffY;
                 } else {
                   this.options.currentDrawTool.options.endY = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].endY[0];
@@ -1947,8 +1948,6 @@
       PDFJS.disableWorker = false;
       PDFJS.getDocument(url).then(factoryObj.renderPages);
     }
-
-    //factoryObj.defaultObj = JSON.parse(JSON.stringify(factoryObj));
 
     return factoryObj;
   });
