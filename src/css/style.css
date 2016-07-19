@@ -1,9 +1,9 @@
 #canvas {background-color:transparent;}
-body img {max-width: 28px;}
-#loading {background-color: #fff; color: #3e3e3e; font-weight: bold;}
-#controllers {font-size: 14px;
+.pdf-annotation img {max-width: 28px;}
+.pdf-annotation #loading {background-color: #fff; color: #3e3e3e; font-weight: bold;}
+.pdf-annotation #controllers {font-size: 14px;
     font-family: verdana;}
-#controllers {
+.pdf-annotation #controllers {
   width: 100%;
   font-size: 0.8em;
   color: #333;
@@ -14,11 +14,11 @@ body img {max-width: 28px;}
   padding-bottom: 10px;
   margin-bottom: 10px;
 }
-#paint {
+.pdf-annotation #paint {
   border: 1px solid #000;
   background: #fff;
 }
-.controller {
+.pdf-annotation .controller {
   display: inline-block;
   background: #eee;
   padding: 12px 16px;
