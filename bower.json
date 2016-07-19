@@ -31,6 +31,6 @@
     "test",
     "tests",
     "src",
-    "pdf-annotation.test.js"
+    "pdf-annotation.js"
   ]
 }
