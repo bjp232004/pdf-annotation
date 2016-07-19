@@ -1,0 +1,115 @@
+
+.icon {
+  background-image: url('../images/sprite.png');
+}
+
+.icon-icn-redo-act {
+  background-position: -0px -0px;
+  width: 58px;
+  height: 58px;
+}
+.icon-icons-50 {
+  background-position: -0px -58px;
+  width: 58px;
+  height: 58px;
+}
+.icon-icn-arrow {
+  background-position: -0px -116px;
+  width: 58px;
+  height: 58px;
+}
+.icon-icn-circle-act {
+  background-position: -0px -174px;
+  width: 58px;
+  height: 58px;
+}
+.icon-icn-circle {
+  background-position: -0px -232px;
+  width: 58px;
+  height: 58px;
+}
+.icon-icn-ellipse-act {
+  background-position: -0px -290px;
+  width: 58px;
+  height: 58px;
+}
+.icon-icn-ellipse {
+  background-position: -0px -348px;
+  width: 58px;
+  height: 58px;
+}
+.icon-icn-line-act {
+  background-position: -0px -406px;
+  width: 58px;
+  height: 58px;
+}
+.icon-icn-line {
+  background-position: -0px -464px;
+  width: 58px;
+  height: 58px;
+}
+.icon-icn-pencil-act {
+  background-position: -0px -522px;
+  width: 58px;
+  height: 58px;
+}
+.icon-icn-pencil {
+  background-position: -0px -580px;
+  width: 58px;
+  height: 58px;
+}
+.icon-icn-arrow-act {
+  background-position: -0px -638px;
+  width: 58px;
+  height: 58px;
+}
+.icon-icn-redo {
+  background-position: -0px -696px;
+  width: 58px;
+  height: 58px;
+}
+.icon-icn-save-act {
+  background-position: -0px -754px;
+  width: 58px;
+  height: 58px;
+}
+.icon-icn-save {
+  background-position: -0px -812px;
+  width: 58px;
+  height: 58px;
+}
+.icon-icn-square-act {
+  background-position: -0px -870px;
+  width: 58px;
+  height: 58px;
+}
+.icon-icn-square {
+  background-position: -0px -928px;
+  width: 58px;
+  height: 58px;
+}
+.icon-icn-text-act {
+  background-position: -0px -986px;
+  width: 58px;
+  height: 58px;
+}
+.icon-icn-text {
+  background-position: -0px -1044px;
+  width: 58px;
+  height: 58px;
+}
+.icon-icn-undo-act {
+  background-position: -0px -1102px;
+  width: 58px;
+  height: 58px;
+}
+.icon-icn-undo {
+  background-position: -0px -1160px;
+  width: 58px;
+  height: 58px;
+}
+.icon-close {
+  background-position: -0px -1218px;
+  width: 136px;
+  height: 136px;
+}

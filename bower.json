@@ -1,6 +1,10 @@
 {
   "name": "pdf-annotation",
-  "main": ["src/js/jquery-2.2.3.js", "src/js/jquery.bxslider.js", "src/js/pdf.js", "src/js/jspdf.debug.js","pdf-annotation.js", "src/css/style.css", "src/css/jquery.bxslider.css"],
+  "main": [
+    "dist/pdf-annotation.js",
+    "dist/css/style.css",
+    "dist/images/aprite.png"
+  ],
   "homepage": "https://github.com/bjp232004/pdf-annotation",
   "authors": [
     "Bhargav <bjp232004@gmail.com>"
@@ -9,25 +13,20 @@
   "keywords": [
     "PDF",
     "Annotation",
-    "PDF",
-    "Annotation",
-    "Canvas",
-    "Square",
-    "Circle",
-    "Pencil",
-    "Ellipse",
-    "Undo",
-    "Redo",
-    "Line",
-    "Arrow"
+    "PDF Annotation",
+    "pdf writer"
   ],
   "dependencies": {
-      "angular": "~1.4.0"
+    "angular": "^1.5.7",
+    "mootools": "https://github.com/Dexmedia/mootools-core.git#^1.6.0",
+    "jspdf": "^1.2.61",
+    "bxslider-4": "https://github.com/Dexmedia/bxslider-4.git#^4.2.5",
+    "jquery": "^3.1.0"
   },
   "license": "MIT",
   "private": true,
   "ignore": [
-	"**/.*",
+    "**/.*",
     "node_modules",
     "bower_components",
     "test",
