@@ -480,7 +480,7 @@ console.log('Before renderPDF Call from directive');
               else {
                 var imgData = document.getElementById("page"+i).toDataURL("image/png");
               }
-              doc.addImage(imgData, 'PNG', 0, 0, 200, 250);
+              doc.addImage(imgData, 'PNG', 0, 0, 200, 250, null, 'SLOW');
               if(i<parseInt(factoryObj.history.options.totalPage-1)){
                 doc.addPage();
               }
@@ -829,12 +829,53 @@ console.log('Before renderPDF Call from directive');
         this.options.height = parseInt(this.options.endY - this.options.startY);
 
         this.ctx.drawImage(this.options.img , this.options.startX, this.options.startY, this.options.width, this.options.height);
+          
+          
+        this.ctx.closePath();
+        this.ctx.beginPath();
+        this.ctx.lineWidth = 3;
+        this.ctx.strokeStyle = '#000000';  
+        this.ctx.rect(this.options.startX+2, this.options.startY+2, this.options.width-4, this.options.height-4);
+        this.ctx.stroke();
+        
+        this.ctx.closePath();
+        this.ctx.beginPath();
+        this.ctx.lineWidth = 1;
+        this.ctx.fillStyle = '#FFFFFF';
+        factoryObj.image.options.endX = factoryObj.image.options.startX + factoryObj.image.options.width;
+        factoryObj.image.options.endY = factoryObj.image.options.startY + factoryObj.image.options.height;
+        this.ctx.rect(factoryObj.image.options.startX, factoryObj.image.options.startY, 8, 8);
+        this.ctx.rect(factoryObj.image.options.startX, factoryObj.image.options.endY-8, 8, 8);
+        this.ctx.rect(factoryObj.image.options.endX-8, factoryObj.image.options.endY-8, 8, 8);
+        this.ctx.rect(factoryObj.image.options.endX-8, factoryObj.image.options.startY, 8, 8);
+          
+        this.ctx.rect(factoryObj.image.options.endX-factoryObj.image.options.width, factoryObj.image.options.endY-parseInt(factoryObj.image.options.height/2)-8, 8, 8);
+        this.ctx.rect(factoryObj.image.options.endX-8, factoryObj.image.options.endY-parseInt(factoryObj.image.options.height/2)-8, 8, 8);
+        this.ctx.rect(factoryObj.image.options.endX-parseInt(factoryObj.image.options.width/2)-8, factoryObj.image.options.endY-8, 8, 8);
+        this.ctx.rect(factoryObj.image.options.endX-parseInt(factoryObj.image.options.width/2)-8, factoryObj.image.options.endY-factoryObj.image.options.height, 8, 8);
+          
+        this.ctx.fill();  
+        this.ctx.stroke();  
+        this.ctx.closePath();
       },
       uploadImage: function(frmData) {
         var img = new Image;
 
         img.onload = function(obj) {
+          factoryObj.image.options.startX = 10;
+          factoryObj.image.options.startY = 10;
+          factoryObj.image.options.endX = obj.path[0].width;
+          factoryObj.image.options.endY = obj.path[0].height;
+          factoryObj.image.ctx.beginPath();
+          factoryObj.image.drawing = true;
+          factoryObj.history.drawingState(factoryObj.image.canvas, factoryObj.image.ctx, factoryObj.history.undo_list);
+          factoryObj.image.drawTool();
+          factoryObj.image.ctx.closePath();     //close the end to the start point
+          factoryObj.image.ctx.stroke();        //actually draw the accumulated lines
 
+          factoryObj.image.drawing = false;
+          factoryObj.history.setRawData();
+          factoryObj.history.saveState(factoryObj.image.canvas);
         }
 
         img.src = URL.createObjectURL(frmData);
@@ -1127,8 +1168,8 @@ console.log('Before renderPDF Call from directive');
 
           this.ctx.beginPath();  //tell canvas to start a set of lines
           for (m = 0 * Math.PI; m < 2 * Math.PI; m += 0.01 ) {
-            xPos = this.options.startX - (parseInt(this.options.endX - this.options.startX) * Math.cos(m));
-            yPos = this.options.startY + (parseInt(this.options.endY - this.options.startY) * Math.sin(m));
+            xPos = Math.floor(this.options.startX - (parseInt(this.options.endX - this.options.startX) * Math.cos(m)));
+            yPos = Math.floor(this.options.startY + (parseInt(this.options.endY - this.options.startY) * Math.sin(m)));
 
             if (m == 0) {
               this.ctx.moveTo(xPos, yPos);
