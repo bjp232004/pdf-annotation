@@ -1307,7 +1307,7 @@ console.log('Before renderPDF Call from directive');
 
           this.drawing = false;
 
-          if(this.options.movedObject >= 0) {
+          if(this.options.movedObject >= 0 && (this.options.startX-this.options.endX !== 0 || this.options.startY-this.options.endY !== 0) && this.options.endX != undefined) {
             //factoryObj.history.tmp_raw_undo_list = JSON.parse(JSON.stringify(factoryObj.history.raw_undo_list[factoryObj.history.options.activePage]));
             factoryObj.history.tmp_raw_undo_list = angular.copy(factoryObj.history.raw_undo_list[factoryObj.history.options.activePage]);
 
@@ -1642,6 +1642,7 @@ console.log('Before renderPDF Call from directive');
             var max = 0;
             var min = 100000000;
             var tmpXPos = 0;
+            this.options.startX = Math.floor(this.options.startX);  
             for (var j = 0 * Math.PI; j < 2 * Math.PI; j += 0.01 ) {
               xPos = Math.floor(factoryObj.history.options.arrData.startX[0] - (parseInt(factoryObj.history.options.arrData.endX[0] - factoryObj.history.options.arrData.startX[0]) * Math.cos(j)));
               yPos = Math.floor(factoryObj.history.options.arrData.startY[0] + (parseInt(factoryObj.history.options.arrData.endY[0] - factoryObj.history.options.arrData.startY[0]) * Math.sin(j)));
