@@ -1876,7 +1876,7 @@
     return factoryObj;
   });
 
-  module.directive('pdfAnnotation', function () {
+  module.directive('pdfAnnotation', function (pdfAnnotationFactory) {
       console.log('In PDF Annotation Directive');
     return {
       restrict: 'E',
@@ -1888,7 +1888,69 @@
       transclude: true,
       templateUrl: 'bower_components/pdf-annotation/src/directives/directive.html',
       link: function (scope, element, attrs, ctrl) {
-        console.log('In link function');
+        pdfAnnotationFactory.options.closeFn = scope.closeFn;
+        pdfAnnotationFactory.options.callbackFn = scope.callbackFn;
+        pdfAnnotationFactory.options.toolsObj.loading = angular.element(document.querySelector('#loading'))[0];
+        pdfAnnotationFactory.options.toolsObj.pencil = angular.element(document.querySelector('#pencil'))[0];
+        pdfAnnotationFactory.options.toolsObj.square = angular.element(document.querySelector('#square'))[0];
+        pdfAnnotationFactory.options.toolsObj.circle = angular.element(document.querySelector('#circle'))[0];
+        pdfAnnotationFactory.options.toolsObj.ellipse = angular.element(document.querySelector('#ellipse'))[0];
+        pdfAnnotationFactory.options.toolsObj.text = angular.element(document.querySelector('#text'))[0];
+        pdfAnnotationFactory.options.toolsObj.contenteditor = angular.element(document.querySelector('#contenteditor'))[0];
+        pdfAnnotationFactory.options.toolsObj.editor_wrapper = angular.element(document.querySelector('#editor_wrapper'))[0];
+        pdfAnnotationFactory.options.toolsObj.arrow = angular.element(document.querySelector('#arrow'))[0];
+        pdfAnnotationFactory.options.toolsObj.line = angular.element(document.querySelector('#line'))[0];
+        pdfAnnotationFactory.options.toolsObj.imageupload = angular.element(document.querySelector('#imageupload'))[0];
+        pdfAnnotationFactory.options.toolsObj.clear_image = angular.element(document.querySelector('#clear_image'))[0];
+        pdfAnnotationFactory.options.toolsObj.frm_canvas_tool = angular.element(document.querySelector('#frm_canvas_tool'))[0];
+        pdfAnnotationFactory.options.toolsObj.undo = angular.element(document.querySelector('#undo'))[0];
+        pdfAnnotationFactory.options.toolsObj.redo = angular.element(document.querySelector('#redo'))[0];
+        pdfAnnotationFactory.options.toolsObj.save = angular.element(document.querySelector('#save'))[0];
+        pdfAnnotationFactory.options.toolsObj.fontsize = angular.element(document.querySelector('#fontsize'))[0];
+        pdfAnnotationFactory.options.toolsObj.fillstyle = angular.element(document.querySelector('#fillstyle'))[0];
+        pdfAnnotationFactory.options.toolsObj.linewidth = angular.element(document.querySelector('#linewidth'))[0];
+        pdfAnnotationFactory.options.toolsObj.prevBtn = angular.element(document.querySelector('#prevBtn'))[0];
+        pdfAnnotationFactory.options.toolsObj.nextBtn = angular.element(document.querySelector('#nextBtn'))[0];
+        pdfAnnotationFactory.options.toolsObj.activePage = angular.element(document.querySelector('#activePage'))[0];
+        pdfAnnotationFactory.options.toolsObj.currentPage = angular.element(document.querySelector('#currentPage'))[0];
+        pdfAnnotationFactory.options.toolsObj.totalPage = angular.element(document.querySelector('#totalPage'))[0];
+        pdfAnnotationFactory.options.toolsObj.canvas = angular.element(document.querySelector('#canvas'))[0];
+        pdfAnnotationFactory.options.toolsObj.close = angular.element(document.querySelector('#close'))[0];
+
+        pdfAnnotationFactory.options.toolsObj.canvasContainer = angular.element(document.querySelector('#canvas-container'))[0];
+        
+        pdfAnnotationFactory.options.toolsObj.close.addEventListener('click', function () {
+            pdfAnnotationFactory.event.options.activeTool = '';
+            pdfAnnotationFactory.history.manageActiveBtn('');
+            pdfAnnotationFactory.event.closepdf();
+        });
+
+        scope.$watch('options', function(newValue, oldValue) {
+          if(scope.options.url !== '') {
+            pdfAnnotationFactory.history.initial_canvas_url = [];
+            pdfAnnotationFactory.history.final_canvas_url = [];
+            pdfAnnotationFactory.history.final_canvas_url = [];
+            pdfAnnotationFactory.history.redo_list = [];
+            pdfAnnotationFactory.history.undo_list = [];
+            pdfAnnotationFactory.history.raw_undo_list = [];
+            pdfAnnotationFactory.history.raw_redo_list = [];
+            pdfAnnotationFactory.history.raw_undo_ver_list = [];
+            pdfAnnotationFactory.history.raw_redo_ver_list = [];
+            pdfAnnotationFactory.history.tmp_raw_undo_list = '';
+            pdfAnnotationFactory.history.options.activePage = 0;
+            pdfAnnotationFactory.history.manageActiveBtn('');
+            pdfAnnotationFactory.history.setButtonStyle();
+
+            pdfAnnotationFactory.options.toolsObj.canvasContainer.innerHTML = '';
+            pdfAnnotationFactory.options.bindFlag = '';
+			pdfAnnotationFactory.options.btnFlag = false;
+            pdfAnnotationFactory.options.bindCnt = 0;
+            scope.errorURL = false;
+            pdfAnnotationFactory.renderPDF(scope.options.url, pdfAnnotationFactory.options.toolsObj.canvasContainer);
+          } else {
+            scope.errorURL = true;
+          }
+        });
       }
     }
   });
