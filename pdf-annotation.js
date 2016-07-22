@@ -12,9 +12,7 @@
   
   'use strict';
   
-  module
-  
-  .factory('pdfAnnotationFactory', function() {
+  angular.module('pdfAnnotation').factory('pdfAnnotationFactory', function() {
     var factoryObj = {};
 
     factoryObj.options = {
@@ -1922,7 +1920,7 @@ console.log('In renderPages function');
     return factoryObj;
   });
   
-  .directive('pdfAnnotation', function (pdfAnnotationFactory) {
+  angular.module('pdfAnnotation').directive('pdfAnnotation', function (pdfAnnotationFactory) {
       console.log('In PDF Annotation Directive');
     return {
       restrict: 'E',
