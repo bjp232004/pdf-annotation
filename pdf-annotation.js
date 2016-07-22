@@ -1877,7 +1877,6 @@
   });
 
   module.directive('pdfAnnotation', function (pdfAnnotationFactory) {
-      console.log('In PDF Annotation Directive');
     return {
       restrict: 'E',
       scope: {
@@ -1888,7 +1887,8 @@
       transclude: true,
       templateUrl: 'bower_components/pdf-annotation/src/directives/directive.html',
       link: function (scope, element, attrs, ctrl) {
-        pdfAnnotationFactory.options.closeFn = scope.closeFn;
+        pdfAnnotationFactory.renderPDF(scope.options.url, pdfAnnotationFactory.options.toolsObj.canvasContainer);
+        /*pdfAnnotationFactory.options.closeFn = scope.closeFn;
         pdfAnnotationFactory.options.callbackFn = scope.callbackFn;
         pdfAnnotationFactory.options.toolsObj.loading = angular.element(document.querySelector('#loading'))[0];
         pdfAnnotationFactory.options.toolsObj.pencil = angular.element(document.querySelector('#pencil'))[0];
@@ -1950,7 +1950,7 @@
           } else {
             scope.errorURL = true;
           }
-        });
+        });*/
       }
     }
   });
