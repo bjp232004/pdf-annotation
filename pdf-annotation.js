@@ -1876,7 +1876,7 @@
     return factoryObj;
   });
 
-  module.directive('pdfAnnotation', function () {
+  module.directive('pdfAnnotation', function (pdfAnnotationFactory) {
     return {
       restrict: 'E',
       scope: {
@@ -1887,7 +1887,7 @@
       transclude: true,
       template: 'Hello World',
       link: function (scope, element, attrs, ctrl) {
-        console.log('In link function');
+        console.log('In link function', pdfAnnotationFactory);
         pdfAnnotationFactory.options.closeFn = scope.closeFn;
         pdfAnnotationFactory.options.callbackFn = scope.callbackFn;
         pdfAnnotationFactory.options.toolsObj.loading = angular.element(document.querySelector('#loading'))[0];
