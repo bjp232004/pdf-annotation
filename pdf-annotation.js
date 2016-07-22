@@ -645,6 +645,490 @@
         return str.slice(0, i + 1);
       }
     };
+    
+    factoryObj.image = {
+      name: 'image',
+      options: {
+        activeImage: '',
+        uploadedImage: [],
+        width: '',
+        height: '',
+        wdthHghtRatio: '',
+        img: ''
+      },
+      init: function(canvas, ctx) {
+        this.canvas = canvas;
+        this.ctx = ctx;
+        this.ctx.strokeColor = this.options.stroke_color;
+        this.drawing = false;
+      },
+      start: function(evt) {
+        this.canvas_coords = this.canvas.getBoundingClientRect();
+        var x = evt.pageX - this.canvas_coords.left;
+        var y = evt.pageY - this.canvas_coords.top;
+
+        this.options.startX = x;
+        this.options.startY = y;
+
+        this.options.endX = x;
+        this.options.endY = y;
+
+        this.ctx.beginPath();
+        this.drawing = true;
+      },
+      stroke: function(evt) {
+        if(this.drawing) {
+          factoryObj.history.drawingState(this.canvas, this.ctx, factoryObj.history.undo_list);
+
+          var x = evt.pageX - this.canvas_coords.left;
+          var y = evt.pageY - this.canvas_coords.top;
+
+          this.options.endX = x;
+          this.options.endY = y;
+
+          this.drawTool();
+        }
+      },
+      stop: function(evt) {
+        if(this.drawing && this.options.startX !== this.options.endX && this.options.startY !== this.options.endY) {
+          this.ctx.beginPath();
+          this.drawTool();
+          this.ctx.closePath();
+          this.ctx.stroke();
+
+          this.drawing = false;
+          factoryObj.history.setRawData();
+          factoryObj.history.saveState(this.canvas);
+        } else {
+          this.ctx.closePath();
+          this.ctx.stroke();
+          this.drawing = false;
+        }
+      },
+      drawTool: function() {
+        this.ctx.beginPath();
+
+        factoryObj.history.setStyleElement(this.canvas, this.ctx);
+
+        this.options.width = parseInt(this.options.endX - this.options.startX);
+        this.options.height = parseInt(this.options.endY - this.options.startY);
+
+        this.ctx.drawImage(this.options.img , this.options.startX, this.options.startY, this.options.width, this.options.height);
+          
+          
+        this.ctx.closePath();
+        this.ctx.beginPath();
+        this.ctx.lineWidth = 3;
+        this.ctx.strokeStyle = '#000000';  
+        this.ctx.rect(this.options.startX+2, this.options.startY+2, this.options.width-4, this.options.height-4);
+        this.ctx.stroke();
+        
+        this.ctx.closePath();
+        this.ctx.beginPath();
+        this.ctx.lineWidth = 1;
+        this.ctx.fillStyle = '#FFFFFF';
+        factoryObj.image.options.endX = factoryObj.image.options.startX + factoryObj.image.options.width;
+        factoryObj.image.options.endY = factoryObj.image.options.startY + factoryObj.image.options.height;
+        this.ctx.rect(factoryObj.image.options.startX, factoryObj.image.options.startY, 8, 8);
+        this.ctx.rect(factoryObj.image.options.startX, factoryObj.image.options.endY-8, 8, 8);
+        this.ctx.rect(factoryObj.image.options.endX-8, factoryObj.image.options.endY-8, 8, 8);
+        this.ctx.rect(factoryObj.image.options.endX-8, factoryObj.image.options.startY, 8, 8);
+          
+        this.ctx.rect(factoryObj.image.options.endX-factoryObj.image.options.width, factoryObj.image.options.endY-parseInt(factoryObj.image.options.height/2)-8, 8, 8);
+        this.ctx.rect(factoryObj.image.options.endX-8, factoryObj.image.options.endY-parseInt(factoryObj.image.options.height/2)-8, 8, 8);
+        this.ctx.rect(factoryObj.image.options.endX-parseInt(factoryObj.image.options.width/2)-8, factoryObj.image.options.endY-8, 8, 8);
+        this.ctx.rect(factoryObj.image.options.endX-parseInt(factoryObj.image.options.width/2)-8, factoryObj.image.options.endY-factoryObj.image.options.height, 8, 8);
+          
+        this.ctx.fill();  
+        this.ctx.stroke();  
+        this.ctx.closePath();
+      },
+      uploadImage: function(frmData) {
+        var img = new Image;
+
+        img.onload = function(obj) {
+          factoryObj.image.options.startX = 10;
+          factoryObj.image.options.startY = 10;
+          factoryObj.image.options.endX = obj.path[0].width;
+          factoryObj.image.options.endY = obj.path[0].height;
+          factoryObj.image.ctx.beginPath();
+          factoryObj.image.drawing = true;
+          factoryObj.history.drawingState(factoryObj.image.canvas, factoryObj.image.ctx, factoryObj.history.undo_list);
+          factoryObj.image.drawTool();
+          factoryObj.image.ctx.closePath();
+          factoryObj.image.ctx.stroke();
+
+          factoryObj.image.drawing = false;
+          factoryObj.history.setRawData();
+          factoryObj.history.saveState(factoryObj.image.canvas);
+        }
+
+        img.src = URL.createObjectURL(frmData);
+        this.options.uploadedImage.push(URL.createObjectURL(frmData));
+        this.options.img = img;
+      }
+    };
+
+    factoryObj.arrow = {
+      name: 'arrow',
+      options: {
+        stroke_color: ['00', '00', '00'],
+        dim: 4,
+        arrow: {h: 5, w: 10},
+        headlen: 10
+      },
+      init: function(canvas, ctx) {
+        this.canvas = canvas;
+        this.ctx = ctx;
+        this.ctx.strokeColor = this.options.stroke_color;
+        this.ctx.fillStyle = 'rgba(0,0,0,0)';
+        this.drawing = false;
+      },
+      start: function(evt) {
+        this.canvas_coords = this.canvas.getBoundingClientRect();
+        var x = evt.pageX - this.canvas_coords.left;
+        var y = evt.pageY - this.canvas_coords.top;
+
+        this.options.startX = x;
+        this.options.startY = y;
+
+        this.options.endX = x;
+        this.options.endY = y;
+
+        this.ctx.beginPath();
+        this.drawing = true;
+      },
+      stroke: function(evt) {
+        if(this.drawing) {
+          factoryObj.history.drawingState(this.canvas, this.ctx, factoryObj.history.undo_list);
+
+          var x = evt.pageX - this.canvas_coords.left;
+          var y = evt.pageY - this.canvas_coords.top;
+
+          this.options.endX = x;
+          this.options.endY = y;
+
+          this.drawTool();
+        }
+      },
+      stop: function(evt) {
+        if(this.drawing && this.options.startX !== this.options.endX && this.options.startY !== this.options.endY) {
+          this.ctx.beginPath();
+          this.drawTool();
+          this.ctx.closePath();
+          this.ctx.stroke();
+
+          this.drawing = false;
+          factoryObj.history.setRawData();
+          factoryObj.history.saveState(this.canvas);
+        } else {
+          this.ctx.closePath();
+          this.ctx.stroke();
+          this.drawing = false;
+        }
+      },
+      drawTool: function() {
+        this.ctx.beginPath();
+
+        factoryObj.history.setStyleElement(this.canvas, this.ctx);
+
+        var angle = Math.atan2(this.options.endY - this.options.startY, this.options.endX - this.options.startX);
+        this.ctx.moveTo(this.options.startX, this.options.startY);
+        this.ctx.lineTo(this.options.endX, this.options.endY);
+        this.ctx.lineTo(this.options.endX - this.options.headlen*Math.cos(angle - Math.PI/6), this.options.endY - this.options.headlen*Math.sin(angle - Math.PI/6));
+        this.ctx.moveTo(this.options.endX, this.options.endY);
+        this.ctx.lineTo(this.options.endX - this.options.headlen*Math.cos(angle+Math.PI/6), this.options.endY - this.options.headlen*Math.sin(angle+Math.PI/6));
+        this.ctx.stroke();
+      }
+    };
+
+    factoryObj.line = {
+      name: 'line',
+      options: {
+        stroke_color: ['00', '00', '00'],
+        dim: 4
+      },
+      init: function(canvas, ctx) {
+        this.canvas = canvas;
+        this.ctx = ctx;
+        this.ctx.strokeColor = this.options.stroke_color;
+        this.ctx.fillStyle = 'rgba(0,0,0,0)';
+        this.drawing = false;
+      },
+      start: function(evt) {
+        this.canvas_coords = this.canvas.getBoundingClientRect();
+        var x = evt.pageX - this.canvas_coords.left;
+        var y = evt.pageY - this.canvas_coords.top;
+
+        this.options.startX = x;
+        this.options.startY = y;
+
+        this.options.endX = x;
+        this.options.endY = y;
+
+        this.ctx.beginPath();
+        this.drawing = true;
+      },
+      stroke: function(evt) {
+        if(this.drawing) {
+          factoryObj.history.drawingState(this.canvas, this.ctx, factoryObj.history.undo_list);
+
+          var x = evt.pageX - this.canvas_coords.left;
+          var y = evt.pageY - this.canvas_coords.top;
+
+          this.options.endX = x;
+          this.options.endY = y;
+
+          this.drawTool();
+        }
+      },
+      stop: function(evt) {
+        if(this.drawing && this.options.startX !== this.options.endX && this.options.startY !== this.options.endY) {
+          this.ctx.beginPath();
+          this.drawTool();
+          this.ctx.closePath();
+          this.ctx.stroke();
+
+          this.drawing = false;
+          factoryObj.history.setRawData();
+          factoryObj.history.saveState(this.canvas);
+        } else {
+          this.ctx.closePath();
+          this.ctx.stroke();
+          this.drawing = false;
+        }
+      },
+      drawTool: function() {
+        this.ctx.beginPath();
+
+        factoryObj.history.setStyleElement(this.canvas, this.ctx);
+
+        this.ctx.moveTo(this.options.startX, this.options.startY);
+        this.ctx.lineTo(this.options.endX, this.options.endY);
+        this.ctx.stroke();
+      },
+      redrawTool: function() {
+        this.ctx.beginPath();
+
+        factoryObj.history.setStyleElement(this.canvas, this.ctx);
+
+        this.ctx.moveTo(this.options.startX, this.options.startY);
+        this.ctx.lineTo(this.options.endX, this.options.endY);
+        this.ctx.stroke();
+      }
+    };
+    
+    factoryObj.circle = {
+      name: 'circle',
+      options: {
+        stroke_color: ['00', '00', '00'],
+        dim: 4
+      },
+      init: function(canvas, ctx) {
+        this.canvas = canvas;
+        this.ctx = ctx;
+        this.ctx.strokeColor = this.options.stroke_color;
+        this.ctx.fillStyle = 'rgba(0,0,0,0)';
+        this.drawing = false;
+      },
+      start: function(evt) {
+        this.canvas_coords = this.canvas.getBoundingClientRect();
+        var x = evt.pageX - this.canvas_coords.left;
+        var y = evt.pageY - this.canvas_coords.top;
+
+        this.options.startX = x;
+        this.options.startY = y;
+
+        this.options.endX = x;
+        this.options.endY = y;
+
+        this.ctx.beginPath();
+        this.drawing = true;
+      },
+      stroke: function(evt) {
+        if(this.drawing) {
+          var x = evt.pageX - this.canvas_coords.left;
+          var y = evt.pageY - this.canvas_coords.top;
+          this.options.endX = x;
+          this.options.endY = y;
+          factoryObj.history.drawingState(this.canvas, this.ctx, factoryObj.history.undo_list);
+        }
+      },
+      stop: function(evt) {
+        if(this.drawing && this.options.startX !== this.options.endX && this.options.startY !== this.options.endY) {
+          this.drawTool();
+          this.ctx.closePath();
+          this.ctx.stroke();
+
+          this.drawing = false;
+          factoryObj.history.setRawData();
+          factoryObj.history.saveState(this.canvas);
+
+        } else {
+          this.ctx.closePath();
+          this.ctx.stroke();
+          this.drawing = false;
+        }
+      },
+      drawTool: function() {
+        if(this.drawing) {
+          factoryObj.history.setStyleElement(this.canvas, this.ctx);
+
+          var h = parseInt(this.options.endX - this.options.startX);
+          var k = parseInt(this.options.endY - this.options.startY);
+          var r = h+k;
+          var step = 2*Math.PI/r;
+
+          this.options.radius = r;
+          this.ctx.beginPath();
+
+          for(var theta=0;  theta < 2*Math.PI;  theta+=step)
+          {
+            var x = h + r * Math.cos(theta);
+            var y = k - r * Math.sin(theta);
+            this.ctx.lineTo(x + this.options.startX, y + this.options.startY);
+          }
+          this.ctx.stroke();
+        }
+      }
+    };
+
+    factoryObj.ellipse = {
+      name: 'ellipse',
+      options: {
+        stroke_color: ['00', '00', '00'],
+        dim: 4
+      },
+      init: function(canvas, ctx) {
+        this.canvas = canvas;
+        this.ctx = ctx;
+        this.ctx.strokeColor = this.options.stroke_color;
+        this.ctx.fillStyle = 'rgba(0,0,0,0)';
+        this.drawing = false;
+      },
+      start: function(evt) {
+        this.canvas_coords = this.canvas.getBoundingClientRect();
+        var x = evt.pageX - this.canvas_coords.left;
+        var y = evt.pageY - this.canvas_coords.top;
+
+        this.options.startX = x;
+        this.options.startY = y;
+
+        this.options.endX = x;
+        this.options.endY = y;
+
+        this.ctx.beginPath();
+        this.drawing = true;
+      },
+      stroke: function(evt) {
+        if(this.drawing) {
+          var x = evt.pageX - this.canvas_coords.left;
+          var y = evt.pageY - this.canvas_coords.top;
+          this.options.endX = x;
+          this.options.endY = y;
+          factoryObj.history.drawingState(this.canvas, this.ctx, factoryObj.history.undo_list);
+        }
+      },
+      stop: function(evt) {
+        if(this.drawing && this.options.startX !== this.options.endX && this.options.startY !== this.options.endY) {
+          this.drawTool();
+          this.ctx.closePath();
+          this.ctx.stroke();
+
+          this.drawing = false;
+          factoryObj.history.setRawData();
+          factoryObj.history.saveState(this.canvas);
+
+        } else {
+          this.ctx.closePath();
+          this.ctx.stroke();
+          this.drawing = false;
+        }
+      },
+      drawTool: function() {
+        if(this.drawing) {
+          factoryObj.history.setStyleElement(this.canvas, this.ctx);
+
+          this.ctx.beginPath();
+          for (m = 0 * Math.PI; m < 2 * Math.PI; m += 0.01 ) {
+            xPos = Math.floor(this.options.startX - (parseInt(this.options.endX - this.options.startX) * Math.cos(m)));
+            yPos = Math.floor(this.options.startY + (parseInt(this.options.endY - this.options.startY) * Math.sin(m)));
+
+            if (m == 0) {
+              this.ctx.moveTo(xPos, yPos);
+            } else {
+              this.ctx.lineTo(xPos, yPos);
+            }
+          }
+
+          this.ctx.stroke();
+        }
+      }
+    };
+
+    factoryObj.pencil = {
+      name: 'pencil',
+      options: {
+        stroke_color: ['00', '00', '00'],
+        dim: 4
+      },
+      init: function(canvas, ctx) {
+        this.canvas = canvas;
+        this.ctx = ctx;
+        this.ctx.strokeColor = this.options.fillStyle;
+        this.drawing = false;
+      },
+      start: function(evt) {
+        factoryObj.history.setStyleElement(this.canvas, this.ctx);
+        this.canvas_coords = this.canvas.getBoundingClientRect();
+        var x = evt.pageX - this.canvas_coords.left;
+        var y = evt.pageY - this.canvas_coords.top;
+        this.options.startX = x;
+        this.options.startY = y;
+
+        this.options.endX = 0;
+        this.options.endY = 0;
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.options.startX, this.options.startY);
+        factoryObj.history.setRawData();
+        this.drawing = true;
+      },
+      stroke: function(evt) {
+        if(this.drawing) {
+          var x = evt.pageX - this.canvas_coords.left;
+          var y = evt.pageY - this.canvas_coords.top;
+          this.options.startX = x;
+          this.options.startY = y;
+          this.options.endX = 0;
+          this.options.endY = 0;
+          this.ctx.lineTo(this.options.startX, this.options.startY);
+          factoryObj.history.setRawData();
+          this.ctx.stroke();
+        }
+      },
+      stop: function(evt) {
+        if(this.drawing) {
+          this.drawing = false;
+          factoryObj.history.saveState(this.canvas);
+        }
+      },
+      drawTool: function() {
+
+      },
+      redrawTool: function() {
+        this.ctx.beginPath();
+
+        for(var l=0; l<this.options.pencilData.length; l++) {
+
+          if(l==0) {
+            this.ctx.moveTo(this.options.pencilData[l].x + this.options.diffX, this.options.pencilData[l].y + this.options.diffY);
+          } else {
+            this.ctx.lineTo(this.options.pencilData[l].x + this.options.diffX, this.options.pencilData[l].y + this.options.diffY);
+          }
+        }
+        this.ctx.stroke();
+      }
+    };
 
     return factoryObj;
   });
