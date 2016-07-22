@@ -1876,7 +1876,7 @@
     return factoryObj;
   });
 
-  module.directive('pdfAnnotation', ['pdfAnnotationFactory', function (pdfAnnotationFactory) {
+  module.directive('pdfAnnotation', function () {
     return {
       restrict: 'E',
       scope: {
@@ -1954,7 +1954,7 @@
         });
       }
     }
-  }]);
+  });
 
 }));
 $(window).scroll(function(){ 
