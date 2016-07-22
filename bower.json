@@ -1,6 +1,6 @@
 {
   "name": "pdf-annotation",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "main": ["pdf-annotation.js", "src/css/style.css"],
   "homepage": "https://github.com/bjp232004/pdf-annotation",
   "authors": [
