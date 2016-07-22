@@ -12,7 +12,9 @@
   
   'use strict';
   
-  module.factory('pdfAnnotationFactory', function() {
+  module
+  
+  .factory('pdfAnnotationFactory', function() {
     var factoryObj = {};
 
     factoryObj.options = {
@@ -1920,7 +1922,7 @@ console.log('In renderPages function');
     return factoryObj;
   });
   
-  module.directive('pdfAnnotation', function (pdfAnnotationFactory) {
+  .directive('pdfAnnotation', function (pdfAnnotationFactory) {
       console.log('In PDF Annotation Directive');
     return {
       restrict: 'E',
@@ -2004,3 +2006,19 @@ console.log('Before renderPDF Call from directive');
   });
 
 }));
+
+
+$(window).scroll(function(){ 
+  var a = 90;
+  var pos = $(window).scrollTop();
+  if(pos > a) {
+    $("#controllers").css({
+        position: 'fixed'
+      });
+    }
+    else {
+      $("#controllers").css({
+        position: 'relative'
+      });
+    }
+});
