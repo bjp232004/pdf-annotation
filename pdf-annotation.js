@@ -1869,7 +1869,6 @@
       factoryObj.options.toolsObj.loading.textContent = 'Wait while loading PDF file...';
       
       PDFJS.disableWorker = false;
-        console.log(url);
       PDFJS.getDocument(url).then(factoryObj.renderPages);
     }
 
