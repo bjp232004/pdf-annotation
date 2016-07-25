@@ -30,7 +30,8 @@
         endX: [],
         endY: [],
         pencilData: []
-      }
+      },
+      pdfWorker: 'src/js/pdf.worker.js'
     };
 
     factoryObj.history = {
@@ -1869,7 +1870,7 @@
       factoryObj.options.toolsObj.loading.textContent = 'Wait while loading PDF file...';
       
       PDFJS.disableWorker = false;
-      PDFJS.workerSrc = "src/js/pdf.worker.js";
+      PDFJS.workerSrc = factoryObj.options.pdfWorker;
       PDFJS.getDocument(url).then(factoryObj.renderPages);
     }
 
@@ -1944,6 +1945,10 @@
             pdfAnnotationFactory.options.bindFlag = '';
 			pdfAnnotationFactory.options.btnFlag = false;
             pdfAnnotationFactory.options.bindCnt = 0;
+            
+            if(scope.options.pdfworker) {
+              pdfAnnotationFactory.options.pdfWorker = scope.options.pdfworker;
+            }
             scope.errorURL = false;
               
             pdfAnnotationFactory.renderPDF(scope.options.url, pdfAnnotationFactory.options.toolsObj.canvasContainer);
