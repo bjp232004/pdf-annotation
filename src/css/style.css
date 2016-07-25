@@ -85,44 +85,46 @@
 
 #controllers select {font-size: 18px;}
 
-span.btn-icn, span.btn-icn:hover {padding: 5px 10px; background-repeat: no-repeat; background-size: 40px; width: 43px; height: 40px;}
-#pencil {background-image: url(../images/icn-pencil.png); }
-#pencil:hover, #pencil.active {background-image: url(../images/icn-pencil-act.png); }
+span.btn-icn, span.btn-icn:hover {padding: 5px 10px; background-repeat: no-repeat; background-size: 40px; width: 43px; height: 40px; background-image: url(images/sprite.png);}
+#pencil {background-position: -0px -580px; }
+#pencil:hover, #pencil.active {background-position: -0px -522px; }
 
-#square {background-image: url(../images/icn-square.png); }
-#square:hover, #square.active {background-image: url(../images/icn-square-act.png); }
+#square {background-position: -0px -928px; }
+#square:hover, #square.active {background-position: -0px -870px; }
 
-#circle {background-image: url(../images/icn-circle.png); }
-#circle:hover, #circle.active {background-image: url(../images/icn-circle-act.png); }
+#circle {background-position: -0px -232px; }
+#circle:hover, #circle.active {background-position: -0px -174px; }
 
-#ellipse {background-image: url(../images/icn-ellipse.png); }
-#ellipse:hover, #ellipse.active {background-image: url(../images/icn-ellipse-act.png); }
+#ellipse {background-position: -0px -348px; }
+#ellipse:hover, #ellipse.active {background-position: -0px -290px; }
 
-#text {background-image: url(../images/icn-text.png); }
-#text:hover, #text.active {background-image: url(../images/icn-text-act.png); }
+#text {background-position: -0px -1044px; }
+#text:hover, #text.active {background-position: -0px -986px; }
 
-#arrow {background-image: url(../images/icn-arrow.png); }
-#arrow:hover, #arrow.active {background-image: url(../images/icn-arrow-act.png); }
+#arrow {background-position: -0px -174px;); }
+#arrow:hover, #arrow.active {background-position: -0px -638px; }
 
-#line {background-image: url(../images/icn-line.png); }
-#line:hover, #line.active {background-image: url(../images/icn-line-act.png); }
+#line {background-position: -0px -464px; }
+#line:hover, #line.active {background-position: -0px -406px; }
 
-#undo {background-image: url(../images/icn-undo-act.png); background-color: #0A0947 !important;}
-#undo:hover, #undo.active {background-image: url(../images/icn-undo-act.png); }
+#undo {background-position: -0px -1160px; background-color: #0A0947 !important;}
+#undo:hover, #undo.active {background-position: -0px -1102px; }
 
-#redo {background-image: url(../images/icn-redo-act.png); background-color: #0A0947 !important;}
-#redo:hover, #redo.active {background-image: url(../images/icn-redo-act.png); }
+#redo {background-position: -0px -696px; background-color: #0A0947 !important;}
+#redo:hover, #redo.active {background-position: -0px -0px; }
 
-#save {background-image: url(../images/icn-save.png); }
-#save:hover, #save.active {background-image: url(../images/icn-save-act.png); }
+#save {background-position: -0px -812px; }
+#save:hover, #save.active {background-position: -0px -754px; }
 
 .cur_disable{cursor: not-allowed !important;}
-#undo.cur_disable{background-image: url(../images/icn-undo.png); background-color: #0E86E2 !important;}
-#redo.cur_disable{background-image: url(../images/icn-redo.png); background-color: #0E86E2 !important;}
+#undo.cur_disable{background-position: -0px -1160px; background-color: #0E86E2 !important;}
+#redo.cur_disable{background-position: -0px -696px; background-color: #0E86E2 !important;}
 
 
 .close {
-    background-image: url(../images/close.png);
+    background-image: url(../images/sprite.png);
+    background-position: -0px -1218px;
+    background-size: 50px;
     width: 50px;
     height: 50px;
     float: right;
