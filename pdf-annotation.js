@@ -1886,7 +1886,7 @@
       transclude: true,
       template: 'Hello World',
       link: function (scope, element, attrs, ctrl) {
-        console.log('In link function', pdfAnnotationFactory);
+        console.log('In link function', factoryObj);
         factoryObj.options.closeFn = scope.closeFn;
         factoryObj.options.callbackFn = scope.callbackFn;
         factoryObj.options.toolsObj.loading = angular.element(document.querySelector('#loading'))[0];
