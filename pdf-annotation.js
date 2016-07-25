@@ -1917,7 +1917,7 @@
         pdfAnnotationFactory.options.toolsObj.canvas = angular.element(document.querySelector('#canvas'))[0];
         pdfAnnotationFactory.options.toolsObj.close = angular.element(document.querySelector('#close'))[0];
 
-        v.options.toolsObj.canvasContainer = angular.element(document.querySelector('#canvas-container'))[0];
+        pdfAnnotationFactory.options.toolsObj.canvasContainer = angular.element(document.querySelector('#canvas-container'))[0];
         
         pdfAnnotationFactory.options.toolsObj.close.addEventListener('click', function () {
             pdfAnnotationFactory.event.options.activeTool = '';
