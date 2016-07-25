@@ -1884,7 +1884,7 @@
         closeFn: '&'
       },
       transclude: true,
-      template: 'Hello World',
+      templateUrl: 'bower_components/pdf-annotation/src/directives/directive.html',
       link: function (scope, element, attrs, ctrl) {
           console.log(element, attrs, ctrl)
         console.log('In link function', pdfAnnotationFactory);
