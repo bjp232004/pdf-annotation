@@ -85,45 +85,53 @@
 
 #controllers select {font-size: 18px;}
 
-span.btn-icn, span.btn-icn:hover {padding: 5px 10px; background-repeat: no-repeat; background-size: 40px; width: 43px; height: 40px; background-image: url(images/sprite.png);}
-#pencil {background-position: -0px -580px; }
-#pencil:hover, #pencil.active {background-position: -0px -522px; }
+span.btn-icn, span.btn-icn:hover {
+    padding: 5px 10px;
+    background-repeat: no-repeat;
+    width: 42px;
+    height: 40px;
+    background-image: url(images/sprite.png);
+    background-size: 90px;
+    margin: 3px;
+}
+#pencil {background-position: -0px -385px; }
+#pencil:hover, #pencil.active {background-position: -0px -347px; }
 
-#square {background-position: -0px -928px; }
-#square:hover, #square.active {background-position: -0px -870px; }
+#square {background-position: -0px -616px; }
+#square:hover, #square.active {background-position: -0px -578px; }
 
-#circle {background-position: -0px -232px; }
-#circle:hover, #circle.active {background-position: -0px -174px; }
+#circle {background-position: -0px -155px; }
+#circle:hover, #circle.active {background-position: -0px -117px; }
 
-#ellipse {background-position: -0px -348px; }
-#ellipse:hover, #ellipse.active {background-position: -0px -290px; }
+#ellipse {background-position: -0px -231px; }
+#ellipse:hover, #ellipse.active {background-position: -0px -193px; }
 
-#text {background-position: -0px -1044px; }
-#text:hover, #text.active {background-position: -0px -986px; }
+#text {background-position: -0px -693px; }
+#text:hover, #text.active {background-position: -0px -655px; }
 
-#arrow {background-position: -0px -174px;); }
-#arrow:hover, #arrow.active {background-position: -0px -638px; }
+#arrow {background-position: -0px -77px;); }
+#arrow:hover, #arrow.active {background-position: -0px -424px; }
 
-#line {background-position: -0px -464px; }
-#line:hover, #line.active {background-position: -0px -406px; }
+#line {background-position: -0px -308px; }
+#line:hover, #line.active {background-position: -0px -270px; }
 
-#undo {background-position: -0px -1160px; background-color: #0A0947 !important;}
-#undo:hover, #undo.active {background-position: -0px -1102px; }
+#undo {background-position: -0px -770px; background-color: #0A0947 !important;}
+#undo:hover, #undo.active {background-position: -0px -732px; }
 
-#redo {background-position: -0px -696px; background-color: #0A0947 !important;}
+#redo {background-position: -0px -462px; background-color: #0A0947 !important;}
 #redo:hover, #redo.active {background-position: -0px -0px; }
 
-#save {background-position: -0px -812px; }
-#save:hover, #save.active {background-position: -0px -754px; }
+#save {background-position: -0px -539px; }
+#save:hover, #save.active {background-position: -0px -501px; }
 
 .cur_disable{cursor: not-allowed !important;}
-#undo.cur_disable{background-position: -0px -1160px; background-color: #0E86E2 !important;}
-#redo.cur_disable{background-position: -0px -696px; background-color: #0E86E2 !important;}
+#undo.cur_disable{background-position: -0px -770px; background-color: #0E86E2 !important;}
+#redo.cur_disable{background-position: -0px -462px; background-color: #0E86E2 !important;}
 
 
 .close {
-    background-image: url(../images/sprite.png);
-    background-position: -0px -1218px;
+    background-image: url(images/sprite.png);
+    background-position: -0px -1251px;
     background-size: 50px;
     width: 50px;
     height: 50px;
