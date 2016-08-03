@@ -1690,7 +1690,7 @@
       factoryObj.history.options.canvas_height = canvas_rand.height;
       factoryObj.options.toolsObj.canvasContainer.appendChild(canvas_rand);
 
-      task = page.render(renderContext);
+      var task = page.render(renderContext);
       task.promise.then(function(){
         factoryObj.options.bindCnt++;
         if(factoryObj.options.bindFlag === '' && page.transport.numPages == factoryObj.options.bindCnt) {
