@@ -20,7 +20,7 @@ gulp.task('compress', function (cb) {
         .pipe(babel({
             presets: ['es2015']
         }))
-        .pipe(uglify())
+        //.pipe(uglify())
         .pipe(gulp.dest('dist'));
     
 });

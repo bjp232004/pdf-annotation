@@ -33,6 +33,7 @@
     "test",
     "tests",
     "pdf-annotation.js",
-    "src"
+    "src",
+    "gulpfile.js"  
   ]
 }
