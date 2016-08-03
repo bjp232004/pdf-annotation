@@ -131,7 +131,7 @@
 #controllers #redo.cur_disable{background-position: -0px -462px; background-color: #0E86E2 !important;}
 
 
-.close {
+#controllers .close {
     background-image: url(images/sprite.png);
     background-position: -0px -1251px;
     background-size: 50px;
