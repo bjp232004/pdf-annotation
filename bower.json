@@ -18,11 +18,7 @@
     "pdf writer"
   ],
   "dependencies": {
-    "angular": "^1.5.7"/*,
-    "jspdf": "^1.2.61",
-    "bxslider-4": "https://github.com/Dexmedia/bxslider-4.git#^4.2.5",
-    "jquery": "^3.1.0",
-    "pdfjs-bower": "^1.0.233"  */
+    "angular": "^1.5.7"
   },
   "license": "MIT",
   "private": true,
