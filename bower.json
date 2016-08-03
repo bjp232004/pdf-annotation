@@ -19,10 +19,10 @@
   ],
   "dependencies": {
     "angular": "^1.5.7",
-    "mootools": "https://github.com/Dexmedia/mootools-core.git#^1.6.0",
     "jspdf": "^1.2.61",
     "bxslider-4": "https://github.com/Dexmedia/bxslider-4.git#^4.2.5",
-    "jquery": "^3.1.0"
+    "jquery": "^3.1.0",
+    "pdfjs-bower": "^1.0.233"  
   },
   "license": "MIT",
   "private": true,
