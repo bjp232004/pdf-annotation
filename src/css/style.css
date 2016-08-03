@@ -92,7 +92,7 @@
     background-repeat: no-repeat;
     width: 42px;
     height: 40px;
-    background-image: url(images/sprite.png) !important;
+    background-image: url(../images/sprite.png) !important;
     background-size: 90px;
     margin: 3px;
 }
@@ -132,7 +132,7 @@
 
 
 #controllers .close {
-    background-image: url(images/sprite.png);
+    background-image: url(../images/sprite.png);
     background-position: -0px -1251px;
     background-size: 50px;
     width: 50px;
