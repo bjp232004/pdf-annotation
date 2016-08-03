@@ -14,6 +14,7 @@
 
   module.factory('pdfAnnotationFactory', function() {
     var factoryObj = {};  
+    var lineP1, lineP2, lineP3, lineP4, i, m;
     factoryObj.options = {
       viewport: '',
       canvas_rand: '',
