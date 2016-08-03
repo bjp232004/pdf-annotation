@@ -29,7 +29,7 @@ gulp.task('compresscss', function (cb) {
     
     gulp.src('src/**/*.css')
         .pipe(cssmin())
-        .pipe(rename({suffix: '.min'}))
+        .pipe(rename({suffix: ''}))
         .pipe(gulp.dest('dist/'));
 });
 
