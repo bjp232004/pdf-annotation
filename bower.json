@@ -4,7 +4,7 @@
   "main": [
     "dist/pdf-annotation.js",
     "dist/css/style.css",
-    "dist/images/aprite.png"
+    "dist/images/sprite.png"
   ],
   "homepage": "https://github.com/bjp232004/pdf-annotation",
   "authors": [
