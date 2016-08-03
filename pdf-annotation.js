@@ -144,12 +144,10 @@
           }
 
           if(this.raw_undo_list[this.options.activePage].length > 0) {
-            //var tmpData = JSON.parse(JSON.stringify(this.raw_undo_list[this.options.activePage]));
             var tmpData = angular.copy(this.raw_undo_list[this.options.activePage]);
             this.raw_undo_ver_list[this.options.activePage].push(tmpData);
           }
 
-          //var tmpArrUndoData = JSON.parse(JSON.stringify(this.options.arrData));
           var tmpArrUndoData = angular.copy(this.options.arrData);
 
           if(tmpArrUndoData.name && tmpArrUndoData.name != '') {
@@ -202,7 +200,6 @@
           factoryObj.options.optionArrData.arrowAngle = Math.atan2(factoryObj.event.options.activeTool.options.endY - factoryObj.event.options.activeTool.options.startY, factoryObj.event.options.activeTool.options.endX - factoryObj.event.options.activeTool.options.startX);
         }
 
-        //this.options.arrData = JSON.parse(JSON.stringify(factoryObj.options.optionArrData))
         this.options.arrData = angular.copy(factoryObj.options.optionArrData);
 
       },
@@ -237,7 +234,6 @@
             this.undo_list[this.options.activePage].push(restore_state);
           }
 
-          //var img = new Element('img', {'src':imgSrc});
           var img = document.createElement("img");
           img.src = imgSrc;
           img.onload = function() {
@@ -250,20 +246,17 @@
         var pageData = pop[this.options.activePage];
         if(this.options.action == 'undo') {
           if(this.raw_undo_ver_list[this.options.activePage].length > 0) {
-            //var tmpArrUndoData = JSON.parse(JSON.stringify(pageData));
             var tmpArrUndoData = angular.copy(pageData);
             this.raw_redo_ver_list[this.options.activePage].push(tmpArrUndoData);
             this.options.redoFlag = true;
 
 
             if(this.raw_undo_ver_list[this.options.activePage].length > 0) {
-              //var undoData = JSON.parse(JSON.stringify(this.raw_undo_ver_list[this.options.activePage].pop()));
               var undoData = angular.copy(this.raw_undo_ver_list[this.options.activePage].pop());
               this.raw_undo_list[this.options.activePage] = undoData;
             }
           } else {
             if(this.options.undoFlag === true) {
-              //var tmpArrUndoData = JSON.parse(JSON.stringify(pageData));
               var tmpArrUndoData = angular.copy(pageData);
               this.raw_redo_ver_list[this.options.activePage].push(tmpArrUndoData);
               this.raw_undo_list[this.options.activePage] = [];
@@ -274,21 +267,18 @@
         } else {
           if(this.raw_redo_ver_list[this.options.activePage].length > 0) {
             if(this.raw_undo_list[this.options.activePage].length > 0) {
-              //var tmpArrUndoData = JSON.parse(JSON.stringify(this.raw_undo_list[this.options.activePage]));
               var tmpArrUndoData = angular.copy(this.raw_undo_list[this.options.activePage]);
               this.raw_undo_ver_list[this.options.activePage].push(tmpArrUndoData);
             }
             this.options.undoFlag = true;
 
             if(this.raw_redo_ver_list[this.options.activePage].length > 0) {
-              //var tmpArrRedoData = JSON.parse(JSON.stringify(this.raw_redo_ver_list[this.options.activePage].pop()));
               var tmpArrRedoData = angular.copy(this.raw_redo_ver_list[this.options.activePage].pop());
               var redoData = tmpArrRedoData;
               this.raw_undo_list[this.options.activePage] = redoData;
             }
           } else {
             if(this.options.redoFlag === true) {
-              //var tmpArrRedoData = JSON.parse(JSON.stringify(this.raw_redo_ver_list[this.options.activePage].pop()));
               var tmpArrRedoData = angular.copy(this.raw_redo_ver_list[this.options.activePage].pop());
               var redoData = tmpArrRedoData;
               this.raw_undo_list[this.options.activePage] = redoData;
@@ -301,7 +291,6 @@
       drawingState: function(canvas, ctx,  pop) {
         if(pop[this.options.activePage].length) {
           var restore_state = pop[this.options.activePage][pop[this.options.activePage].length-1];
-          //var img = new Element('img', {'src':restore_state});
           var img = document.createElement("img");
           img.src = restore_state;
           img.onload = function() {
@@ -314,7 +303,6 @@
       redrawState: function(canvas, ctx) {
         if(this.initial_canvas_url[this.options.activePage]) {
           var restore_state = this.initial_canvas_url[this.options.activePage];
-          //var img = new Element('img', {'src':restore_state});
           var img = document.createElement("img");
           img.src = restore_state;
           img.onload = function() {
@@ -1732,7 +1720,7 @@
         }
 
         factoryObj.options.canvas.height = factoryObj.history.options.canvas_height;
-        factoryObj.options.canvas.width = factoryObj.history.options.canvas_width; //viewport.width;
+        factoryObj.options.canvas.width = factoryObj.history.options.canvas_width;
 
         var img = document.createElement("img");
         img.src = factoryObj.options.imgURL;
