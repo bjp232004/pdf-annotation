@@ -14,7 +14,7 @@
 
   module.factory('pdfAnnotationFactory', function() {
     var factoryObj = {};  
-    var lineP1, lineP2, lineP3, lineP4, i, m;
+    var lineP1, lineP2, lineP3, lineP4, i, m, xPos, yPos;
     factoryObj.options = {
       viewport: '',
       canvas_rand: '',
@@ -205,15 +205,19 @@
 
       },
       undo: function(canvas, ctx) {
-        this.options.action = 'undo';
-        this.restoreStateRawData(this.raw_undo_list, this.raw_redo_list);
-        this.redrawState(canvas, ctx);
+        if(this.raw_undo_list.length > 0) {  
+          this.options.action = 'undo';
+          this.restoreStateRawData(this.raw_undo_list, this.raw_redo_list);
+          this.redrawState(canvas, ctx);
+        }
       },
       redo: function(canvas, ctx) {
-        this.options.action = 'redo';
-        this.restoreStateRawData(this.raw_undo_list, this.raw_redo_list);
-        factoryObj.move.init(canvas, ctx);
-        this.redrawState(canvas, ctx);
+        if(this.raw_redo_list.length > 0) {  
+          this.options.action = 'redo';
+          this.restoreStateRawData(this.raw_undo_list, this.raw_redo_list);
+          factoryObj.move.init(canvas, ctx);
+          this.redrawState(canvas, ctx);
+        }
       },
       restoreState: function(canvas, ctx,  pop, push) {
         var pageData = pop[this.options.activePage];
@@ -375,22 +379,27 @@
         factoryObj.options.closeFn();
       },
       savepdf: function() {
-          
+        var page = 0;  
         var m = confirm("Are you sure to you want to save file?");
         if (m) {
           var doc = new jsPDF('p', 'mm', 'a4');
-          for(i = 0; i < parseInt(factoryObj.history.options.totalPage); i++) {
-            if(i<2){
-              if(factoryObj.history.final_canvas_url.hasOwnProperty(i)) {
-                var imgData = factoryObj.history.final_canvas_url[i];
+          for(page = 0; page < parseInt(factoryObj.history.options.totalPage); page++) {
+            if(page<2){
+              this.options.isSave = true;    
+              factoryObj.move.init(this.canvas, this.ctx);
+              factoryObj.move.redrawTool();
+              if(factoryObj.history.final_canvas_url.hasOwnProperty(page)) {
+                var imgData = factoryObj.history.final_canvas_url[page];
               }
               else {
-                var imgData = document.getElementById("page"+i).toDataURL("image/png");
+                var imgData = document.getElementById("page"+page).toDataURL("image/png");
               }
               doc.addImage(imgData, 'PNG', 0, 0, 200, 250, null, 'SLOW');
-              if(i<parseInt(factoryObj.history.options.totalPage-1)){
+              if(page<parseInt(factoryObj.history.options.totalPage-1)){
                 doc.addPage();
               }
+              
+              this.options.isSave = false;
             }
           }
 
@@ -491,6 +500,7 @@
 
           factoryObj.options.toolsObj.contenteditor.focus();
           factoryObj.options.toolsObj.contenteditor.style.minHeight = parseInt(this.options.endY - this.options.startY);
+          this.options.finalTextInfo = [];    
         } else {
           this.ctx.closePath();
           this.ctx.stroke();
@@ -703,34 +713,36 @@
         this.options.height = parseInt(this.options.endY - this.options.startY);
 
         this.ctx.drawImage(this.options.img , this.options.startX, this.options.startY, this.options.width, this.options.height);
-          
-          
         this.ctx.closePath();
-        this.ctx.beginPath();
-        this.ctx.lineWidth = 3;
-        this.ctx.strokeStyle = '#000000';  
-        this.ctx.rect(this.options.startX+2, this.options.startY+2, this.options.width-4, this.options.height-4);
-        this.ctx.stroke();
+          
+        if(!factoryObj.event.options.isSave) {
+          this.ctx.beginPath();
+          this.ctx.lineWidth = 3;
+          this.ctx.strokeStyle = '#000000';  
+          this.ctx.rect(this.options.startX+2, this.options.startY+2, this.options.width-4, this.options.height-4);
+          this.ctx.stroke();
         
-        this.ctx.closePath();
-        this.ctx.beginPath();
-        this.ctx.lineWidth = 1;
-        this.ctx.fillStyle = '#FFFFFF';
-        factoryObj.image.options.endX = factoryObj.image.options.startX + factoryObj.image.options.width;
-        factoryObj.image.options.endY = factoryObj.image.options.startY + factoryObj.image.options.height;
-        this.ctx.rect(factoryObj.image.options.startX, factoryObj.image.options.startY, 8, 8);
-        this.ctx.rect(factoryObj.image.options.startX, factoryObj.image.options.endY-8, 8, 8);
-        this.ctx.rect(factoryObj.image.options.endX-8, factoryObj.image.options.endY-8, 8, 8);
-        this.ctx.rect(factoryObj.image.options.endX-8, factoryObj.image.options.startY, 8, 8);
+          this.ctx.closePath();
           
-        this.ctx.rect(factoryObj.image.options.endX-factoryObj.image.options.width, factoryObj.image.options.endY-parseInt(factoryObj.image.options.height/2)-8, 8, 8);
-        this.ctx.rect(factoryObj.image.options.endX-8, factoryObj.image.options.endY-parseInt(factoryObj.image.options.height/2)-8, 8, 8);
-        this.ctx.rect(factoryObj.image.options.endX-parseInt(factoryObj.image.options.width/2)-8, factoryObj.image.options.endY-8, 8, 8);
-        this.ctx.rect(factoryObj.image.options.endX-parseInt(factoryObj.image.options.width/2)-8, factoryObj.image.options.endY-factoryObj.image.options.height, 8, 8);
+          this.ctx.beginPath();
+          this.ctx.lineWidth = 1;
+          this.ctx.fillStyle = '#FFFFFF';
+          factoryObj.image.options.endX = factoryObj.image.options.startX + factoryObj.image.options.width;
+          factoryObj.image.options.endY = factoryObj.image.options.startY + factoryObj.image.options.height;
+          this.ctx.rect(factoryObj.image.options.startX, factoryObj.image.options.startY, 8, 8);
+          this.ctx.rect(factoryObj.image.options.startX, factoryObj.image.options.endY-8, 8, 8);
+          this.ctx.rect(factoryObj.image.options.endX-8, factoryObj.image.options.endY-8, 8, 8);
+          this.ctx.rect(factoryObj.image.options.endX-8, factoryObj.image.options.startY, 8, 8);
           
-        this.ctx.fill();  
-        this.ctx.stroke();  
-        this.ctx.closePath();
+          this.ctx.rect(factoryObj.image.options.endX-factoryObj.image.options.width, factoryObj.image.options.endY-parseInt(factoryObj.image.options.height/2)-8, 8, 8);
+          this.ctx.rect(factoryObj.image.options.endX-8, factoryObj.image.options.endY-parseInt(factoryObj.image.options.height/2)-8, 8, 8);
+          this.ctx.rect(factoryObj.image.options.endX-parseInt(factoryObj.image.options.width/2)-8, factoryObj.image.options.endY-8, 8, 8);
+          this.ctx.rect(factoryObj.image.options.endX-parseInt(factoryObj.image.options.width/2)-8, factoryObj.image.options.endY-factoryObj.image.options.height, 8, 8);
+          
+          this.ctx.fill();  
+          this.ctx.stroke();  
+          this.ctx.closePath();
+        }
       },
       uploadImage: function(frmData) {
         var img = new Image;
@@ -1261,6 +1273,7 @@
         this.ctx.stroke();
       },
       redrawTool: function() {
+          console.log(factoryObj.history.raw_undo_list[factoryObj.history.options.activePage]);
         var tmpData = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage];
         var cntStart = tmpData.length - 1;
 
@@ -1388,8 +1401,12 @@
           }
 
           var canvasData = this.canvas.toDataURL();
-          factoryObj.history.undo_list[factoryObj.history.options.activePage][0] = canvasData;
-
+          
+          if(!factoryObj.event.options.isSave) {
+            factoryObj.history.undo_list[factoryObj.history.options.activePage][0] = canvasData;
+          } else {
+            factoryObj.history.final_canvas_url[factoryObj.history.options.activePage] = canvasData;  
+          }
           factoryObj.history.resetStyleElement();
         }
       },
@@ -1875,7 +1892,7 @@
         closeFn: '&'
       },
       transclude: true,
-      template: '<div id="controllers"><a href="#" id="close" ng-show="options.enableCloseBtn" class="close">&nbsp;</a><span class="controller btn btn-icn" id="pencil" title="Freehand Drawing"></span><span class="controller btn btn-icn" id="square" title="Square"></span><span class="controller btn btn-icn" id="circle" title="Circle"></span><span class="controller btn btn-icn" id="ellipse" title="Ellipse"></span><span class="controller btn btn-icn" id="text" title="Text"></span><span class="controller btn btn-icn" id="arrow" title="Arrow"></span><span class="controller btn btn-icn" id="line" title="Line"></span><span class="controller btn btn-icn" id="undo" title="Undo"></span><span class="controller btn btn-icn" id="redo" title="Redo"></span><span class="controller title" id="activePage" disabled="disabled"></span>&nbsp; out of&nbsp;<span class="controller title" id="totalPage" disabled="disabled"></span><span class="controller btn" id="prevBtn"><</span> &nbsp;<input type="text" class="pagenumber" name="currentPage" id="currentPage" />&nbsp;<span class="controller btn" id="nextBtn">></span><span class="controller btn btn-icn" id="save" title="Save"></span><br /><br /><form id="frm_canvas_tool"><input name="imageupload" id="imageupload" class="input_file" type="file" accept="image/*" ><span class="controller btn" id="clear_image">Clear Image</span></form>    Font Size:<select id="fontsize" name="fontsize"><option value="">Select Font Size</option><option value="2">2px</option><option value="5">5px</option><option value="7">7px</option><option value="8">8px</option><option value="9">9px</option><option value="10">10px</option><option value="11">11px</option><option value="12">12px</option><option value="13">13px</option><option value="14">14px</option><option value="16">16px</option><option value="18">18px</option><option value="32">32px</option></select>    Color:<select id="fillstyle" name="fillstyle"><option>Select Color</option><option value="FF0000">Red</option><option value="00FF00">Green</option><option value="0000FF">Blue</option><option value="000000">Black</option><option value="FFFFFF">White</option></select>    Line Width:<select id="linewidth" name="linewidth"><option value="">Select Font Size</option><option value="2">2px</option><option value="5">5px</option><option value="7">7px</option><option value="8">8px</option></select><span class="controller" id="loading"></span></div><div id="canvas-container" class="canvas-container" style="visibility: hidden; height: 0px;"></div><div id="canvas-cont" class="canvas-container"><canvas id="canvas"></canvas><div id="editor_wrapper" style="display:none;"><textarea id="contenteditor" rows="10"></textarea></div></div><div ng-if="errorURL"><h1>URL not found!</h1></div>',
+      template: '<div id="controllers"><a href="#" id="close" ng-show="options.enableCloseBtn" class="close">&nbsp;</a><span class="controller btn btn-icn" id="pencil" title="Freehand Drawing"></span><span class="controller btn btn-icn" id="square" title="Square"></span><span class="controller btn btn-icn hide" id="circle" title="Circle"></span><span class="controller btn btn-icn" id="ellipse" title="Ellipse"></span><span class="controller btn btn-icn" id="text" title="Text"></span><span class="controller btn btn-icn" id="arrow" title="Arrow"></span><span class="controller btn btn-icn" id="line" title="Line"></span><span class="controller btn btn-icn" id="undo" title="Undo"></span><span class="controller btn btn-icn" id="redo" title="Redo"></span><span class="controller title" id="activePage" disabled="disabled"></span>&nbsp; out of&nbsp;<span class="controller title" id="totalPage" disabled="disabled"></span><span class="controller btn" id="prevBtn"><</span> &nbsp;<input type="text" class="pagenumber" name="currentPage" id="currentPage" />&nbsp;<span class="controller btn" id="nextBtn">></span><span class="controller btn btn-icn" id="save" title="Save"></span><br /><br /><form id="frm_canvas_tool"><input name="imageupload" id="imageupload" class="input_file" type="file" accept="image/*" ><span class="controller btn" id="clear_image">Clear Image</span></form>    Font Size:<select id="fontsize" name="fontsize"><option value="">Select Font Size</option><option value="2">2px</option><option value="5">5px</option><option value="7">7px</option><option value="8">8px</option><option value="9">9px</option><option value="10">10px</option><option value="11">11px</option><option value="12">12px</option><option value="13">13px</option><option value="14">14px</option><option value="16">16px</option><option value="18">18px</option><option value="32">32px</option></select>    Color:<select id="fillstyle" name="fillstyle"><option>Select Color</option><option value="FF0000">Red</option><option value="00FF00">Green</option><option value="0000FF">Blue</option><option value="000000">Black</option><option value="FFFFFF">White</option></select>    Line Width:<select id="linewidth" name="linewidth"><option value="">Select Font Size</option><option value="2">2px</option><option value="5">5px</option><option value="7">7px</option><option value="8">8px</option></select><span class="controller" id="loading"></span></div><div id="canvas-container" class="canvas-container" style="visibility: hidden; height: 0px;"></div><div id="canvas-cont" class="canvas-container"><canvas id="canvas"></canvas><div id="editor_wrapper" style="display:none;"><textarea id="contenteditor" rows="10"></textarea></div></div><div ng-if="errorURL"><h1>URL not found!</h1></div>',
       link: function (scope, element, attrs, ctrl) {
           console.log('Scope:', scope);
         pdfAnnotationFactory.options.closeFn = scope.closeFn;
@@ -1930,8 +1947,9 @@
             pdfAnnotationFactory.history.options.activePage = 0;
             pdfAnnotationFactory.history.manageActiveBtn('');
             pdfAnnotationFactory.history.setButtonStyle();
-
+            
             pdfAnnotationFactory.options.toolsObj.canvasContainer.innerHTML = '';
+            pdfAnnotationFactory.text.options.finalTextInfo = [];
             pdfAnnotationFactory.options.bindFlag = '';
 			pdfAnnotationFactory.options.btnFlag = false;
             pdfAnnotationFactory.options.bindCnt = 0;

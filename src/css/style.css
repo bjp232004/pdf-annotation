@@ -117,10 +117,10 @@
 #controllers #line {background-position: -0px -308px; }
 #controllers #line:hover, #controllers #line.active {background-position: -0px -270px; }
 
-#controllers #undo {background-position: -0px -770px; background-color: #0A0947 !important;}
+#controllers #undo {background-position: -0px -732px; background-color: #0A0947 !important;}
 #controllers #undo:hover, #controllers #undo.active {background-position: -0px -732px; }
 
-#controllers #redo {background-position: -0px -462px; background-color: #0A0947 !important;}
+#controllers #redo {background-position: -0px -0px; background-color: #0A0947 !important;}
 #controllers #redo:hover, #controllers #redo.active {background-position: -0px -0px; }
 
 #controllers #save {background-position: -0px -539px; }
