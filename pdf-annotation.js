@@ -426,17 +426,22 @@
         factoryObj.options.toolsObj.activePage.textContent = factoryObj.history.options.activePage + 1;
         factoryObj.options.toolsObj.currentPage.value = factoryObj.history.options.activePage + 1;
         factoryObj.options.toolsObj.totalPage.textContent = factoryObj.history.options.totalPage;
-        if(factoryObj.history.options.activePage === 0) {
-          factoryObj.options.toolsObj.prevBtn.setAttribute('disabled', 'disabled');
-          factoryObj.options.toolsObj.nextBtn.removeAttribute('disabled');
-        }
-        else if(parseInt(factoryObj.history.options.activePage) === parseInt(factoryObj.history.options.totalPage - 1)) {
+        if(factoryObj.history.options.totalPage > 1) {
+          if(factoryObj.history.options.activePage === 0) {
+            factoryObj.options.toolsObj.prevBtn.setAttribute('disabled', 'disabled');
+            factoryObj.options.toolsObj.nextBtn.removeAttribute('disabled');
+          }
+          else if(parseInt(factoryObj.history.options.activePage) === parseInt(factoryObj.history.options.totalPage - 1)) {
+            factoryObj.options.toolsObj.nextBtn.setAttribute('disabled', 'disabled');
+            factoryObj.options.toolsObj.prevBtn.removeAttribute('disabled');
+          }
+          else if(factoryObj.history.options.activePage > 0 && parseInt(factoryObj.history.options.activePage) < parseInt(factoryObj.history.options.totalPage - 1)) {
+            factoryObj.options.toolsObj.prevBtn.removeAttribute('disabled');
+            factoryObj.options.toolsObj.nextBtn.removeAttribute('disabled');
+          }
+        } else {
           factoryObj.options.toolsObj.nextBtn.setAttribute('disabled', 'disabled');
-          factoryObj.options.toolsObj.prevBtn.removeAttribute('disabled');
-        }
-        else if(factoryObj.history.options.activePage > 0 && parseInt(factoryObj.history.options.activePage) < parseInt(factoryObj.history.options.totalPage - 1)) {
-          factoryObj.options.toolsObj.prevBtn.removeAttribute('disabled');
-          factoryObj.options.toolsObj.nextBtn.removeAttribute('disabled');
+          factoryObj.options.toolsObj.prevBtn.setAttribute('disabled', 'disabled');
         }
       }
     }
