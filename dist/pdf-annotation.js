@@ -1690,6 +1690,7 @@
     };
 
     factoryObj.renderPage = function (page) {
+        console.log('renderpage');
       var viewport = page.getViewport(factoryObj.options.pdfOptions.scale);
       var canvas_rand = document.createElement('canvas');
 
@@ -1706,9 +1707,10 @@
       factoryObj.history.options.canvas_width = canvas_rand.width;
       factoryObj.history.options.canvas_height = canvas_rand.height;
       factoryObj.options.toolsObj.canvasContainer.appendChild(canvas_rand);
-
+console.log('In render page before task');
       var task = page.render(renderContext);
       task.promise.then(function () {
+          console.log('In render page in promise');
         factoryObj.options.bindCnt++;
         if (factoryObj.options.bindFlag === '' && page.transport.numPages == factoryObj.options.bindCnt) {
           factoryObj.history.options.pdfobj = page;
@@ -1720,6 +1722,7 @@
     };
 
     factoryObj.bindEvent = function (page) {
+        console.log('In bind event');
       if (factoryObj.options.bindFlag == '') {
         factoryObj.options.bindFlag = 'true';
         factoryObj.history.options.PrevPage = page;
@@ -1741,8 +1744,9 @@
 
         var img = document.createElement("img");
         img.src = factoryObj.options.imgURL;
+          console.log('In bind event before image load');
         img.onload = function () {
-
+console.log('In bind event image load');
           factoryObj.options.canvas_coords = factoryObj.options.canvas.getBoundingClientRect();
           factoryObj.history.options.canvas_coords = factoryObj.options.canvas_coords;
           factoryObj.options.ctx.clearRect(0, 0, factoryObj.options.canvas.width, factoryObj.options.canvas.height);
@@ -1864,6 +1868,7 @@
     };
 
     factoryObj.renderPages = function (pdfDoc) {
+        console.log('In renderpages');
       factoryObj.history.options.numPages = pdfDoc.numPages;
       for (var num = 1; num <= pdfDoc.numPages; num++) {
         pdfDoc.getPage(num).then(factoryObj.renderPage);
@@ -1873,7 +1878,7 @@
     factoryObj.renderPDF = function (url, canvasContainer, options) {
       this.options.pdfOptions = options || { scale: 2 };
       factoryObj.options.toolsObj.loading.textContent = 'Wait while loading PDF file...';
-
+console.log('In renderpdf');
       PDFJS.disableWorker = false;
       PDFJS.workerSrc = factoryObj.options.pdfWorker;
       PDFJS.getDocument(url).then(factoryObj.renderPages);
