@@ -519,7 +519,7 @@
         factoryObj.options.toolsObj.contenteditor.style.fontSize = factoryObj.history.options.font_size;
         factoryObj.options.toolsObj.contenteditor.style.lineHeight = factoryObj.history.options.font_size + 'px';
         factoryObj.options.toolsObj.contenteditor.style.height = factoryObj.options.toolsObj.contenteditor.scrollHeight + "px";
-        factoryObj.options.toolsObj.contenteditor.style.width = this.options.width + "px";
+        /*factoryObj.options.toolsObj.contenteditor.style.width = this.options.width + "px";*/
 
         var contenttext = factoryObj.options.toolsObj.contenteditor.value;
         var enteredTextEncoded = escape(contenttext);
@@ -531,7 +531,7 @@
             text: contenttext,
             x: this.options.startX,
             y: this.options.startY,
-            boxWidth: parseInt(factoryObj.options.toolsObj.contenteditor.style.width)
+            boxWidth: parseInt(factoryObj.options.toolsObj.contenteditor.style.width) > 0 ? parseInt(factoryObj.options.toolsObj.contenteditor.style.width) : this.options.width + "px"
           };
           console.log('before drawstyled');
           this.drawStyledText(textObj);

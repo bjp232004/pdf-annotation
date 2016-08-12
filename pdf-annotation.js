@@ -1,5 +1,5 @@
 'use strict';
- 
+
 (function (angular, factory) {
   if (typeof define === 'function' && define.amd) {
     define('pdf-annotation', ['angular'], function (angular) {
@@ -9,17 +9,17 @@
     return factory(angular);
   }
 })(typeof angular === 'undefined' ? null : angular, function (angular) {
- 
+
   var module = angular.module('pdfAnnotation', []);
- 
+
   'use strict';
- 
+
   module.factory('pdfAnnotationFactory', function () {
     var factoryObj = {};
     var lineP1, lineP2, lineP3, lineP4, i, m, xPos, yPos;
     factoryObj.options = {
       viewport: '',
-     canvas_rand: '',
+      canvas_rand: '',
       ctx_rand: '',
       renderContext: { canvasContext: '', viewport: '' },
       bindFlag: '',
@@ -36,7 +36,7 @@
       },
       pdfWorker: 'src/js/pdf.worker.js'
     };
- 
+
     factoryObj.history = {
       options: {
         canvas_width: '',
@@ -85,7 +85,7 @@
           } else {
             factoryObj.options.toolsObj.undo.className += ' cur_disable';
           }
- 
+
           if (this.raw_redo_ver_list[this.options.activePage].length > 0) {
             factoryObj.options.toolsObj.redo.classList.remove('cur_disable');
           } else {
@@ -101,19 +101,19 @@
         if (!keep_redo) {
           this.redo_list = [];
         }
- 
+
         if (!this.undo_list.hasOwnProperty(this.options.activePage)) {
           this.undo_list[this.options.activePage] = [];
         }
- 
+
         if (!this.raw_undo_list.hasOwnProperty(this.options.activePage)) {
           this.raw_undo_list[this.options.activePage] = [];
           this.raw_redo_list[this.options.activePage] = [];
- 
+
           this.raw_undo_ver_list[this.options.activePage] = [];
           this.raw_redo_ver_list[this.options.activePage] = [];
         }
- 
+
         var canvasData = canvas.toDataURL();
         if (list) {
           if (!list.hasOwnProperty(this.options.activePage)) {
@@ -122,7 +122,7 @@
           list[this.options.activePage][0] = canvasData;
         } else {
           this.undo_list[this.options.activePage][0] = canvasData;
- 
+
           if (factoryObj.event.options.activeTool && factoryObj.event.options.activeTool.name !== 'move') {
             this.saveRawData();
           } else {
@@ -141,23 +141,23 @@
           if (!this.raw_undo_list.hasOwnProperty(this.options.activePage)) {
             this.raw_undo_list[this.options.activePage] = [];
             this.raw_redo_list[this.options.activePage] = [];
- 
+
             this.raw_undo_ver_list[this.options.activePage] = [];
             this.raw_redo_ver_list[this.options.activePage] = [];
           }
- 
+
           if (this.raw_undo_list[this.options.activePage].length > 0) {
             var tmpData = angular.copy(this.raw_undo_list[this.options.activePage]);
             this.raw_undo_ver_list[this.options.activePage].push(tmpData);
           }
- 
+
           var tmpArrUndoData = angular.copy(this.options.arrData);
- 
+
           if (tmpArrUndoData.name && tmpArrUndoData.name != '') {
             this.raw_undo_list[this.options.activePage][this.raw_undo_list[this.options.activePage].length] = tmpArrUndoData;
             this.options.undoFlag = true;
           }
- 
+
           factoryObj.options.optionArrData = this.options.arrData = {
             startX: [],
             startY: [],
@@ -176,32 +176,32 @@
         factoryObj.options.optionArrData.font_size = this.options.font_size;
         factoryObj.options.optionArrData.fillStyle = this.options.fillStyle;
         factoryObj.options.optionArrData.lineWidth = this.options.lineWidth;
- 
+
         if (factoryObj.options.optionArrData.name === "text") {
           factoryObj.options.optionArrData.textInfo = factoryObj.event.options.activeTool.options.textInfo;
           factoryObj.options.optionArrData.finalTextInfo = factoryObj.event.options.activeTool.options.finalTextInfo;
         }
- 
+
         if (factoryObj.options.optionArrData.name === "image") {
           factoryObj.options.optionArrData.imageURL = factoryObj.event.options.activeTool.options.uploadedImage[factoryObj.event.options.activeTool.options.uploadedImage.length - 1];
         }
- 
+
         if (factoryObj.options.optionArrData.name === "circle") {
           factoryObj.options.optionArrData.radius = factoryObj.event.options.activeTool.options.radius;
         }
- 
+
         if (factoryObj.options.optionArrData.name === "pencil") {
           factoryObj.options.optionArrData.pencilData.push({ x: factoryObj.event.options.activeTool.options.startX, y: factoryObj.event.options.activeTool.options.startY });
         }
- 
+
         if (factoryObj.options.optionArrData.name === "line") {
           factoryObj.options.optionArrData.lineAngle = Math.atan2(factoryObj.event.options.activeTool.options.endY - factoryObj.event.options.activeTool.options.startY, factoryObj.event.options.activeTool.options.endX - factoryObj.event.options.activeTool.options.startX);
         }
- 
+
         if (factoryObj.options.optionArrData.name === "arrow") {
           factoryObj.options.optionArrData.arrowAngle = Math.atan2(factoryObj.event.options.activeTool.options.endY - factoryObj.event.options.activeTool.options.startY, factoryObj.event.options.activeTool.options.endX - factoryObj.event.options.activeTool.options.startX);
         }
- 
+
         this.options.arrData = angular.copy(factoryObj.options.optionArrData);
       },
       undo: function undo(canvas, ctx) {
@@ -225,7 +225,7 @@
           if (push && this.options.action == 'undo') {
             this.saveState(canvas, push, true);
           }
- 
+
           if (this.options.action == 'undo') {
             var restore_state = pageData.pop();
             if (pageData.length) {
@@ -238,7 +238,7 @@
             var imgSrc = restore_state;
             this.undo_list[this.options.activePage].push(restore_state);
           }
- 
+
           var img = document.createElement("img");
           img.src = imgSrc;
           img.onload = function () {
@@ -254,7 +254,7 @@
             var tmpArrUndoData = angular.copy(pageData);
             this.raw_redo_ver_list[this.options.activePage].push(tmpArrUndoData);
             this.options.redoFlag = true;
- 
+
             if (this.raw_undo_ver_list[this.options.activePage].length > 0) {
               var undoData = angular.copy(this.raw_undo_ver_list[this.options.activePage].pop());
               this.raw_undo_list[this.options.activePage] = undoData;
@@ -275,7 +275,7 @@
               this.raw_undo_ver_list[this.options.activePage].push(tmpArrUndoData);
             }
             this.options.undoFlag = true;
- 
+
             if (this.raw_redo_ver_list[this.options.activePage].length > 0) {
               var tmpArrRedoData = angular.copy(this.raw_redo_ver_list[this.options.activePage].pop());
               var redoData = tmpArrRedoData;
@@ -311,8 +311,8 @@
           img.src = restore_state;
           img.onload = function () {
             ctx.clearRect(0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
-           ctx.drawImage(img, 0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
- 
+            ctx.drawImage(img, 0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
+
             if (factoryObj.history.raw_undo_list[factoryObj.history.options.activePage].length > 0) {
               factoryObj.move.redrawTool();
             }
@@ -332,7 +332,7 @@
         }
       }
     };
- 
+
     factoryObj.event = {
       options: {
         activeTool: ''
@@ -356,7 +356,7 @@
           factoryObj.move.init(this.canvas, this.ctx);
           factoryObj.move.start(evt);
         }
- 
+
         if (factoryObj.move.options.movedObject == -1) {
           if (this.options.activeTool !== '' && this.options.activeTool !== undefined) {
             this.options.activeTool.start(evt);
@@ -395,14 +395,14 @@
               if (page < parseInt(factoryObj.history.options.totalPage - 1)) {
                 doc.addPage();
               }
- 
+
               this.options.isSave = false;
             }
           }
- 
+
           var dataurl = doc.output('datauristring');
           var blob = this.dataURLtoBlob(dataurl);
- 
+
           if (typeof factoryObj.options.callbackFn == "function") {
             factoryObj.options.callbackFn({ blob: blob });
           } else {
@@ -443,7 +443,7 @@
         }
       }
     };
- 
+
     factoryObj.text = {
       name: 'text',
       options: {
@@ -469,16 +469,16 @@
         this.canvas_coords = this.canvas.getBoundingClientRect();
         var x = evt.pageX - this.canvas_coords.left;
         var y = evt.pageY - this.canvas_coords.top;
- 
+
         this.options.startX = x;
         this.options.startY = y;
- 
+
         this.options.endX = x;
         this.options.endY = y;
- 
+
         this.ctx.fillStyle = this.options.fill_color;
         this.ctx.font = this.options.font;
- 
+
         this.ctx.beginPath();
         this.drawing = true;
       },
@@ -493,17 +493,17 @@
       },
       stop: function stop(evt) {
         /*if(this.drawing && this.options.flag && this.options.startX !== this.options.endX && this.options.startY !== this.options.endY) {*/
-          console.log('In text stop event');
+        console.log('In text stop event');
         this.drawing = false;
         this.options.flag = false;
         console.log(this.canvas_coords);
         this.options.lineHeight = parseInt(factoryObj.history.options.font_size);
-console.log('In text stop event before style attribute');
+        console.log('In text stop event before style attribute');
         factoryObj.options.toolsObj.editor_wrapper.style.display = 'block';
-        factoryObj.options.toolsObj.editor_wrapper.style.top = parseInt(this.options.startY + 90)+ 'px';
+        factoryObj.options.toolsObj.editor_wrapper.style.top = parseInt(this.options.startY + 90) + 'px';
         factoryObj.options.toolsObj.editor_wrapper.style.left = this.options.startX + 'px';
         factoryObj.options.toolsObj.editor_wrapper.style.width = this.options.width + 'px';
-console.log('In text stop event before focus');
+        console.log('In text stop event before focus');
         factoryObj.options.toolsObj.contenteditor.focus();
         factoryObj.options.toolsObj.contenteditor.style.height = 'auto';
         this.options.finalTextInfo = [];
@@ -519,21 +519,21 @@ console.log('In text stop event before focus');
         factoryObj.options.toolsObj.contenteditor.style.fontSize = factoryObj.history.options.font_size;
         factoryObj.options.toolsObj.contenteditor.style.lineHeight = factoryObj.history.options.font_size + 'px';
         factoryObj.options.toolsObj.contenteditor.style.height = factoryObj.options.toolsObj.contenteditor.scrollHeight + "px";
-        factoryObj.options.toolsObj.contenteditor.style.width = this.options.width + "px";
-         
+        /*factoryObj.options.toolsObj.contenteditor.style.width = this.options.width + "px";*/
+
         var contenttext = factoryObj.options.toolsObj.contenteditor.value;
         var enteredTextEncoded = escape(contenttext);
         contenttext = unescape(enteredTextEncoded.replace(/%0A/g, '<br />').replace(/%20/g, ' '));
         factoryObj.options.toolsObj.contenteditor.value = '';
- 
+
         if (contenttext !== '') {
           var textObj = {
             text: contenttext,
             x: this.options.startX,
             y: this.options.startY,
-            boxWidth: parseInt(factoryObj.options.toolsObj.contenteditor.style.width)
+            boxWidth: (parseInt(factoryObj.options.toolsObj.contenteditor.style.width) > 0) ? parseInt(factoryObj.options.toolsObj.contenteditor.style.width) : this.options.width + "px"
           };
-console.log('before drawstyled');
+          console.log('before drawstyled');
           this.drawStyledText(textObj);
         }
         this.options.flag = true;
@@ -548,11 +548,11 @@ console.log('before drawstyled');
             textLines = [],
             boxWidth = textInfo.boxWidth;
         var proText, k, n, m;
- 
+
         var match = text.match(/<\s*br\s*\/>|<\s*class=["|']([^"|']+)["|']\s*\>([^>]+)<\s*\/class\s*\>|<\s*style=["|']([^"|']+)["|']\s*\>([^>]+)<\s*\/style\s*\>|[^<]+/g);
- 
+
         for (m = 0; m < match.length; m++) {
- 
+
           if (/<\s*br\s*\/>/i.test(match[m])) {
             y += parseInt(this.options.lineHeight, 10) * 1.5;
             x = textInfo.x;
@@ -560,22 +560,22 @@ console.log('before drawstyled');
           } else {
             proText = match[m];
           }
- 
+
           textLines = [];
           proText = proText.replace(/\s*\n\s*/g, " ");
- 
+
           if (boxWidth !== undefined) {
- 
+
             if (this.checkLineBreak(proText, boxWidth + textInfo.x, x)) {
               splittedText = this.trim(proText).split(" ");
- 
+
               if (splittedText.length == 1) {
                 textLines.push({ text: this.trim(proText) + " ", linebreak: true });
               } else {
                 xAux = x;
                 var line = 0;
                 textLines[line] = { text: undefined, linebreak: false };
- 
+
                 for (k = 0; k < splittedText.length; k++) {
                   splittedText[k] += " ";
                   if (!this.checkLineBreak(splittedText[k], boxWidth + textInfo.x, xAux)) {
@@ -584,14 +584,14 @@ console.log('before drawstyled');
                     } else {
                       textLines[line].text += splittedText[k];
                     }
- 
+
                     xAux += this.ctx.measureText(splittedText[k]).width;
                   } else {
                     xAux = textInfo.x;
                     if (textLines[line].text !== undefined) {
                       line++;
                     }
- 
+
                     textLines[line] = { text: splittedText[k], linebreak: true };
                     xAux += this.ctx.measureText(splittedText[k]).width;
                   }
@@ -599,16 +599,16 @@ console.log('before drawstyled');
               }
             }
           }
- 
+
           if (textLines.length == 0) {
             textLines.push({ text: this.trim(proText) + " ", linebreak: false });
           }
- 
+
           for (n = 0; n < textLines.length; n++) {
             if (textLines[n].linebreak) {
               y += parseInt(this.options.lineHeight, 10);
               x = textInfo.x;
- 
+
               this.options.endY = y;
             }
             this.ctx.fillText(textLines[n].text, x, y);
@@ -616,7 +616,7 @@ console.log('before drawstyled');
             x += this.ctx.measureText(textLines[n].text).width;
           }
         }
- 
+
         factoryObj.square.canvas = this.canvas;
         factoryObj.square.ctx = this.ctx;
         factoryObj.square.options.startX = this.options.startX - 10;
@@ -624,12 +624,12 @@ console.log('before drawstyled');
         factoryObj.square.options.endX = this.options.startX + parseInt(factoryObj.options.toolsObj.contenteditor.style.width) + 10;
         factoryObj.square.options.endY = y + 10;
         factoryObj.square.drawTool();
- 
+
         this.options.startX = this.options.startX - 10;
         this.options.startY = this.options.startY - 20;
         this.options.endX = this.options.startX + parseInt(factoryObj.options.toolsObj.contenteditor.style.width) + 10;
         this.options.endY = y + 10;
- 
+
         this.ctx.stroke();
         factoryObj.history.setRawData();
         factoryObj.history.saveState(this.canvas);
@@ -638,7 +638,7 @@ console.log('before drawstyled');
         for (var k = 0; k < obj.length; k++) {
           this.ctx.fillText(obj[k].text, obj[k].x + diffX, obj[k].y + diffY);
         }
- 
+
         factoryObj.square.canvas = this.canvas;
         factoryObj.square.ctx = this.ctx;
         factoryObj.square.options.startX = this.options.startX;
@@ -661,7 +661,7 @@ console.log('before drawstyled');
         return str.slice(0, i + 1);
       }
     };
- 
+
     factoryObj.image = {
       name: 'image',
       options: {
@@ -682,26 +682,26 @@ console.log('before drawstyled');
         this.canvas_coords = this.canvas.getBoundingClientRect();
         var x = evt.pageX - this.canvas_coords.left;
         var y = evt.pageY - this.canvas_coords.top;
- 
+
         this.options.startX = x;
         this.options.startY = y;
- 
+
         this.options.endX = x;
         this.options.endY = y;
- 
+
         this.ctx.beginPath();
         this.drawing = true;
       },
       stroke: function stroke(evt) {
         if (this.drawing) {
           factoryObj.history.drawingState(this.canvas, this.ctx, factoryObj.history.undo_list);
- 
+
           var x = evt.pageX - this.canvas_coords.left;
           var y = evt.pageY - this.canvas_coords.top;
- 
+
           this.options.endX = x;
           this.options.endY = y;
- 
+
           this.drawTool();
         }
       },
@@ -711,7 +711,7 @@ console.log('before drawstyled');
           this.drawTool();
           this.ctx.closePath();
           this.ctx.stroke();
- 
+
           this.drawing = false;
           factoryObj.history.setRawData();
           factoryObj.history.saveState(this.canvas);
@@ -723,24 +723,24 @@ console.log('before drawstyled');
       },
       drawTool: function drawTool() {
         this.ctx.beginPath();
- 
+
         factoryObj.history.setStyleElement(this.canvas, this.ctx);
- 
+
         this.options.width = parseInt(this.options.endX - this.options.startX);
         this.options.height = parseInt(this.options.endY - this.options.startY);
- 
+
         this.ctx.drawImage(this.options.img, this.options.startX, this.options.startY, this.options.width, this.options.height);
         this.ctx.closePath();
- 
+
         if (!factoryObj.event.options.isSave) {
           this.ctx.beginPath();
           this.ctx.lineWidth = 3;
           this.ctx.strokeStyle = '#000000';
           this.ctx.rect(this.options.startX + 2, this.options.startY + 2, this.options.width - 4, this.options.height - 4);
           this.ctx.stroke();
- 
+
           this.ctx.closePath();
- 
+
           this.ctx.beginPath();
           this.ctx.lineWidth = 1;
           this.ctx.fillStyle = '#FFFFFF';
@@ -750,12 +750,12 @@ console.log('before drawstyled');
           this.ctx.rect(factoryObj.image.options.startX, factoryObj.image.options.endY - 8, 8, 8);
           this.ctx.rect(factoryObj.image.options.endX - 8, factoryObj.image.options.endY - 8, 8, 8);
           this.ctx.rect(factoryObj.image.options.endX - 8, factoryObj.image.options.startY, 8, 8);
- 
+
           this.ctx.rect(factoryObj.image.options.endX - factoryObj.image.options.width, factoryObj.image.options.endY - parseInt(factoryObj.image.options.height / 2) - 8, 8, 8);
           this.ctx.rect(factoryObj.image.options.endX - 8, factoryObj.image.options.endY - parseInt(factoryObj.image.options.height / 2) - 8, 8, 8);
           this.ctx.rect(factoryObj.image.options.endX - parseInt(factoryObj.image.options.width / 2) - 8, factoryObj.image.options.endY - 8, 8, 8);
           this.ctx.rect(factoryObj.image.options.endX - parseInt(factoryObj.image.options.width / 2) - 8, factoryObj.image.options.endY - factoryObj.image.options.height, 8, 8);
- 
+
           this.ctx.fill();
           this.ctx.stroke();
           this.ctx.closePath();
@@ -763,9 +763,9 @@ console.log('before drawstyled');
       },
       uploadImage: function uploadImage(frmData) {
         var img = new Image();
- 
+
         img.onload = function (obj) {
-            console.log(obj, this.width, this);
+          console.log(obj, this.width, this);
           factoryObj.image.options.startX = 10;
           factoryObj.image.options.startY = 10;
           factoryObj.image.options.endX = this.width;
@@ -776,18 +776,18 @@ console.log('before drawstyled');
           factoryObj.image.drawTool();
           factoryObj.image.ctx.closePath();
           factoryObj.image.ctx.stroke();
- 
+
           factoryObj.image.drawing = false;
           factoryObj.history.setRawData();
           factoryObj.history.saveState(factoryObj.image.canvas);
         };
- 
+
         img.src = URL.createObjectURL(frmData);
         this.options.uploadedImage.push(URL.createObjectURL(frmData));
         this.options.img = img;
       }
     };
- 
+
     factoryObj.arrow = {
       name: 'arrow',
       options: {
@@ -807,26 +807,26 @@ console.log('before drawstyled');
         this.canvas_coords = this.canvas.getBoundingClientRect();
         var x = evt.pageX - this.canvas_coords.left;
         var y = evt.pageY - this.canvas_coords.top;
- 
+
         this.options.startX = x;
         this.options.startY = y;
- 
+
         this.options.endX = x;
         this.options.endY = y;
- 
+
         this.ctx.beginPath();
         this.drawing = true;
       },
       stroke: function stroke(evt) {
         if (this.drawing) {
           factoryObj.history.drawingState(this.canvas, this.ctx, factoryObj.history.undo_list);
- 
+
           var x = evt.pageX - this.canvas_coords.left;
           var y = evt.pageY - this.canvas_coords.top;
- 
+
           this.options.endX = x;
           this.options.endY = y;
- 
+
           this.drawTool();
         }
       },
@@ -836,7 +836,7 @@ console.log('before drawstyled');
           this.drawTool();
           this.ctx.closePath();
           this.ctx.stroke();
- 
+
           this.drawing = false;
           factoryObj.history.setRawData();
           factoryObj.history.saveState(this.canvas);
@@ -848,9 +848,9 @@ console.log('before drawstyled');
       },
       drawTool: function drawTool() {
         this.ctx.beginPath();
- 
+
         factoryObj.history.setStyleElement(this.canvas, this.ctx);
- 
+
         var angle = Math.atan2(this.options.endY - this.options.startY, this.options.endX - this.options.startX);
         this.ctx.moveTo(this.options.startX, this.options.startY);
         this.ctx.lineTo(this.options.endX, this.options.endY);
@@ -860,7 +860,7 @@ console.log('before drawstyled');
         this.ctx.stroke();
       }
     };
- 
+
     factoryObj.line = {
       name: 'line',
       options: {
@@ -878,26 +878,26 @@ console.log('before drawstyled');
         this.canvas_coords = this.canvas.getBoundingClientRect();
         var x = evt.pageX - this.canvas_coords.left;
         var y = evt.pageY - this.canvas_coords.top;
- 
+
         this.options.startX = x;
         this.options.startY = y;
- 
+
         this.options.endX = x;
         this.options.endY = y;
- 
+
         this.ctx.beginPath();
         this.drawing = true;
       },
       stroke: function stroke(evt) {
         if (this.drawing) {
           factoryObj.history.drawingState(this.canvas, this.ctx, factoryObj.history.undo_list);
- 
+
           var x = evt.pageX - this.canvas_coords.left;
           var y = evt.pageY - this.canvas_coords.top;
- 
+
           this.options.endX = x;
           this.options.endY = y;
- 
+
           this.drawTool();
         }
       },
@@ -907,7 +907,7 @@ console.log('before drawstyled');
           this.drawTool();
           this.ctx.closePath();
           this.ctx.stroke();
- 
+
           this.drawing = false;
           factoryObj.history.setRawData();
           factoryObj.history.saveState(this.canvas);
@@ -919,24 +919,24 @@ console.log('before drawstyled');
       },
       drawTool: function drawTool() {
         this.ctx.beginPath();
- 
+
         factoryObj.history.setStyleElement(this.canvas, this.ctx);
- 
+
         this.ctx.moveTo(this.options.startX, this.options.startY);
         this.ctx.lineTo(this.options.endX, this.options.endY);
         this.ctx.stroke();
       },
       redrawTool: function redrawTool() {
         this.ctx.beginPath();
- 
+
         factoryObj.history.setStyleElement(this.canvas, this.ctx);
- 
+
         this.ctx.moveTo(this.options.startX, this.options.startY);
         this.ctx.lineTo(this.options.endX, this.options.endY);
         this.ctx.stroke();
       }
     };
- 
+
     factoryObj.circle = {
       name: 'circle',
       options: {
@@ -954,13 +954,13 @@ console.log('before drawstyled');
         this.canvas_coords = this.canvas.getBoundingClientRect();
         var x = evt.pageX - this.canvas_coords.left;
         var y = evt.pageY - this.canvas_coords.top;
- 
+
         this.options.startX = x;
         this.options.startY = y;
- 
+
         this.options.endX = x;
         this.options.endY = y;
- 
+
         this.ctx.beginPath();
         this.drawing = true;
       },
@@ -978,7 +978,7 @@ console.log('before drawstyled');
           this.drawTool();
           this.ctx.closePath();
           this.ctx.stroke();
- 
+
           this.drawing = false;
           factoryObj.history.setRawData();
           factoryObj.history.saveState(this.canvas);
@@ -991,15 +991,15 @@ console.log('before drawstyled');
       drawTool: function drawTool() {
         if (this.drawing) {
           factoryObj.history.setStyleElement(this.canvas, this.ctx);
- 
+
           var h = parseInt(this.options.endX - this.options.startX);
           var k = parseInt(this.options.endY - this.options.startY);
           var r = h + k;
           var step = 2 * Math.PI / r;
- 
+
           this.options.radius = r;
           this.ctx.beginPath();
- 
+
           for (var theta = 0; theta < 2 * Math.PI; theta += step) {
             var x = h + r * Math.cos(theta);
             var y = k - r * Math.sin(theta);
@@ -1009,7 +1009,7 @@ console.log('before drawstyled');
         }
       }
     };
- 
+
     factoryObj.ellipse = {
       name: 'ellipse',
       options: {
@@ -1027,13 +1027,13 @@ console.log('before drawstyled');
         this.canvas_coords = this.canvas.getBoundingClientRect();
         var x = evt.pageX - this.canvas_coords.left;
         var y = evt.pageY - this.canvas_coords.top;
- 
+
         this.options.startX = x;
         this.options.startY = y;
- 
+
         this.options.endX = x;
         this.options.endY = y;
- 
+
         this.ctx.beginPath();
         this.drawing = true;
       },
@@ -1051,7 +1051,7 @@ console.log('before drawstyled');
           this.drawTool();
           this.ctx.closePath();
           this.ctx.stroke();
- 
+
           this.drawing = false;
           factoryObj.history.setRawData();
           factoryObj.history.saveState(this.canvas);
@@ -1064,24 +1064,24 @@ console.log('before drawstyled');
       drawTool: function drawTool() {
         if (this.drawing) {
           factoryObj.history.setStyleElement(this.canvas, this.ctx);
- 
+
           this.ctx.beginPath();
           for (m = 0 * Math.PI; m < 2 * Math.PI; m += 0.01) {
             xPos = Math.floor(this.options.startX - parseInt(this.options.endX - this.options.startX) * Math.cos(m));
             yPos = Math.floor(this.options.startY + parseInt(this.options.endY - this.options.startY) * Math.sin(m));
- 
+
             if (m == 0) {
               this.ctx.moveTo(xPos, yPos);
             } else {
               this.ctx.lineTo(xPos, yPos);
             }
           }
- 
+
           this.ctx.stroke();
         }
       }
     };
- 
+
     factoryObj.pencil = {
       name: 'pencil',
       options: {
@@ -1092,7 +1092,7 @@ console.log('before drawstyled');
         this.canvas = canvas;
         this.ctx = ctx;
         this.ctx.strokeColor = this.options.fillStyle;
-       this.drawing = false;
+        this.drawing = false;
       },
       start: function start(evt) {
         factoryObj.history.setStyleElement(this.canvas, this.ctx);
@@ -1101,7 +1101,7 @@ console.log('before drawstyled');
         var y = evt.pageY - this.canvas_coords.top;
         this.options.startX = x;
         this.options.startY = y;
- 
+
         this.options.endX = 0;
         this.options.endY = 0;
         this.ctx.beginPath();
@@ -1131,9 +1131,9 @@ console.log('before drawstyled');
       drawTool: function drawTool() {},
       redrawTool: function redrawTool() {
         this.ctx.beginPath();
- 
+
         for (var l = 0; l < this.options.pencilData.length; l++) {
- 
+
           if (l == 0) {
             this.ctx.moveTo(this.options.pencilData[l].x + this.options.diffX, this.options.pencilData[l].y + this.options.diffY);
           } else {
@@ -1143,7 +1143,7 @@ console.log('before drawstyled');
         this.ctx.stroke();
       }
     };
- 
+
     factoryObj.move = {
       name: 'move',
       options: {
@@ -1166,13 +1166,13 @@ console.log('before drawstyled');
         var y = evt.pageY - this.canvas_coords.top;
         this.options.startX = x;
         this.options.startY = y;
- 
+
         this.options.startDiffX = evt.pageX;
         this.options.startDiffY = evt.pageY;
         this.options.cursorStyle = 'move';
- 
+
         this.hitTest();
- 
+
         if (this.options.movedObject >= 0) {
           this.options.prevTool = factoryObj.event.options.activeTool;
           factoryObj.event.options.activeTool = factoryObj.move;
@@ -1186,27 +1186,27 @@ console.log('before drawstyled');
         if (this.drawing) {
           var x = evt.pageX - this.canvas_coords.left;
           var y = evt.pageY - this.canvas_coords.top;
- 
+
           this.options.endX = x;
           this.options.endY = y;
- 
+
           this.options.endDiffX = evt.pageX;
           this.options.endDiffY = evt.pageY;
- 
+
           this.options.diffX = this.options.endDiffX - this.options.startDiffX;
           this.options.diffY = this.options.endDiffY - this.options.startDiffY;
- 
+
           factoryObj.history.redrawState(this.canvas, this.ctx);
         }
       },
       stop: function stop(evt) {
         if (this.drawing) {
- 
+
           this.drawing = false;
- 
+
           if (this.options.movedObject >= 0 && (this.options.startX - this.options.endX !== 0 || this.options.startY - this.options.endY !== 0) && this.options.endX != undefined) {
             factoryObj.history.tmp_raw_undo_list = angular.copy(factoryObj.history.raw_undo_list[factoryObj.history.options.activePage]);
- 
+
             if (this.options.arrTool.indexOf(factoryObj.history.options.arrData.name) > -1) {
               if (this.options.isResize === false) {
                 factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].startX[0] = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].startX[0] + this.options.diffX;
@@ -1217,26 +1217,26 @@ console.log('before drawstyled');
                 if (this.options.arrResize.startX === true) {
                   factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].startX[0] = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].startX[0] + this.options.diffX;
                 }
- 
+
                 if (this.options.arrResize.startY === true) {
                   factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].startY[0] = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].startY[0] + this.options.diffY;
                 }
- 
+
                 if (this.options.arrResize.endX === true) {
                   factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].endX[0] = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].endX[0] + this.options.diffX;
                 }
- 
+
                 if (this.options.arrResize.endY === true) {
                   factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].endY[0] = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].endY[0] + this.options.diffY;
                 }
               }
- 
+
               if (factoryObj.history.options.arrData.name == 'text') {
                 for (var k = 0; k < factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].finalTextInfo.length; k++) {
                   factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].finalTextInfo[k].x = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].finalTextInfo[k].x + this.options.diffX;
                   factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].finalTextInfo[k].y = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].finalTextInfo[k].y + this.options.diffY;
                 }
- 
+
                 factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].textInfo.x += this.options.diffX;
                 factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].textInfo.y += this.options.diffY;
               }
@@ -1247,7 +1247,7 @@ console.log('before drawstyled');
               }
             }
           }
- 
+
           factoryObj.options.optionArrData = factoryObj.history.options.arrData = {
             startX: [],
             startY: [],
@@ -1259,10 +1259,10 @@ console.log('before drawstyled');
           this.options.movedObject = -1;
           this.options.cursorStyle = 'default';
           factoryObj.options.toolsObj.canvas.style.cursor = this.options.cursorStyle;
- 
+
           this.options.arrResize = { startX: false, startY: false, endX: false, endY: false };
           this.options.isResize = false;
- 
+
           if (this.options.prevTool != '') {
             factoryObj.event.options.activeTool = this.options.prevTool;
             this.options.prevTool = '';
@@ -1288,11 +1288,11 @@ console.log('before drawstyled');
         console.log(factoryObj.history.raw_undo_list[factoryObj.history.options.activePage]);
         var tmpData = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage];
         var cntStart = tmpData.length - 1;
- 
+
         if (cntStart >= 0) {
           for (i = 0; i <= cntStart; i++) {
             this.ctx.beginPath();
- 
+
             factoryObj.history.options.font_size = tmpData[i].font_size;
             factoryObj.history.options.fillStyle = tmpData[i].fillStyle;
             factoryObj.history.options.lineWidth = tmpData[i].lineWidth;
@@ -1301,59 +1301,59 @@ console.log('before drawstyled');
               if (tmpData[i].name === 'square') {
                 this.options.currentDrawTool = factoryObj.square;
               }
- 
+
               if (tmpData[i].name === 'circle') {
                 this.options.currentDrawTool = factoryObj.circle;
               }
- 
+
               if (tmpData[i].name === 'image') {
                 this.options.currentDrawTool = factoryObj.image;
                 this.options.currentDrawTool.options.img = tmpData[i].imageURL;
                 var img = new Image();
- 
+
                 img.onload = function (obj) {};
- 
+
                 img.src = this.options.currentDrawTool.options.img;
                 this.options.currentDrawTool.options.img = img;
               }
- 
+
               if (tmpData[i].name === 'line') {
                 this.options.currentDrawTool = factoryObj.line;
               }
- 
+
               if (tmpData[i].name === 'arrow') {
                 this.options.currentDrawTool = factoryObj.arrow;
               }
- 
+
               if (tmpData[i].name === 'ellipse') {
                 this.options.currentDrawTool = factoryObj.ellipse;
               }
- 
+
               if (tmpData[i].name === 'text') {
                 this.options.currentDrawTool = factoryObj.text;
               }
- 
+
               this.options.currentDrawTool.drawing = true;
- 
+
               if (this.options.movedObject == i && this.options.isResize === true) {
                 if (this.options.arrResize.startX === true) {
                   this.options.currentDrawTool.options.startX = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].startX[0] + this.options.diffX;
                 } else {
                   this.options.currentDrawTool.options.startX = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].startX[0];
                 }
- 
+
                 if (this.options.arrResize.startY === true) {
                   this.options.currentDrawTool.options.startY = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].startY[0] + this.options.diffY;
                 } else {
                   this.options.currentDrawTool.options.startY = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].startY[0];
                 }
- 
+
                 if (this.options.arrResize.endX === true) {
                   this.options.currentDrawTool.options.endX = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].endX[0] + this.options.diffX;
                 } else {
                   this.options.currentDrawTool.options.endX = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].endX[0];
                 }
- 
+
                 if (this.options.arrResize.endY === true) {
                   this.options.currentDrawTool.options.endY = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].endY[0] + this.options.diffY;
                 } else {
@@ -1370,7 +1370,7 @@ console.log('before drawstyled');
                 this.options.currentDrawTool.options.endX = tmpData[i].endX[0];
                 this.options.currentDrawTool.options.endY = tmpData[i].endY[0];
               }
- 
+
               if (tmpData[i].name === 'text') {
                 var tmpDiffX = 0;
                 var tmpDiffY = 0;
@@ -1378,7 +1378,7 @@ console.log('before drawstyled');
                   tmpDiffX = this.options.diffX;
                   tmpDiffY = this.options.diffY;
                 }
- 
+
                 this.options.currentDrawTool.redrawTool(tmpData[i].finalTextInfo, tmpDiffX, tmpDiffY);
               } else {
                 this.options.currentDrawTool.drawTool();
@@ -1396,7 +1396,7 @@ console.log('before drawstyled');
                   this.options.currentDrawTool.options.diffY = 0;
                 }
               }
- 
+
               if (this.options.currentDrawTool) {
                 this.options.currentDrawTool.drawing = true;
                 if (tmpData[i].name === 'pencil') {
@@ -1409,9 +1409,9 @@ console.log('before drawstyled');
             }
             this.ctx.stroke();
           }
- 
+
           var canvasData = this.canvas.toDataURL();
- 
+
           if (!factoryObj.event.options.isSave) {
             factoryObj.history.undo_list[factoryObj.history.options.activePage][0] = canvasData;
           } else {
@@ -1483,20 +1483,20 @@ console.log('before drawstyled');
         var tmpData = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage];
         var cntStart = tmpData.length - 1;
         this.options.movedObject = -1;
- 
+
         for (i = cntStart; i >= 0; i--) {
           if (this.options.movedObject > -1) {
             break;
           }
           factoryObj.history.options.arrData = tmpData[i];
- 
+
           if (factoryObj.history.options.arrData.name === 'square') {
             if (this.options.startX >= factoryObj.history.options.arrData.startX[0] && this.options.startX <= factoryObj.history.options.arrData.endX[0] && this.options.startY >= factoryObj.history.options.arrData.startY[0] && this.options.startY <= factoryObj.history.options.arrData.endY[0]) {
               this.options.movedObject = i;
               break;
             }
           }
- 
+
           if (factoryObj.history.options.arrData.name === 'image') {
             if (this.options.startX >= factoryObj.history.options.arrData.startX[0] && this.options.startX <= factoryObj.history.options.arrData.endX[0] && this.options.startY >= factoryObj.history.options.arrData.startY[0] && this.options.startY <= factoryObj.history.options.arrData.endY[0]) {
               this.options.movedObject = i;
@@ -1504,7 +1504,7 @@ console.log('before drawstyled');
               break;
             }
           }
- 
+
           if (factoryObj.history.options.arrData.name === 'text') {
             console.log(factoryObj.history.options.arrData, this.options);
             if (this.options.startX >= factoryObj.history.options.arrData.startX[0] && this.options.startX <= factoryObj.history.options.arrData.endX[0] && this.options.startY >= factoryObj.history.options.arrData.startY[0] && this.options.startY <= factoryObj.history.options.arrData.endY[0]) {
@@ -1512,7 +1512,7 @@ console.log('before drawstyled');
               break;
             }
           }
- 
+
           if (factoryObj.history.options.arrData.name === 'pencil') {
             if (factoryObj.history.options.arrData.pencilData.length > 0) {
               for (j = 0; j < factoryObj.history.options.arrData.pencilData.length; j++) {
@@ -1523,19 +1523,19 @@ console.log('before drawstyled');
               }
             }
           }
- 
+
           if (factoryObj.history.options.arrData.name === 'circle') {
             var r = tmpData[i].radius;
- 
+
             var x = tmpData[i].startX[0] - this.options.startX;
             var y = tmpData[i].startY[0] - this.options.startY;
- 
+
             if (parseInt(x * x + y * y) < parseInt(r * r)) {
               this.options.movedObject = i;
               break;
             }
           }
- 
+
           if (factoryObj.history.options.arrData.name === 'ellipse') {
             var max = 0;
             var min = 100000000;
@@ -1544,28 +1544,28 @@ console.log('before drawstyled');
             for (var j = 0 * Math.PI; j < 2 * Math.PI; j += 0.01) {
               xPos = Math.floor(factoryObj.history.options.arrData.startX[0] - parseInt(factoryObj.history.options.arrData.endX[0] - factoryObj.history.options.arrData.startX[0]) * Math.cos(j));
               yPos = Math.floor(factoryObj.history.options.arrData.startY[0] + parseInt(factoryObj.history.options.arrData.endY[0] - factoryObj.history.options.arrData.startY[0]) * Math.sin(j));
- 
+
               if (this.options.startX >= xPos - 5 && this.options.startX <= xPos + 5) {
- 
+
                 if (this.options.startX == xPos) {
                   tmpXPos = xPos;
                 }
                 if (min > yPos) {
                   min = yPos;
                 }
- 
+
                 if (max < yPos) {
                   max = yPos;
                 }
               }
             }
- 
+
             if (this.options.startX == tmpXPos && this.options.startY > min && this.options.startY < max) {
               this.options.movedObject = i;
               break;
             }
           }
- 
+
           if (factoryObj.history.options.arrData.name === 'line') {
             if (factoryObj.history.options.arrData.endX[0] < factoryObj.history.options.arrData.startX[0]) {
               var minX = factoryObj.history.options.arrData.endX[0];
@@ -1574,7 +1574,7 @@ console.log('before drawstyled');
               var minX = factoryObj.history.options.arrData.startX[0];
               var maxX = factoryObj.history.options.arrData.endX[0];
             }
- 
+
             if (factoryObj.history.options.arrData.endY[0] < factoryObj.history.options.arrData.startY[0]) {
               var minY = factoryObj.history.options.arrData.endY[0];
               var maxY = factoryObj.history.options.arrData.startY[0];
@@ -1582,10 +1582,10 @@ console.log('before drawstyled');
               var minY = factoryObj.history.options.arrData.startY[0];
               var maxY = factoryObj.history.options.arrData.endY[0];
             }
- 
+
             if (this.options.startX >= minX && this.options.startX <= maxX && this.options.startY >= minY && this.options.startY <= maxY) {
               var newangle = Math.atan2(this.options.startY - factoryObj.history.options.arrData.startY[0], this.options.startX - factoryObj.history.options.arrData.startX[0]);
- 
+
               var angleDiff = Math.abs(newangle) - Math.abs(factoryObj.history.options.arrData.lineAngle);
               if (Math.abs(angleDiff) < 0.2) {
                 this.options.movedObject = i;
@@ -1593,7 +1593,7 @@ console.log('before drawstyled');
               }
             }
           }
- 
+
           if (factoryObj.history.options.arrData.name === 'arrow') {
             if (factoryObj.history.options.arrData.endX[0] < factoryObj.history.options.arrData.startX[0]) {
               var minX = factoryObj.history.options.arrData.endX[0];
@@ -1602,7 +1602,7 @@ console.log('before drawstyled');
               var minX = factoryObj.history.options.arrData.startX[0];
               var maxX = factoryObj.history.options.arrData.endX[0];
             }
- 
+
             if (factoryObj.history.options.arrData.endY[0] < factoryObj.history.options.arrData.startY[0]) {
               var minY = factoryObj.history.options.arrData.endY[0];
               var maxY = factoryObj.history.options.arrData.startY[0];
@@ -1610,12 +1610,12 @@ console.log('before drawstyled');
               var minY = factoryObj.history.options.arrData.startY[0];
               var maxY = factoryObj.history.options.arrData.endY[0];
             }
- 
+
             if (this.options.startX >= minX && this.options.startX <= maxX && this.options.startY >= minY && this.options.startY <= maxY) {
               var newangle = Math.atan2(this.options.startY - factoryObj.history.options.arrData.startY[0], this.options.startX - factoryObj.history.options.arrData.startX[0]);
- 
+
               var angleDiff = Math.abs(newangle) - Math.abs(factoryObj.history.options.arrData.arrowAngle);
- 
+
               if (Math.abs(angleDiff) < 0.2) {
                 this.options.movedObject = i;
                 break;
@@ -1625,7 +1625,7 @@ console.log('before drawstyled');
         }
       }
     };
- 
+
     factoryObj.square = {
       name: 'square',
       options: {
@@ -1643,10 +1643,10 @@ console.log('before drawstyled');
         var y = evt.pageY - this.canvas_coords.top;
         this.options.startX = x;
         this.options.startY = y;
- 
+
         this.options.endX = x;
         this.options.endY = y;
- 
+
         this.ctx.beginPath();
         this.drawing = true;
       },
@@ -1654,25 +1654,25 @@ console.log('before drawstyled');
         if (this.drawing) {
           factoryObj.history.drawingState(this.canvas, this.ctx, factoryObj.history.undo_list);
           this.ctx.beginPath();
- 
+
           var x = evt.pageX - this.canvas_coords.left;
           var y = evt.pageY - this.canvas_coords.top;
- 
+
           this.options.endX = x;
           this.options.endY = y;
- 
+
           this.drawTool();
         }
       },
       stop: function stop(evt) {
         if (this.drawing && this.options.startX !== this.options.endX && this.options.startY !== this.options.endY) {
           this.ctx.beginPath();
- 
+
           this.options.width = this.options.endX - this.options.startX;
           this.options.height = this.options.endY - this.options.startY;
           this.drawTool();
           this.ctx.stroke();
- 
+
           this.drawing = false;
           factoryObj.history.setRawData();
           factoryObj.history.saveState(this.canvas);
@@ -1684,7 +1684,7 @@ console.log('before drawstyled');
       },
       drawLine: function drawLine(startPt, endPt) {
         factoryObj.history.setStyleElement(this.canvas, this.ctx);
- 
+
         this.ctx.moveTo(startPt.x, startPt.y);
         this.ctx.lineTo(endPt.x, endPt.y);
         this.ctx.stroke();
@@ -1700,26 +1700,26 @@ console.log('before drawstyled');
         this.drawLine(lineP4, lineP1);
       }
     };
- 
+
     factoryObj.renderPage = function (page) {
       console.log('start: renderPage');
       var viewport = page.getViewport(factoryObj.options.pdfOptions.scale);
       var canvas_rand = document.createElement('canvas');
- 
+
       var ctx_rand = canvas_rand.getContext('2d');
       var renderContext = {
         canvasContext: ctx_rand,
         viewport: viewport
       };
- 
+
       canvas_rand.setAttribute('id', 'page' + page.pageIndex);
       canvas_rand.height = viewport.height;
       canvas_rand.width = viewport.width;
- 
+
       factoryObj.history.options.canvas_width = canvas_rand.width;
       factoryObj.history.options.canvas_height = canvas_rand.height;
       factoryObj.options.toolsObj.canvasContainer.appendChild(canvas_rand);
- 
+
       var task = page.render(renderContext);
       task.promise.then(function () {
         factoryObj.options.bindCnt++;
@@ -1731,7 +1731,7 @@ console.log('before drawstyled');
         }
       });
     };
- 
+
     factoryObj.bindEvent = function (page) {
       console.log('start: bindEvent');
       if (factoryObj.options.bindFlag == '') {
@@ -1740,7 +1740,7 @@ console.log('before drawstyled');
         factoryObj.history.options.activePage = page;
         factoryObj.options.canvas = factoryObj.options.toolsObj.canvas;
         factoryObj.options.ctx = factoryObj.options.canvas.getContext('2d');
- 
+
         if (!factoryObj.history.initial_canvas_url.hasOwnProperty(page)) {
           var tmpImgObj = document.getElementById('page' + page);
           factoryObj.history.initial_canvas_url[page] = tmpImgObj.toDataURL();
@@ -1749,21 +1749,21 @@ console.log('before drawstyled');
         } else {
           factoryObj.options.imgURL = factoryObj.history.final_canvas_url[factoryObj.history.options.activePage];
         }
- 
+
         factoryObj.options.canvas.height = factoryObj.history.options.canvas_height;
         factoryObj.options.canvas.width = factoryObj.history.options.canvas_width;
- 
+
         var img = document.createElement("img");
         img.src = factoryObj.options.imgURL;
         img.onload = function () {
- 
+
           factoryObj.options.canvas_coords = factoryObj.options.canvas.getBoundingClientRect();
           factoryObj.history.options.canvas_coords = factoryObj.options.canvas_coords;
           factoryObj.options.ctx.clearRect(0, 0, factoryObj.options.canvas.width, factoryObj.options.canvas.height);
           factoryObj.options.ctx.drawImage(img, 0, 0, factoryObj.options.canvas.width, factoryObj.options.canvas.height);
- 
+
           factoryObj.options.toolsObj.loading.textContent = '';
- 
+
           factoryObj.history.saveState(factoryObj.options.canvas);
           console.log('start binding events for each element: ', factoryObj.options);
           if (factoryObj.options.btnFlag === false) {
@@ -1773,110 +1773,110 @@ console.log('before drawstyled');
               factoryObj.history.manageActiveBtn('pencil');
               factoryObj.pencil.init(factoryObj.options.canvas, factoryObj.options.ctx);
             });
- 
+
             factoryObj.options.toolsObj.square.addEventListener('click', function () {
               factoryObj.event.options.activeTool = factoryObj.square;
               factoryObj.history.manageActiveBtn('square');
               factoryObj.square.init(factoryObj.options.canvas, factoryObj.options.ctx);
             });
- 
+
             factoryObj.options.toolsObj.circle.addEventListener('click', function () {
               factoryObj.event.options.activeTool = factoryObj.circle;
               factoryObj.history.manageActiveBtn('circle');
               factoryObj.circle.init(factoryObj.options.canvas, factoryObj.options.ctx);
             });
- 
+
             factoryObj.options.toolsObj.ellipse.addEventListener('click', function () {
               factoryObj.event.options.activeTool = factoryObj.ellipse;
               factoryObj.history.manageActiveBtn('ellipse');
               factoryObj.ellipse.init(factoryObj.options.canvas, factoryObj.options.ctx);
             });
- 
+
             factoryObj.options.toolsObj.text.addEventListener('click', function () {
               factoryObj.event.options.activeTool = factoryObj.text;
               factoryObj.history.manageActiveBtn('text');
               factoryObj.text.init(factoryObj.options.canvas, factoryObj.options.ctx);
             });
- 
+
             factoryObj.options.toolsObj.contenteditor.addEventListener('blur', function () {
               factoryObj.options.toolsObj.editor_wrapper.style.display = 'none';
               factoryObj.text.drawTool();
             });
- 
+
             factoryObj.options.toolsObj.arrow.addEventListener('click', function () {
               factoryObj.event.options.activeTool = factoryObj.arrow;
               factoryObj.history.manageActiveBtn('arrow');
               factoryObj.arrow.init(factoryObj.options.canvas, factoryObj.options.ctx);
             });
- 
+
             factoryObj.options.toolsObj.line.addEventListener('click', function () {
               factoryObj.event.options.activeTool = factoryObj.line;
               factoryObj.history.manageActiveBtn('line');
               factoryObj.line.init(factoryObj.options.canvas, factoryObj.options.ctx);
             });
- 
+
             factoryObj.options.toolsObj.imageupload.addEventListener('change', function () {
               factoryObj.image.uploadImage(this.files[0]);
               factoryObj.event.options.activeTool = factoryObj.image;
               factoryObj.history.manageActiveBtn('clear_image');
               factoryObj.image.init(factoryObj.options.canvas, factoryObj.options.ctx);
             });
- 
+
             factoryObj.options.toolsObj.clear_image.addEventListener('click', function () {
               factoryObj.options.toolsObj.frm_canvas_tool.reset();
             });
- 
+
             factoryObj.options.toolsObj.undo.addEventListener('click', function () {
               factoryObj.history.undo(factoryObj.options.canvas, factoryObj.options.ctx);
             });
- 
+
             factoryObj.options.toolsObj.redo.addEventListener('click', function () {
               factoryObj.history.redo(factoryObj.options.canvas, factoryObj.options.ctx);
             });
- 
+
             factoryObj.options.toolsObj.save.addEventListener('click', function () {
               factoryObj.event.options.activeTool = '';
               factoryObj.history.manageActiveBtn('');
               factoryObj.event.savepdf();
             });
- 
+
             factoryObj.options.toolsObj.fontsize.addEventListener('change', function () {
               factoryObj.history.options.font_size = this.value;
             });
- 
+
             factoryObj.options.toolsObj.fillstyle.addEventListener('change', function () {
               factoryObj.history.options.fillStyle = '#' + this.value;
             });
- 
+
             factoryObj.options.toolsObj.linewidth.addEventListener('change', function () {
               factoryObj.history.options.lineWidth = this.value;
             });
- 
+
             factoryObj.options.toolsObj.prevBtn.addEventListener('click', function () {
               if (!factoryObj.options.toolsObj.prevBtn.getAttribute('disable')) {
                 factoryObj.options.bindFlag = '';
                 factoryObj.bindEvent(parseInt(factoryObj.history.options.activePage - 1));
               }
             });
- 
+
             factoryObj.options.toolsObj.nextBtn.addEventListener('click', function () {
               if (!factoryObj.options.toolsObj.nextBtn.getAttribute('disabled')) {
                 factoryObj.options.bindFlag = '';
                 factoryObj.bindEvent(parseInt(factoryObj.history.options.activePage + 1));
               }
             });
- 
+
             factoryObj.options.toolsObj.fontsize.value = factoryObj.history.options.font_size;
             factoryObj.options.toolsObj.fillstyle.value = factoryObj.history.options.fillStyle;
             factoryObj.options.toolsObj.linewidth.value = factoryObj.history.options.lineWidth;
           }
- 
+
           factoryObj.event.init(factoryObj.options.canvas, factoryObj.options.ctx);
           factoryObj.history.setButtonStyle();
         };
       }
     };
- 
+
     factoryObj.renderPages = function (pdfDoc) {
       console.log('start: renderPages');
       factoryObj.history.options.numPages = pdfDoc.numPages;
@@ -1884,21 +1884,21 @@ console.log('before drawstyled');
         pdfDoc.getPage(num).then(factoryObj.renderPage);
       }
     };
- 
+
     factoryObj.renderPDF = function (url, canvasContainer, options) {
       console.log('start: renderPDF');
       this.options.pdfOptions = options || { scale: 2 };
       factoryObj.options.toolsObj.loading.textContent = 'Wait while loading PDF file...';
- 
+
       PDFJS.disableWorker = false;
       PDFJS.workerSrc = factoryObj.options.pdfWorker;
       console.log('start: before renderPages called');
       PDFJS.getDocument(url).then(factoryObj.renderPages);
     };
- 
+
     return factoryObj;
   });
- 
+
   module.directive('pdfAnnotation', ['pdfAnnotationFactory', function (pdfAnnotationFactory) {
     return {
       restrict: 'E',
@@ -1939,15 +1939,15 @@ console.log('before drawstyled');
         pdfAnnotationFactory.options.toolsObj.totalPage = angular.element(document.querySelector('#totalPage'))[0];
         pdfAnnotationFactory.options.toolsObj.canvas = angular.element(document.querySelector('#canvas'))[0];
         pdfAnnotationFactory.options.toolsObj.close = angular.element(document.querySelector('#close'))[0];
- 
+
         pdfAnnotationFactory.options.toolsObj.canvasContainer = angular.element(document.querySelector('#canvas-container'))[0];
- 
+
         pdfAnnotationFactory.options.toolsObj.close.addEventListener('click', function () {
           pdfAnnotationFactory.event.options.activeTool = '';
           pdfAnnotationFactory.history.manageActiveBtn('');
           pdfAnnotationFactory.event.closepdf();
         });
- 
+
         scope.$watch('options', function (newValue, oldValue) {
           if (scope.options.url !== '') {
             pdfAnnotationFactory.history.initial_canvas_url = [];
@@ -1963,18 +1963,18 @@ console.log('before drawstyled');
             pdfAnnotationFactory.history.options.activePage = 0;
             pdfAnnotationFactory.history.manageActiveBtn('');
             pdfAnnotationFactory.history.setButtonStyle();
- 
+
             pdfAnnotationFactory.options.toolsObj.canvasContainer.innerHTML = '';
             pdfAnnotationFactory.text.options.finalTextInfo = [];
             pdfAnnotationFactory.options.bindFlag = '';
             pdfAnnotationFactory.options.btnFlag = false;
             pdfAnnotationFactory.options.bindCnt = 0;
- 
+
             if (scope.options.pdfworker) {
               pdfAnnotationFactory.options.pdfWorker = scope.options.pdfworker;
             }
             scope.errorURL = false;
- 
+
             pdfAnnotationFactory.renderPDF(scope.options.url, pdfAnnotationFactory.options.toolsObj.canvasContainer);
           } else {
             scope.errorURL = true;
@@ -1997,7 +1997,7 @@ $(window).scroll(function () {
     });
   }
 });
- 
+
 function textAreaAdjust(o) {
   o.style.height = "1px";
   o.style.height = 25 + o.scrollHeight + "px";
