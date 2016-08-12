@@ -493,18 +493,18 @@
       },
       stop: function stop(evt) {
         /*if(this.drawing && this.options.flag && this.options.startX !== this.options.endX && this.options.startY !== this.options.endY) {*/
+        console.log('In text stop event');
         this.drawing = false;
         this.options.flag = false;
         console.log(this.canvas_coords);
         this.options.lineHeight = parseInt(factoryObj.history.options.font_size);
-
+        console.log('In text stop event before style attribute');
         factoryObj.options.toolsObj.editor_wrapper.style.display = 'block';
-        factoryObj.options.toolsObj.editor_wrapper.style.top = this.options.startY + 90;
-        factoryObj.options.toolsObj.editor_wrapper.style.left = this.options.startX;
-        factoryObj.options.toolsObj.editor_wrapper.style.width = this.options.width;
-
+        factoryObj.options.toolsObj.editor_wrapper.style.top = parseInt(this.options.startY + 90) + 'px';
+        factoryObj.options.toolsObj.editor_wrapper.style.left = this.options.startX + 'px';
+        factoryObj.options.toolsObj.editor_wrapper.style.width = this.options.width + 'px';
+        console.log('In text stop event before focus');
         factoryObj.options.toolsObj.contenteditor.focus();
-        //factoryObj.options.toolsObj.contenteditor.style.minHeight = this.options.height;
         factoryObj.options.toolsObj.contenteditor.style.height = 'auto';
         this.options.finalTextInfo = [];
         /*} else {
@@ -515,16 +515,17 @@
       },
       drawTool: function drawTool() {
         factoryObj.history.setStyleElement(this.canvas, this.ctx);
-
+        console.log(factoryObj.options.toolsObj.contenteditor.style);
         factoryObj.options.toolsObj.contenteditor.style.fontSize = factoryObj.history.options.font_size;
         factoryObj.options.toolsObj.contenteditor.style.lineHeight = factoryObj.history.options.font_size + 'px';
         factoryObj.options.toolsObj.contenteditor.style.height = factoryObj.options.toolsObj.contenteditor.scrollHeight + "px";
+        factoryObj.options.toolsObj.contenteditor.style.width = this.options.width + "px";
 
         var contenttext = factoryObj.options.toolsObj.contenteditor.value;
         var enteredTextEncoded = escape(contenttext);
         contenttext = unescape(enteredTextEncoded.replace(/%0A/g, '<br />').replace(/%20/g, ' '));
         factoryObj.options.toolsObj.contenteditor.value = '';
-        console.log(factoryObj.options.toolsObj.contenteditor.style.width);
+
         if (contenttext !== '') {
           var textObj = {
             text: contenttext,
@@ -532,7 +533,7 @@
             y: this.options.startY,
             boxWidth: parseInt(factoryObj.options.toolsObj.contenteditor.style.width)
           };
-
+          console.log('before drawstyled');
           this.drawStyledText(textObj);
         }
         this.options.flag = true;
@@ -764,10 +765,11 @@
         var img = new Image();
 
         img.onload = function (obj) {
+          console.log(obj, this.width, this);
           factoryObj.image.options.startX = 10;
           factoryObj.image.options.startY = 10;
-          factoryObj.image.options.endX = obj.path[0].width;
-          factoryObj.image.options.endY = obj.path[0].height;
+          factoryObj.image.options.endX = this.width;
+          factoryObj.image.options.endY = this.height;
           factoryObj.image.ctx.beginPath();
           factoryObj.image.drawing = true;
           factoryObj.history.drawingState(factoryObj.image.canvas, factoryObj.image.ctx, factoryObj.history.undo_list);
