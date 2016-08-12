@@ -3,8 +3,7 @@
   "version": "1.0.48",
   "main": [
     "dist/pdf-annotation.js",
-    "dist/css/style.css",
-    "dist/images/sprite.png"
+    "dist/css/style.css"
   ],
   "homepage": "https://github.com/bjp232004/pdf-annotation",
   "authors": [
