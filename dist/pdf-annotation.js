@@ -452,7 +452,9 @@
         font: '18px Arial',
         dim: 4,
         lineHeight: 14,
-        finalTextInfo: []
+        finalTextInfo: [],
+        width: 250,
+        height: 250
       },
       init: function init(canvas, ctx) {
         this.canvas = canvas;
@@ -490,25 +492,26 @@
         }
       },
       stop: function stop(evt) {
-        if (this.drawing && this.options.flag && this.options.startX !== this.options.endX && this.options.startY !== this.options.endY) {
-          this.drawing = false;
-          this.options.flag = false;
+        /*if(this.drawing && this.options.flag && this.options.startX !== this.options.endX && this.options.startY !== this.options.endY) {*/
+        this.drawing = false;
+        this.options.flag = false;
+        console.log(this.canvas_coords);
+        this.options.lineHeight = parseInt(factoryObj.history.options.font_size);
 
-          this.options.lineHeight = parseInt(factoryObj.history.options.font_size);
+        factoryObj.options.toolsObj.editor_wrapper.style.display = 'block';
+        factoryObj.options.toolsObj.editor_wrapper.style.top = this.options.startY + 90;
+        factoryObj.options.toolsObj.editor_wrapper.style.left = this.options.startX;
+        factoryObj.options.toolsObj.editor_wrapper.style.width = this.options.width;
 
-          factoryObj.options.toolsObj.editor_wrapper.style.display = 'block';
-          factoryObj.options.toolsObj.editor_wrapper.style.top = this.options.startY + this.canvas_coords.top - 10;
-          factoryObj.options.toolsObj.editor_wrapper.style.left = this.options.startX + this.canvas_coords.left;
-          factoryObj.options.toolsObj.editor_wrapper.style.width = this.options.endX - this.options.startX;
-
-          factoryObj.options.toolsObj.contenteditor.focus();
-          factoryObj.options.toolsObj.contenteditor.style.minHeight = parseInt(this.options.endY - this.options.startY);
-          this.options.finalTextInfo = [];
-        } else {
+        factoryObj.options.toolsObj.contenteditor.focus();
+        //factoryObj.options.toolsObj.contenteditor.style.minHeight = this.options.height;
+        factoryObj.options.toolsObj.contenteditor.style.height = 'auto';
+        this.options.finalTextInfo = [];
+        /*} else {
           this.ctx.closePath();
           this.ctx.stroke();
           this.drawing = false;
-        }
+        }*/
       },
       drawTool: function drawTool() {
         factoryObj.history.setStyleElement(this.canvas, this.ctx);
@@ -521,17 +524,18 @@
         var enteredTextEncoded = escape(contenttext);
         contenttext = unescape(enteredTextEncoded.replace(/%0A/g, '<br />').replace(/%20/g, ' '));
         factoryObj.options.toolsObj.contenteditor.value = '';
+        console.log(factoryObj.options.toolsObj.contenteditor.style.width);
         if (contenttext !== '') {
           var textObj = {
             text: contenttext,
             x: this.options.startX,
             y: this.options.startY,
-            boxWidth: this.options.endX - this.options.startX
+            boxWidth: parseInt(factoryObj.options.toolsObj.contenteditor.style.width)
           };
 
           this.drawStyledText(textObj);
-          this.options.flag = true;
         }
+        this.options.flag = true;
       },
       drawStyledText: function drawStyledText(textInfo) {
         this.options.textInfo = textInfo;
@@ -615,10 +619,15 @@
         factoryObj.square.canvas = this.canvas;
         factoryObj.square.ctx = this.ctx;
         factoryObj.square.options.startX = this.options.startX - 10;
-        factoryObj.square.options.startY = this.options.startY - 15;
-        factoryObj.square.options.endX = this.options.endX;
-        factoryObj.square.options.endY = this.options.endY + 10;
+        factoryObj.square.options.startY = this.options.startY - 20;
+        factoryObj.square.options.endX = this.options.startX + parseInt(factoryObj.options.toolsObj.contenteditor.style.width) + 10;
+        factoryObj.square.options.endY = y + 10;
         factoryObj.square.drawTool();
+
+        this.options.startX = this.options.startX - 10;
+        this.options.startY = this.options.startY - 20;
+        this.options.endX = this.options.startX + parseInt(factoryObj.options.toolsObj.contenteditor.style.width) + 10;
+        this.options.endY = y + 10;
 
         this.ctx.stroke();
         factoryObj.history.setRawData();
@@ -631,10 +640,10 @@
 
         factoryObj.square.canvas = this.canvas;
         factoryObj.square.ctx = this.ctx;
-        factoryObj.square.options.startX = this.options.startX - 10;
-        factoryObj.square.options.startY = this.options.startY - 15;
+        factoryObj.square.options.startX = this.options.startX;
+        factoryObj.square.options.startY = this.options.startY;
         factoryObj.square.options.endX = this.options.endX;
-        factoryObj.square.options.endY = this.options.endY + 10;
+        factoryObj.square.options.endY = this.options.endY;
         factoryObj.square.drawTool();
       },
       checkLineBreak: function checkLineBreak(text, boxWidth, x) {
@@ -1495,6 +1504,7 @@
           }
 
           if (factoryObj.history.options.arrData.name === 'text') {
+            console.log(factoryObj.history.options.arrData, this.options);
             if (this.options.startX >= factoryObj.history.options.arrData.startX[0] && this.options.startX <= factoryObj.history.options.arrData.endX[0] && this.options.startY >= factoryObj.history.options.arrData.startY[0] && this.options.startY <= factoryObj.history.options.arrData.endY[0]) {
               this.options.movedObject = i;
               break;
@@ -1690,7 +1700,7 @@
     };
 
     factoryObj.renderPage = function (page) {
-        console.log('renderpage');
+      console.log('start: renderPage');
       var viewport = page.getViewport(factoryObj.options.pdfOptions.scale);
       var canvas_rand = document.createElement('canvas');
 
@@ -1707,14 +1717,13 @@
       factoryObj.history.options.canvas_width = canvas_rand.width;
       factoryObj.history.options.canvas_height = canvas_rand.height;
       factoryObj.options.toolsObj.canvasContainer.appendChild(canvas_rand);
-console.log('In render page before task');
+
       var task = page.render(renderContext);
       task.promise.then(function () {
-          console.log('In render page in promise');
         factoryObj.options.bindCnt++;
         if (factoryObj.options.bindFlag === '' && page.transport.numPages == factoryObj.options.bindCnt) {
           factoryObj.history.options.pdfobj = page;
-
+          console.log('before bindEvent');
           factoryObj.bindEvent(0);
           factoryObj.options.bindFlag = 1;
         }
@@ -1722,7 +1731,7 @@ console.log('In render page before task');
     };
 
     factoryObj.bindEvent = function (page) {
-        console.log('In bind event');
+      console.log('start: bindEvent');
       if (factoryObj.options.bindFlag == '') {
         factoryObj.options.bindFlag = 'true';
         factoryObj.history.options.PrevPage = page;
@@ -1744,9 +1753,8 @@ console.log('In render page before task');
 
         var img = document.createElement("img");
         img.src = factoryObj.options.imgURL;
-          console.log('In bind event before image load');
         img.onload = function () {
-console.log('In bind event image load');
+
           factoryObj.options.canvas_coords = factoryObj.options.canvas.getBoundingClientRect();
           factoryObj.history.options.canvas_coords = factoryObj.options.canvas_coords;
           factoryObj.options.ctx.clearRect(0, 0, factoryObj.options.canvas.width, factoryObj.options.canvas.height);
@@ -1755,7 +1763,7 @@ console.log('In bind event image load');
           factoryObj.options.toolsObj.loading.textContent = '';
 
           factoryObj.history.saveState(factoryObj.options.canvas);
-
+          console.log('start binding events for each element: ', factoryObj.options);
           if (factoryObj.options.btnFlag === false) {
             factoryObj.options.btnFlag = true;
             factoryObj.options.toolsObj.pencil.addEventListener('click', function () {
@@ -1868,7 +1876,7 @@ console.log('In bind event image load');
     };
 
     factoryObj.renderPages = function (pdfDoc) {
-        console.log('In renderpages');
+      console.log('start: renderPages');
       factoryObj.history.options.numPages = pdfDoc.numPages;
       for (var num = 1; num <= pdfDoc.numPages; num++) {
         pdfDoc.getPage(num).then(factoryObj.renderPage);
@@ -1876,11 +1884,13 @@ console.log('In bind event image load');
     };
 
     factoryObj.renderPDF = function (url, canvasContainer, options) {
+      console.log('start: renderPDF');
       this.options.pdfOptions = options || { scale: 2 };
       factoryObj.options.toolsObj.loading.textContent = 'Wait while loading PDF file...';
-console.log('In renderpdf');
+
       PDFJS.disableWorker = false;
       PDFJS.workerSrc = factoryObj.options.pdfWorker;
+      console.log('start: before renderPages called');
       PDFJS.getDocument(url).then(factoryObj.renderPages);
     };
 
@@ -1896,7 +1906,7 @@ console.log('In renderpdf');
         closeFn: '&'
       },
       transclude: true,
-      template: '<div id="controllers"><a href="#" id="close" ng-show="options.enableCloseBtn" class="close">&nbsp;</a><span class="controller btn btn-icn" id="pencil" title="Freehand Drawing"></span><span class="controller btn btn-icn" id="square" title="Square"></span><span class="controller btn btn-icn hide" id="circle" title="Circle"></span><span class="controller btn btn-icn" id="ellipse" title="Ellipse"></span><span class="controller btn btn-icn" id="text" title="Text"></span><span class="controller btn btn-icn" id="arrow" title="Arrow"></span><span class="controller btn btn-icn" id="line" title="Line"></span><span class="controller btn btn-icn" id="undo" title="Undo"></span><span class="controller btn btn-icn" id="redo" title="Redo"></span><span class="controller title" id="activePage" disabled="disabled"></span>&nbsp; out of&nbsp;<span class="controller title" id="totalPage" disabled="disabled"></span><span class="controller btn" id="prevBtn"><</span> &nbsp;<input type="text" class="pagenumber" name="currentPage" id="currentPage" />&nbsp;<span class="controller btn" id="nextBtn">></span><span class="controller btn btn-icn" id="save" title="Save"></span><br /><br /><form id="frm_canvas_tool"><input name="imageupload" id="imageupload" class="input_file" type="file" accept="image/*" ><span class="controller btn" id="clear_image">Clear Image</span></form>    Font Size:<select id="fontsize" name="fontsize"><option value="">Select Font Size</option><option value="2">2px</option><option value="5">5px</option><option value="7">7px</option><option value="8">8px</option><option value="9">9px</option><option value="10">10px</option><option value="11">11px</option><option value="12">12px</option><option value="13">13px</option><option value="14">14px</option><option value="16">16px</option><option value="18">18px</option><option value="32">32px</option></select>    Color:<select id="fillstyle" name="fillstyle"><option>Select Color</option><option value="FF0000">Red</option><option value="00FF00">Green</option><option value="0000FF">Blue</option><option value="000000">Black</option><option value="FFFFFF">White</option></select>    Line Width:<select id="linewidth" name="linewidth"><option value="">Select Font Size</option><option value="2">2px</option><option value="5">5px</option><option value="7">7px</option><option value="8">8px</option></select><span class="controller" id="loading"></span></div><div id="canvas-container" class="canvas-container" style="visibility: hidden; height: 0px;"></div><div id="canvas-cont" class="canvas-container"><canvas id="canvas"></canvas><div id="editor_wrapper" style="display:none;"><textarea id="contenteditor" rows="10"></textarea></div></div><div ng-if="errorURL"><h1>URL not found!</h1></div>',
+      template: '<div id="controllers"><a href="#" id="close" ng-show="options.enableCloseBtn" class="close">&nbsp;</a><span class="controller btn btn-icn" id="pencil" title="Freehand Drawing"></span><span class="controller btn btn-icn" id="square" title="Square"></span><span class="controller btn btn-icn hide" id="circle" title="Circle"></span><span class="controller btn btn-icn" id="ellipse" title="Ellipse"></span><span class="controller btn btn-icn" id="text" title="Text"></span><span class="controller btn btn-icn" id="arrow" title="Arrow"></span><span class="controller btn btn-icn" id="line" title="Line"></span><span class="controller btn btn-icn" id="undo" title="Undo"></span><span class="controller btn btn-icn" id="redo" title="Redo"></span><span class="controller title" id="activePage" disabled="disabled"></span>&nbsp; out of&nbsp;<span class="controller title" id="totalPage" disabled="disabled"></span><span class="controller btn" id="prevBtn"><</span> &nbsp;<input type="text" class="pagenumber" name="currentPage" id="currentPage" />&nbsp;<span class="controller btn" id="nextBtn">></span><span class="controller btn btn-icn" id="save" title="Save"></span><br /><br /><form id="frm_canvas_tool"><input name="imageupload" id="imageupload" class="input_file" type="file" accept="image/*" ><span class="controller btn" id="clear_image">Clear Image</span></form>    Font Size:<select id="fontsize" name="fontsize"><option value="">Select Font Size</option><option value="2">2px</option><option value="5">5px</option><option value="7">7px</option><option value="8">8px</option><option value="9">9px</option><option value="10">10px</option><option value="11">11px</option><option value="12">12px</option><option value="13">13px</option><option value="14">14px</option><option value="16">16px</option><option value="18">18px</option><option value="32">32px</option></select>    Color:<select id="fillstyle" name="fillstyle"><option>Select Color</option><option value="FF0000">Red</option><option value="00FF00">Green</option><option value="0000FF">Blue</option><option value="000000">Black</option><option value="FFFFFF">White</option></select>    Line Width:<select id="linewidth" name="linewidth"><option value="">Select Font Size</option><option value="2">2px</option><option value="5">5px</option><option value="7">7px</option><option value="8">8px</option></select><span class="controller" id="loading"></span></div><div id="canvas-container" class="canvas-container" style="visibility: hidden; height: 0px;"></div><div id="canvas-cont" class="canvas-container"><canvas id="canvas"></canvas><div id="editor_wrapper" style="display:none;"><textarea id="contenteditor"  onkeyup="textAreaAdjust(this)" style="overflow:hidden"></textarea></div></div><div ng-if="errorURL"><h1>URL not found!</h1></div>',
       link: function link(scope, element, attrs, ctrl) {
         console.log('Scope:', scope);
         pdfAnnotationFactory.options.closeFn = scope.closeFn;
@@ -1985,3 +1995,8 @@ $(window).scroll(function () {
     });
   }
 });
+
+function textAreaAdjust(o) {
+  o.style.height = "1px";
+  o.style.height = 25 + o.scrollHeight + "px";
+}

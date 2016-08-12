@@ -33,7 +33,7 @@
     width: 1300px;
 }
 .canvas-container{
-  height: 1600px;
+  height: auto;
   overflow-y: auto;
 }
 #canvas{
@@ -67,7 +67,7 @@
   left: 0px;
   width: 25%;
   height: 80px;
-  background-color: #3c3c3c;
+  background-color: transparent;
   float: right;
 }
 #contenteditor {
