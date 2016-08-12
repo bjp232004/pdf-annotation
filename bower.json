@@ -1,6 +1,6 @@
 {
   "name": "pdf-annotation",
-  "version": "1.0.50",
+  "version": "1.0.51",
   "main": [
     "dist/pdf-annotation.js",
     "dist/css/style.css"

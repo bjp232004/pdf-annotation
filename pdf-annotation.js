@@ -531,9 +531,9 @@
             text: contenttext,
             x: this.options.startX,
             y: this.options.startY,
-            boxWidth: (parseInt(factoryObj.options.toolsObj.contenteditor.style.width) > 0) ? parseInt(factoryObj.options.toolsObj.contenteditor.style.width) : this.options.width + "px"
+            boxWidth: (parseInt(factoryObj.options.toolsObj.contenteditor.style.width) > 0) ? parseInt(factoryObj.options.toolsObj.contenteditor.style.width) : this.options.width
           };
-          console.log('before drawstyled');
+          console.log('before drawstyled', textObj);
           this.drawStyledText(textObj);
         }
         this.options.flag = true;
