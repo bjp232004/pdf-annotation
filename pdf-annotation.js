@@ -1727,14 +1727,16 @@
       factoryObj.options.toolsObj.canvasContainer.appendChild(canvas_rand);
  
       var task = page.render(renderContext);
-      task.promise.then(function () {
-        factoryObj.options.bindCnt++;
-        if (factoryObj.options.bindFlag === '' && page.transport.numPages == factoryObj.options.bindCnt) {
-          factoryObj.history.options.pdfobj = page;
-          console.log('before bindEvent');
-          factoryObj.bindEvent(0);
-          factoryObj.options.bindFlag = 1;
-        }
+      $( document ).ready(function() {
+        task.promise.then(function () {
+          factoryObj.options.bindCnt++;
+          if (factoryObj.options.bindFlag === '' && page.transport.numPages == factoryObj.options.bindCnt) {
+            factoryObj.history.options.pdfobj = page;
+            console.log('before bindEvent');
+            factoryObj.bindEvent(0);
+            factoryObj.options.bindFlag = 1;
+          }
+        });
       });
     };
  
@@ -1772,6 +1774,7 @@
  
           factoryObj.history.saveState(factoryObj.options.canvas);
           console.log('start binding events for each element: ', factoryObj.options);
+          
           if (factoryObj.options.btnFlag === false) {
             factoryObj.options.btnFlag = true;
             factoryObj.options.toolsObj.pencil.addEventListener('click', function () {
