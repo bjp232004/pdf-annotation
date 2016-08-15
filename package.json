@@ -18,7 +18,9 @@
   },
   "homepage": "https://github.com/Dexmedia/pdf-annotation#readme",
   "dependencies": {
-    "babel": "^6.5.2"
+    "babel": "^6.5.2",
+    "gulp-cssmin": "^0.1.7",
+    "gulp-rename": "^1.2.2"
   },
   "devDependencies": {
     "babel-core": "^6.10.4",
