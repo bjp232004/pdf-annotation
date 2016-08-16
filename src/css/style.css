@@ -123,8 +123,8 @@
 #controllers #redo {background-position: -0px -0px; background-color: #0A0947 !important;}
 #controllers #redo:hover, #controllers #redo.active {background-position: -0px -0px; }
 
-#controllers #save {background-position: -0px -539px; }
-#controllers #save:hover, #controllers #save.active {background-position: -0px -501px; }
+#controllers #savecsf {background-position: -0px -539px; }
+#controllers #savecsf:hover, #controllers #savecsf.active {background-position: -0px -501px; }
 
 #controllers .cur_disable{cursor: not-allowed !important;}
 #controllers #undo.cur_disable{background-position: -0px -770px; background-color: #0E86E2 !important;}
