@@ -1840,11 +1840,12 @@
               factoryObj.history.redo(factoryObj.options.canvas, factoryObj.options.ctx);
             });
  
-            factoryObj.options.toolsObj.save.addEventListener('click', function () {
+            console.log(factoryObj.options.toolsObj.save);
+            /*factoryObj.options.toolsObj.save.addEventListener('click', function () {
               factoryObj.event.options.activeTool = '';
               factoryObj.history.manageActiveBtn('');
               factoryObj.event.savepdf();
-            });
+            });*/
  
             factoryObj.options.toolsObj.fontsize.addEventListener('change', function () {
               factoryObj.history.options.font_size = this.value;
