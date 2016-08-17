@@ -67,18 +67,18 @@
       raw_undo_ver_list: [],
       raw_redo_ver_list: [],
       tmp_raw_undo_list: '',
-      setStyleElement: function setStyleElement(canvas, ctx) {
+      setStyleElement: function(canvas, ctx) {
         ctx.fillStyle = '#' + this.options.fillStyle.replace('#', '');
         ctx.font = this.options.font_size + 'px Calibri';
         ctx.lineWidth = this.options.lineWidth;
         ctx.strokeStyle = '#' + this.options.fillStyle.replace('#', '');
       },
-      resetStyleElement: function resetStyleElement() {
+      resetStyleElement: function() {
         this.options.fillStyle = document.getElementById('fillstyle').value;
         this.options.font_size = document.getElementById('fontsize').value;
         this.options.lineWidth = document.getElementById('linewidth').value;
       },
-      setButtonStyle: function setButtonStyle() {
+      setButtonStyle: function() {
         if (this.raw_undo_ver_list.length > 0) {
           if (this.raw_undo_ver_list[this.options.activePage].length > 0 || this.raw_undo_list[this.options.activePage].length > 0) {
             factoryObj.options.toolsObj.undo.classList.remove('cur_disable');
@@ -96,7 +96,7 @@
           factoryObj.options.toolsObj.redo.className += ' cur_disable';
         }
       },
-      saveState: function saveState(canvas, list, keep_redo) {
+      saveState: function(canvas, list, keep_redo) {
         keep_redo = keep_redo || false;
         if (!keep_redo) {
           this.redo_list = [];
@@ -136,7 +136,7 @@
         this.setButtonStyle();
         factoryObj.history.final_canvas_url[factoryObj.history.options.PrevPage] = canvasData;
       },
-      saveRawData: function saveRawData() {
+      saveRawData: function() {
         if (!factoryObj.event.options.activeTool.drawing) {
           if (!this.raw_undo_list.hasOwnProperty(this.options.activePage)) {
             this.raw_undo_list[this.options.activePage] = [];
@@ -167,7 +167,7 @@
           };
         }
       },
-      setRawData: function setRawData() {
+      setRawData: function() {
         factoryObj.options.optionArrData.name = factoryObj.event.options.activeTool.name;
         factoryObj.options.optionArrData.startX.push(factoryObj.event.options.activeTool.options.startX);
         factoryObj.options.optionArrData.startY.push(factoryObj.event.options.activeTool.options.startY);
@@ -204,22 +204,22 @@
  
         this.options.arrData = angular.copy(factoryObj.options.optionArrData);
       },
-      undo: function undo(canvas, ctx) {
+      undo: function(canvas, ctx) {
         if (this.raw_undo_list.length > 0) {
           this.options.action = 'undo';
           this.restoreStateRawData(this.raw_undo_list, this.raw_redo_list);
           this.redrawState(canvas, ctx);
         }
       },
-      redo: function redo(canvas, ctx) {
-        if (this.raw_redo_list.length > 0) {
+      redo: function(canvas, ctx) {
+        if (this.raw_redo_ver_list[this.options.activePage].length > 0) {
           this.options.action = 'redo';
           this.restoreStateRawData(this.raw_undo_list, this.raw_redo_list);
           factoryObj.move.init(canvas, ctx);
           this.redrawState(canvas, ctx);
         }
       },
-      restoreState: function restoreState(canvas, ctx, pop, push) {
+      restoreState: function(canvas, ctx, pop, push) {
         var pageData = pop[this.options.activePage];
         if (pageData.length) {
           if (push && this.options.action == 'undo') {
@@ -247,7 +247,7 @@
           };
         }
       },
-      restoreStateRawData: function restoreStateRawData(pop, push) {
+      restoreStateRawData: function(pop, push) {
         var pageData = pop[this.options.activePage];
         if (this.options.action == 'undo') {
           if (this.raw_undo_ver_list[this.options.activePage].length > 0) {
@@ -292,7 +292,7 @@
           this.setButtonStyle();
         }
       },
-      drawingState: function drawingState(canvas, ctx, pop) {
+      drawingState: function(canvas, ctx, pop) {
         if (pop[this.options.activePage].length) {
           var restore_state = pop[this.options.activePage][pop[this.options.activePage].length - 1];
           var img = document.createElement("img");
@@ -304,7 +304,7 @@
           };
         }
       },
-      redrawState: function redrawState(canvas, ctx) {
+      redrawState: function(canvas, ctx) {
         if (this.initial_canvas_url[this.options.activePage]) {
           var restore_state = this.initial_canvas_url[this.options.activePage];
           var img = document.createElement("img");
@@ -319,7 +319,7 @@
           };
         }
       },
-      manageActiveBtn: function manageActiveBtn(btn) {
+      manageActiveBtn: function(btn) {
         var activeObj = document.getElementsByClassName('controller active');
         for (var x = 0; x < activeObj.length; x++) {
           activeObj[x].classList.remove('active');
@@ -332,12 +332,12 @@
         }
       }
     };
- 
+
     factoryObj.event = {
       options: {
         activeTool: ''
       },
-      init: function init(canvas, ctx) {
+      init: function(canvas, ctx) {
         this.canvas = canvas;
         this.canvas_coords = this.canvas.getBoundingClientRect();
         this.ctx = ctx;
@@ -345,13 +345,13 @@
         this.paging();
         this.addCanvasEvents();
       },
-      addCanvasEvents: function addCanvasEvents() {
+      addCanvasEvents: function() {
         this.canvas.addEventListener('mousedown', this.start.bind(this));
         this.canvas.addEventListener('mousemove', this.stroke.bind(this));
         this.canvas.addEventListener('mouseup', this.stop.bind(this));
         this.canvas.addEventListener('mouseout', this.stop.bind(this));
       },
-      start: function start(evt) {
+      start: function(evt) {
         if (factoryObj.history.raw_undo_list[factoryObj.history.options.activePage].length > 0) {
           factoryObj.move.init(this.canvas, this.ctx);
           factoryObj.move.start(evt);
@@ -363,20 +363,20 @@
           }
         }
       },
-      stroke: function stroke(evt) {
+      stroke: function(evt) {
         if (this.options.activeTool !== '' && this.options.activeTool !== undefined && this.options.activeTool.drawing === true) {
           this.options.activeTool.stroke(evt);
         }
       },
-      stop: function stop(evt) {
+      stop: function(evt) {
         if (this.options.activeTool !== '' && this.options.activeTool !== undefined && this.options.activeTool.drawing === true) {
           this.options.activeTool.stop(evt);
         }
       },
-      closepdf: function closepdf() {
+      closepdf: function() {
         factoryObj.options.closeFn();
       },
-      savepdf: function savepdf() {
+      savepdf: function() {
         var page = 0;
         var m = confirm("Are you sure to you want to save file?");
         if (m) {
@@ -410,7 +410,7 @@
           }
         }
       },
-      dataURLtoBlob: function dataURLtoBlob(dataurl) {
+      dataURLtoBlob: function(dataurl) {
         var arr = dataurl.split(','),
             mime = arr[0].match(/:(.*?);/)[1],
             bstr = atob(arr[1]),
@@ -421,7 +421,7 @@
         }
         return new Blob([u8arr], { type: mime });
       },
-      paging: function paging() {
+      paging: function() {
         factoryObj.history.options.totalPage = factoryObj.history.options.pdfobj.transport.numPages;
         factoryObj.options.toolsObj.activePage.textContent = factoryObj.history.options.activePage + 1;
         factoryObj.options.toolsObj.currentPage.value = factoryObj.history.options.activePage + 1;
@@ -456,7 +456,7 @@
         width: 250,
         height: 250
       },
-      init: function init(canvas, ctx) {
+      init: function(canvas, ctx) {
         this.canvas = canvas;
         this.ctx = ctx;
         this.ctx.strokeColor = this.options.stroke_color;
@@ -464,7 +464,7 @@
         this.drawing = false;
         this.options.flag = true;
       },
-      start: function start(evt) {
+      start: function(evt) {
         if (!this.options.flag) return;
         this.canvas_coords = this.canvas.getBoundingClientRect();
         var x = evt.pageX - this.canvas_coords.left;
@@ -482,7 +482,7 @@
         this.ctx.beginPath();
         this.drawing = true;
       },
-      stroke: function stroke(evt) {
+      stroke: function(evt) {
         if (!this.options.flag) return;
         if (this.drawing) {
           var x = evt.pageX - this.canvas_coords.left;
@@ -491,7 +491,7 @@
           this.options.endY = y;
         }
       },
-      stop: function stop(evt) {
+      stop: function(evt) {
         /*if(this.drawing && this.options.flag && this.options.startX !== this.options.endX && this.options.startY !== this.options.endY) {*/
         console.log('In text stop event');
         this.drawing = false;
@@ -513,7 +513,7 @@
           this.drawing = false;
         }*/
       },
-      drawTool: function drawTool() {
+      drawTool: function() {
         factoryObj.history.setStyleElement(this.canvas, this.ctx);
         console.log(factoryObj.options.toolsObj.contenteditor.style);
         factoryObj.options.toolsObj.contenteditor.style.fontSize = factoryObj.history.options.font_size;
@@ -544,7 +544,7 @@
         }
         this.options.flag = true;
       },
-      drawStyledText: function drawStyledText(textInfo) {
+      drawStyledText: function(textInfo) {
         this.options.textInfo = textInfo;
         var text = textInfo.text,
             x = textInfo.x,
@@ -640,7 +640,7 @@
         factoryObj.history.setRawData();
         factoryObj.history.saveState(this.canvas);
       },
-      redrawTool: function redrawTool(obj, diffX, diffY) {
+      redrawTool: function(obj, diffX, diffY) {
         for (var k = 0; k < obj.length; k++) {
           this.ctx.fillText(obj[k].text, obj[k].x + diffX, obj[k].y + diffY);
         }
@@ -653,10 +653,10 @@
         factoryObj.square.options.endY = this.options.endY;
         factoryObj.square.drawTool();
       },
-      checkLineBreak: function checkLineBreak(text, boxWidth, x) {
+      checkLineBreak: function(text, boxWidth, x) {
         return this.ctx.measureText(text).width + x > boxWidth;
       },
-      trim: function trim(str) {
+      trim: function(str) {
         var ws, i;
         str = str.replace(/^\s\s*/, '');
         ws = /\s/;
@@ -678,13 +678,13 @@
         wdthHghtRatio: '',
         img: ''
       },
-      init: function init(canvas, ctx) {
+      init: function(canvas, ctx) {
         this.canvas = canvas;
         this.ctx = ctx;
         this.ctx.strokeColor = this.options.stroke_color;
         this.drawing = false;
       },
-      start: function start(evt) {
+      start: function(evt) {
         this.canvas_coords = this.canvas.getBoundingClientRect();
         var x = evt.pageX - this.canvas_coords.left;
         var y = evt.pageY - this.canvas_coords.top;
@@ -698,7 +698,7 @@
         this.ctx.beginPath();
         this.drawing = true;
       },
-      stroke: function stroke(evt) {
+      stroke: function(evt) {
         if (this.drawing) {
           factoryObj.history.drawingState(this.canvas, this.ctx, factoryObj.history.undo_list);
  
@@ -711,7 +711,7 @@
           this.drawTool();
         }
       },
-      stop: function stop(evt) {
+      stop: function(evt) {
         if (this.drawing && this.options.startX !== this.options.endX && this.options.startY !== this.options.endY) {
           this.ctx.beginPath();
           this.drawTool();
@@ -727,7 +727,7 @@
           this.drawing = false;
         }
       },
-      drawTool: function drawTool() {
+      drawTool: function() {
         this.ctx.beginPath();
  
         factoryObj.history.setStyleElement(this.canvas, this.ctx);
@@ -767,7 +767,7 @@
           this.ctx.closePath();
         }
       },
-      uploadImage: function uploadImage(frmData) {
+      uploadImage: function(frmData) {
         var img = new Image();
  
         img.onload = function (obj) {
@@ -802,14 +802,14 @@
         arrow: { h: 5, w: 10 },
         headlen: 10
       },
-      init: function init(canvas, ctx) {
+      init: function(canvas, ctx) {
         this.canvas = canvas;
         this.ctx = ctx;
         this.ctx.strokeColor = this.options.stroke_color;
         this.ctx.fillStyle = 'rgba(0,0,0,0)';
         this.drawing = false;
       },
-      start: function start(evt) {
+      start: function(evt) {
         this.canvas_coords = this.canvas.getBoundingClientRect();
         var x = evt.pageX - this.canvas_coords.left;
         var y = evt.pageY - this.canvas_coords.top;
@@ -823,7 +823,7 @@
         this.ctx.beginPath();
         this.drawing = true;
       },
-      stroke: function stroke(evt) {
+      stroke: function(evt) {
         if (this.drawing) {
           factoryObj.history.drawingState(this.canvas, this.ctx, factoryObj.history.undo_list);
  
@@ -836,7 +836,7 @@
           this.drawTool();
         }
       },
-      stop: function stop(evt) {
+      stop: function(evt) {
         if (this.drawing && this.options.startX !== this.options.endX && this.options.startY !== this.options.endY) {
           this.ctx.beginPath();
           this.drawTool();
@@ -852,7 +852,7 @@
           this.drawing = false;
         }
       },
-      drawTool: function drawTool() {
+      drawTool: function() {
         this.ctx.beginPath();
  
         factoryObj.history.setStyleElement(this.canvas, this.ctx);
@@ -873,14 +873,14 @@
         stroke_color: ['00', '00', '00'],
         dim: 4
       },
-      init: function init(canvas, ctx) {
+      init: function(canvas, ctx) {
         this.canvas = canvas;
         this.ctx = ctx;
         this.ctx.strokeColor = this.options.stroke_color;
         this.ctx.fillStyle = 'rgba(0,0,0,0)';
         this.drawing = false;
       },
-      start: function start(evt) {
+      start: function(evt) {
         this.canvas_coords = this.canvas.getBoundingClientRect();
         var x = evt.pageX - this.canvas_coords.left;
         var y = evt.pageY - this.canvas_coords.top;
@@ -894,7 +894,7 @@
         this.ctx.beginPath();
         this.drawing = true;
       },
-      stroke: function stroke(evt) {
+      stroke: function(evt) {
         if (this.drawing) {
           factoryObj.history.drawingState(this.canvas, this.ctx, factoryObj.history.undo_list);
  
@@ -907,7 +907,7 @@
           this.drawTool();
         }
       },
-      stop: function stop(evt) {
+      stop: function(evt) {
         if (this.drawing && this.options.startX !== this.options.endX && this.options.startY !== this.options.endY) {
           this.ctx.beginPath();
           this.drawTool();
@@ -923,7 +923,7 @@
           this.drawing = false;
         }
       },
-      drawTool: function drawTool() {
+      drawTool: function() {
         this.ctx.beginPath();
  
         factoryObj.history.setStyleElement(this.canvas, this.ctx);
@@ -932,7 +932,7 @@
         this.ctx.lineTo(this.options.endX, this.options.endY);
         this.ctx.stroke();
       },
-      redrawTool: function redrawTool() {
+      redrawTool: function() {
         this.ctx.beginPath();
  
         factoryObj.history.setStyleElement(this.canvas, this.ctx);
@@ -949,14 +949,14 @@
         stroke_color: ['00', '00', '00'],
         dim: 4
       },
-      init: function init(canvas, ctx) {
+      init: function(canvas, ctx) {
         this.canvas = canvas;
         this.ctx = ctx;
         this.ctx.strokeColor = this.options.stroke_color;
         this.ctx.fillStyle = 'rgba(0,0,0,0)';
         this.drawing = false;
       },
-      start: function start(evt) {
+      start: function(evt) {
         this.canvas_coords = this.canvas.getBoundingClientRect();
         var x = evt.pageX - this.canvas_coords.left;
         var y = evt.pageY - this.canvas_coords.top;
@@ -970,7 +970,7 @@
         this.ctx.beginPath();
         this.drawing = true;
       },
-      stroke: function stroke(evt) {
+      stroke: function(evt) {
         if (this.drawing) {
           var x = evt.pageX - this.canvas_coords.left;
           var y = evt.pageY - this.canvas_coords.top;
@@ -979,7 +979,7 @@
           factoryObj.history.drawingState(this.canvas, this.ctx, factoryObj.history.undo_list);
         }
       },
-      stop: function stop(evt) {
+      stop: function(evt) {
         if (this.drawing && this.options.startX !== this.options.endX && this.options.startY !== this.options.endY) {
           this.drawTool();
           this.ctx.closePath();
@@ -994,7 +994,7 @@
           this.drawing = false;
         }
       },
-      drawTool: function drawTool() {
+      drawTool: function() {
         if (this.drawing) {
           factoryObj.history.setStyleElement(this.canvas, this.ctx);
  
@@ -1022,14 +1022,14 @@
         stroke_color: ['00', '00', '00'],
         dim: 4
       },
-      init: function init(canvas, ctx) {
+      init: function(canvas, ctx) {
         this.canvas = canvas;
         this.ctx = ctx;
         this.ctx.strokeColor = this.options.stroke_color;
         this.ctx.fillStyle = 'rgba(0,0,0,0)';
         this.drawing = false;
       },
-      start: function start(evt) {
+      start: function(evt) {
         this.canvas_coords = this.canvas.getBoundingClientRect();
         var x = evt.pageX - this.canvas_coords.left;
         var y = evt.pageY - this.canvas_coords.top;
@@ -1043,7 +1043,7 @@
         this.ctx.beginPath();
         this.drawing = true;
       },
-      stroke: function stroke(evt) {
+      stroke: function(evt) {
         if (this.drawing) {
           var x = evt.pageX - this.canvas_coords.left;
           var y = evt.pageY - this.canvas_coords.top;
@@ -1052,7 +1052,7 @@
           factoryObj.history.drawingState(this.canvas, this.ctx, factoryObj.history.undo_list);
         }
       },
-      stop: function stop(evt) {
+      stop: function(evt) {
         if (this.drawing && this.options.startX !== this.options.endX && this.options.startY !== this.options.endY) {
           this.drawTool();
           this.ctx.closePath();
@@ -1067,7 +1067,7 @@
           this.drawing = false;
         }
       },
-      drawTool: function drawTool() {
+      drawTool: function() {
         if (this.drawing) {
           factoryObj.history.setStyleElement(this.canvas, this.ctx);
  
@@ -1094,13 +1094,13 @@
         stroke_color: ['00', '00', '00'],
         dim: 4
       },
-      init: function init(canvas, ctx) {
+      init: function(canvas, ctx) {
         this.canvas = canvas;
         this.ctx = ctx;
         this.ctx.strokeColor = this.options.fillStyle;
         this.drawing = false;
       },
-      start: function start(evt) {
+      start: function(evt) {
         factoryObj.history.setStyleElement(this.canvas, this.ctx);
         this.canvas_coords = this.canvas.getBoundingClientRect();
         var x = evt.pageX - this.canvas_coords.left;
@@ -1115,7 +1115,7 @@
         factoryObj.history.setRawData();
         this.drawing = true;
       },
-      stroke: function stroke(evt) {
+      stroke: function(evt) {
         if (this.drawing) {
           var x = evt.pageX - this.canvas_coords.left;
           var y = evt.pageY - this.canvas_coords.top;
@@ -1128,14 +1128,14 @@
           this.ctx.stroke();
         }
       },
-      stop: function stop(evt) {
+      stop: function(evt) {
         if (this.drawing) {
           this.drawing = false;
           factoryObj.history.saveState(this.canvas);
         }
       },
-      drawTool: function drawTool() {},
-      redrawTool: function redrawTool() {
+      drawTool: function() {},
+      redrawTool: function() {
         this.ctx.beginPath();
  
         for (var l = 0; l < this.options.pencilData.length; l++) {
@@ -1161,13 +1161,13 @@
         arrResize: { startX: false, startY: false, endX: false, endY: false },
         resizeMargin: 10
       },
-      init: function init(canvas, ctx) {
+      init: function(canvas, ctx) {
         this.canvas = canvas;
         this.canvas_coords = this.canvas.getBoundingClientRect();
         this.ctx = ctx;
         this.drawing = false;
       },
-      start: function start(evt) {
+      start: function(evt) {
         var x = evt.pageX - this.canvas_coords.left;
         var y = evt.pageY - this.canvas_coords.top;
         this.options.startX = x;
@@ -1188,7 +1188,7 @@
         factoryObj.options.toolsObj.canvas.style.cursor = this.options.cursorStyle;
         this.drawing = true;
       },
-      stroke: function stroke(evt) {
+      stroke: function(evt) {
         if (this.drawing) {
           var x = evt.pageX - this.canvas_coords.left;
           var y = evt.pageY - this.canvas_coords.top;
@@ -1205,7 +1205,7 @@
           factoryObj.history.redrawState(this.canvas, this.ctx);
         }
       },
-      stop: function stop(evt) {
+      stop: function(evt) {
         if (this.drawing) {
  
           this.drawing = false;
@@ -1275,7 +1275,7 @@
           }
         }
       },
-      drawTool: function drawTool() {
+      drawTool: function() {
         this.ctx.beginPath();
         if (this.drawing) {
           var reDrawTool = factoryObj.history.options.arrData.name;
@@ -1290,7 +1290,7 @@
         }
         this.ctx.stroke();
       },
-      redrawTool: function redrawTool() {
+      redrawTool: function() {
         console.log(factoryObj.history.raw_undo_list[factoryObj.history.options.activePage]);
         var tmpData = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage];
         var cntStart = tmpData.length - 1;
@@ -1426,7 +1426,7 @@
           factoryObj.history.resetStyleElement();
         }
       },
-      resizeCheck: function resizeCheck(startX, startY, endX, endY) {
+      resizeCheck: function(startX, startY, endX, endY) {
         if (this.options.startX >= startX && this.options.startX <= startX + this.options.resizeMargin && this.options.startY >= startY && this.options.startY <= startY + this.options.resizeMargin) {
           this.options.arrResize.startX = true;
           this.options.arrResize.startY = true;
@@ -1485,7 +1485,7 @@
           this.options.isResize = true;
         }
       },
-      hitTest: function hitTest() {
+      hitTest: function() {
         var tmpData = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage];
         var cntStart = tmpData.length - 1;
         this.options.movedObject = -1;
@@ -1638,12 +1638,12 @@
         stroke_color: ['00', '00', '00'],
         dim: 4
       },
-      init: function init(canvas, ctx) {
+      init: function(canvas, ctx) {
         this.canvas = canvas;
         this.ctx = ctx;
         this.drawing = false;
       },
-      start: function start(evt) {
+      start: function(evt) {
         this.canvas_coords = this.canvas.getBoundingClientRect();
         var x = evt.pageX - this.canvas_coords.left;
         var y = evt.pageY - this.canvas_coords.top;
@@ -1656,7 +1656,7 @@
         this.ctx.beginPath();
         this.drawing = true;
       },
-      stroke: function stroke(evt) {
+      stroke: function(evt) {
         if (this.drawing) {
           factoryObj.history.drawingState(this.canvas, this.ctx, factoryObj.history.undo_list);
           this.ctx.beginPath();
@@ -1670,7 +1670,7 @@
           this.drawTool();
         }
       },
-      stop: function stop(evt) {
+      stop: function(evt) {
         if (this.drawing && this.options.startX !== this.options.endX && this.options.startY !== this.options.endY) {
           this.ctx.beginPath();
  
@@ -1688,14 +1688,14 @@
           this.drawing = false;
         }
       },
-      drawLine: function drawLine(startPt, endPt) {
+      drawLine: function(startPt, endPt) {
         factoryObj.history.setStyleElement(this.canvas, this.ctx);
  
         this.ctx.moveTo(startPt.x, startPt.y);
         this.ctx.lineTo(endPt.x, endPt.y);
         this.ctx.stroke();
       },
-      drawTool: function drawTool() {
+      drawTool: function() {
         lineP1 = { x: this.options.startX, y: this.options.startY, r: 0 };
         lineP2 = { x: this.options.startX, y: this.options.endY, r: 0 };
         lineP3 = { x: this.options.endX, y: this.options.endY, r: 0 };
