@@ -696,7 +696,9 @@
         this.options.endY = y;
  
         this.ctx.beginPath();
-        this.drawing = true;
+        if(this.options.img != '') {
+          this.drawing = true;  
+        }
       },
       stroke: function(evt) {
         if (this.drawing) {
@@ -791,6 +793,9 @@
         img.src = URL.createObjectURL(frmData);
         this.options.uploadedImage.push(URL.createObjectURL(frmData));
         this.options.img = img;
+      },
+      resetImage: function() {
+        this.options.img = '';  
       }
     };
  
@@ -1832,6 +1837,7 @@
             });
  
             factoryObj.options.toolsObj.clear_image.addEventListener('click', function () {
+              factoryObj.image.resetImage();  
               factoryObj.options.toolsObj.frm_canvas_tool.reset();
             });
  
