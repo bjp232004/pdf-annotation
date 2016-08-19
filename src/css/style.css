@@ -31,6 +31,7 @@
 }
 #canvas-cont{
     width: 1300px;
+    position: relative;
 }
 .canvas-container{
   height: auto;
