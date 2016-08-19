@@ -2004,7 +2004,7 @@ $(window).scroll(function () {
   var pos = $(window).scrollTop();
   if (pos > a) {
     $("#controllers").css({
-      position: 'fixed'
+      position: 'relative'
     });
   } else {
     $("#controllers").css({
