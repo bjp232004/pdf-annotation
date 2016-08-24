@@ -493,17 +493,13 @@
       },
       stop: function(evt) {
         /*if(this.drawing && this.options.flag && this.options.startX !== this.options.endX && this.options.startY !== this.options.endY) {*/
-        console.log('In text stop event');
         this.drawing = false;
         this.options.flag = false;
-        console.log(this.canvas_coords);
         this.options.lineHeight = parseInt(factoryObj.history.options.font_size);
-        console.log('In text stop event before style attribute');
         factoryObj.options.toolsObj.editor_wrapper.style.display = 'block';
-        factoryObj.options.toolsObj.editor_wrapper.style.top = parseInt(this.options.startY + 90) + 'px';
+        factoryObj.options.toolsObj.editor_wrapper.style.top = parseInt(this.options.startY) + 'px';
         factoryObj.options.toolsObj.editor_wrapper.style.left = this.options.startX + 'px';
         factoryObj.options.toolsObj.editor_wrapper.style.width = this.options.width + 'px';
-        console.log('In text stop event before focus');
         factoryObj.options.toolsObj.contenteditor.focus();
         factoryObj.options.toolsObj.contenteditor.style.height = 'auto';
         this.options.finalTextInfo = [];
@@ -515,7 +511,6 @@
       },
       drawTool: function() {
         factoryObj.history.setStyleElement(this.canvas, this.ctx);
-        console.log(factoryObj.options.toolsObj.contenteditor.style);
         factoryObj.options.toolsObj.contenteditor.style.fontSize = factoryObj.history.options.font_size;
         factoryObj.options.toolsObj.contenteditor.style.lineHeight = factoryObj.history.options.font_size + 'px';
         factoryObj.options.toolsObj.contenteditor.style.height = factoryObj.options.toolsObj.contenteditor.scrollHeight + "px";
@@ -535,11 +530,10 @@
         if (contenttext !== '') {
           var textObj = {
             text: contenttext,
-            x: this.options.startX,
-            y: this.options.startY,
+            x: this.options.startX + 10,
+            y: this.options.startY + 20,
             boxWidth: parseInt(factoryObj.options.toolsObj.contenteditor.style.width)
           };
-          console.log('before drawstyled', textObj);
           this.drawStyledText(textObj);
         }
         this.options.flag = true;
@@ -622,18 +616,18 @@
             x += this.ctx.measureText(textLines[n].text).width;
           }
         }
- 
+
         factoryObj.square.canvas = this.canvas;
         factoryObj.square.ctx = this.ctx;
-        factoryObj.square.options.startX = this.options.startX - 10;
-        factoryObj.square.options.startY = this.options.startY - 20;
-        factoryObj.square.options.endX = this.options.startX + parseInt(factoryObj.options.toolsObj.contenteditor.style.width) + 10;
+        factoryObj.square.options.startX = this.options.startX;
+        factoryObj.square.options.startY = this.options.startY;
+        factoryObj.square.options.endX = this.options.startX + parseInt(factoryObj.options.toolsObj.contenteditor.style.width);
         factoryObj.square.options.endY = y + 10;
         factoryObj.square.drawTool();
  
-        this.options.startX = this.options.startX - 10;
-        this.options.startY = this.options.startY - 20;
-        this.options.endX = this.options.startX + parseInt(factoryObj.options.toolsObj.contenteditor.style.width) + 10;
+        this.options.startX = this.options.startX;
+        this.options.startY = this.options.startY;
+        this.options.endX = this.options.startX + parseInt(factoryObj.options.toolsObj.contenteditor.style.width);
         this.options.endY = y + 10;
  
         this.ctx.stroke();
@@ -773,7 +767,6 @@
         var img = new Image();
  
         img.onload = function (obj) {
-          console.log(obj, this.width, this);
           factoryObj.image.options.startX = 10;
           factoryObj.image.options.startY = 10;
           factoryObj.image.options.endX = this.width;
@@ -1297,7 +1290,6 @@
         this.ctx.stroke();
       },
       redrawTool: function() {
-        console.log(factoryObj.history.raw_undo_list[factoryObj.history.options.activePage]);
         var tmpData = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage];
         var cntStart = tmpData.length - 1;
  
@@ -1518,7 +1510,6 @@
           }
  
           if (factoryObj.history.options.arrData.name === 'text') {
-            console.log(factoryObj.history.options.arrData, this.options);
             if (this.options.startX >= factoryObj.history.options.arrData.startX[0] && this.options.startX <= factoryObj.history.options.arrData.endX[0] && this.options.startY >= factoryObj.history.options.arrData.startY[0] && this.options.startY <= factoryObj.history.options.arrData.endY[0]) {
               this.options.movedObject = i;
               break;
@@ -1714,7 +1705,6 @@
     };
  
     factoryObj.renderPage = function (page) {
-      console.log('start: renderPage');
       var viewport = page.getViewport(factoryObj.options.pdfOptions.scale);
       var canvas_rand = document.createElement('canvas');
  
@@ -1738,7 +1728,6 @@
           factoryObj.options.bindCnt++;
           if (factoryObj.options.bindFlag === '' && page.transport.numPages == factoryObj.options.bindCnt) {
             factoryObj.history.options.pdfobj = page;
-            console.log('before bindEvent');
             factoryObj.bindEvent(0);
             factoryObj.options.bindFlag = 1;
           }
@@ -1747,7 +1736,6 @@
     };
  
     factoryObj.bindEvent = function (page) {
-      console.log('start: bindEvent');
       if (factoryObj.options.bindFlag == '') {
         factoryObj.options.bindFlag = 'true';
         factoryObj.history.options.PrevPage = page;
@@ -1779,7 +1767,6 @@
           factoryObj.options.toolsObj.loading.textContent = '';
  
           factoryObj.history.saveState(factoryObj.options.canvas);
-          console.log('start binding events for each element: ', factoryObj.options);
           
           if (factoryObj.options.btnFlag === false) {
             factoryObj.options.btnFlag = true;
@@ -1894,7 +1881,6 @@
     };
  
     factoryObj.renderPages = function (pdfDoc) {
-      console.log('start: renderPages');
       factoryObj.history.options.numPages = pdfDoc.numPages;
       for (var num = 1; num <= pdfDoc.numPages; num++) {
         pdfDoc.getPage(num).then(factoryObj.renderPage);
@@ -1902,13 +1888,11 @@
     };
  
     factoryObj.renderPDF = function (url, canvasContainer, options) {
-      console.log('start: renderPDF');
       this.options.pdfOptions = options || { scale: 2 };
       factoryObj.options.toolsObj.loading.textContent = 'Wait while loading PDF file...';
  
       PDFJS.disableWorker = false;
       PDFJS.workerSrc = factoryObj.options.pdfWorker;
-      console.log('start: before renderPages called');
       PDFJS.getDocument(url).then(factoryObj.renderPages);
     };
  
@@ -1926,7 +1910,6 @@
       transclude: true,
       template: '<div id="controllers"><a href="#" id="close" ng-show="options.enableCloseBtn" class="close">&nbsp;</a><span class="controller btn btn-icn" id="pencil" title="Freehand Drawing"></span><span class="controller btn btn-icn" id="square" title="Square"></span><span class="controller btn btn-icn hide" id="circle" title="Circle"></span><span class="controller btn btn-icn" id="ellipse" title="Ellipse"></span><span class="controller btn btn-icn" id="text" title="Text"></span><span class="controller btn btn-icn" id="arrow" title="Arrow"></span><span class="controller btn btn-icn" id="line" title="Line"></span><span class="controller btn btn-icn" id="undo" title="Undo"></span><span class="controller btn btn-icn" id="redo" title="Redo"></span><span class="controller title" id="activePage" disabled="disabled"></span>&nbsp; out of&nbsp;<span class="controller title" id="totalPage" disabled="disabled"></span><span class="controller btn" id="prevBtn"><</span> &nbsp;<input type="text" class="pagenumber" name="currentPage" id="currentPage" />&nbsp;<span class="controller btn" id="nextBtn">></span><span class="controller btn btn-icn" id="savecsf" title="Save"></span><br /><br /><form id="frm_canvas_tool"><input name="imageupload" id="imageupload" class="input_file" type="file" accept="image/*" ><span class="controller btn hide" id="clear_image">Clear Image</span></form>    Font Size:<select id="fontsize" name="fontsize"><option value="">Select Font Size</option><option value="2">2px</option><option value="5">5px</option><option value="7">7px</option><option value="8">8px</option><option value="9">9px</option><option value="10">10px</option><option value="11">11px</option><option value="12">12px</option><option value="13">13px</option><option value="14">14px</option><option value="16">16px</option><option value="18">18px</option><option value="32">32px</option></select>    Color:<select id="fillstyle" name="fillstyle"><option>Select Color</option><option value="FF0000">Red</option><option value="00FF00">Green</option><option value="0000FF">Blue</option><option value="000000">Black</option><option value="FFFFFF">White</option></select>    Line Width:<select id="linewidth" name="linewidth"><option value="">Select Font Size</option><option value="2">2px</option><option value="5">5px</option><option value="7">7px</option><option value="8">8px</option></select><span class="controller" id="loading"></span></div><div id="canvas-container" class="canvas-container" style="visibility: hidden; height: 0px;"></div><div id="canvas-cont" class="canvas-container"><canvas id="canvas"></canvas><div id="editor_wrapper" style="display:none;"><textarea id="contenteditor"  onkeyup="textAreaAdjust(this)" style="overflow:hidden"></textarea></div></div><div ng-if="errorURL"><h1>URL not found!</h1></div>',
       link: function link(scope, element, attrs, ctrl) {
-        console.log('Scope:', scope);
         pdfAnnotationFactory.options.closeFn = scope.closeFn;
         pdfAnnotationFactory.options.callbackFn = scope.callbackFn;
         pdfAnnotationFactory.options.toolsObj.loading = angular.element(document.querySelector('#loading'))[0];
