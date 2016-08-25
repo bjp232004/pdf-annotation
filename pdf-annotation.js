@@ -378,7 +378,7 @@
       },
       savepdf: function() {
         var page = 0;
-        var m = confirm("Are you sure to you want to save file?");
+        var m = confirm("Are you sure you want to save this file?");
         if (m) {
           var doc = new jsPDF('p', 'mm', 'a4');
           for (page = 0; page < parseInt(factoryObj.history.options.totalPage); page++) {
