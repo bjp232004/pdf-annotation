@@ -378,36 +378,33 @@
             },
             savepdf: function(action) {
                 var page = 0;
-                var m = confirm("Are you sure you want to save this file?");
-                if (m) {
-                    var doc = new jsPDF('p', 'mm', 'a4');
-                    for (page = 0; page < parseInt(factoryObj.history.options.totalPage); page++) {
-                        if (page < 2) {
-                            this.options.isSave = true;
-                            factoryObj.move.init(this.canvas, this.ctx);
-                            factoryObj.move.redrawTool();
-                            if (factoryObj.history.final_canvas_url.hasOwnProperty(page)) {
-                                var imgData = factoryObj.history.final_canvas_url[page];
-                            } else {
-                                var imgData = document.getElementById("page" + page).toDataURL("image/png");
-                            }
-                            doc.addImage(imgData, 'PNG', 0, 0, 200, 250, null, 'SLOW');
-                            if (page < parseInt(factoryObj.history.options.totalPage - 1)) {
-                                doc.addPage();
-                            }
-
-                            this.options.isSave = false;
+                var doc = new jsPDF('p', 'mm', 'a4');
+                for (page = 0; page < parseInt(factoryObj.history.options.totalPage); page++) {
+                    if (page < 2) {
+                        this.options.isSave = true;
+                        factoryObj.move.init(this.canvas, this.ctx);
+                        factoryObj.move.redrawTool();
+                        if (factoryObj.history.final_canvas_url.hasOwnProperty(page)) {
+                            var imgData = factoryObj.history.final_canvas_url[page];
+                        } else {
+                            var imgData = document.getElementById("page" + page).toDataURL("image/png");
                         }
-                    }
+                        doc.addImage(imgData, 'PNG', 0, 0, 200, 250, null, 'SLOW');
+                        if (page < parseInt(factoryObj.history.options.totalPage - 1)) {
+                            doc.addPage();
+                        }
 
-                    var dataurl = doc.output('datauristring');
-                    var blob = this.dataURLtoBlob(dataurl);
-
-                    if (typeof factoryObj.options.callbackFn == "function") {
-                        factoryObj.options.callbackFn({ blob: blob,flag:action });
-                    } else {
-                        doc.save();
+                        this.options.isSave = false;
                     }
+                }
+
+                var dataurl = doc.output('datauristring');
+                var blob = this.dataURLtoBlob(dataurl);
+
+                if (typeof factoryObj.options.callbackFn == "function") {
+                    factoryObj.options.callbackFn({ blob: blob,flag:action });
+                } else {
+                    doc.save();
                 }
             },
             dataURLtoBlob: function(dataurl) {
