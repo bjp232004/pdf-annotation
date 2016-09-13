@@ -34,7 +34,8 @@
                 endY: [],
                 pencilData: []
             },
-            pdfWorker: 'src/js/pdf.worker.js'
+            pdfWorker: 'src/js/pdf.worker.js',
+            actionListObj: []
         };
 
         factoryObj.history = {
@@ -402,7 +403,7 @@
                 var blob = this.dataURLtoBlob(dataurl);
 
                 if (typeof factoryObj.options.callbackFn == "function") {
-                    factoryObj.options.callbackFn({ blob: blob,flag:action });
+                    factoryObj.options.callbackFn({ blob: blob,flag:action,actionListObj: factoryObj.history.raw_undo_ver_list });
                 } else {
                     doc.save();
                 }
@@ -1783,7 +1784,9 @@
                 var img = document.createElement("img");
                 img.src = factoryObj.options.imgURL;
                 img.onload = function () {
-
+                    if(factoryObj.options.actionListObj.length > 0) {
+                        factoryObj.move.redrawTool();
+                    }
                     factoryObj.options.canvas_coords = factoryObj.options.canvas.getBoundingClientRect();
                     factoryObj.history.options.canvas_coords = factoryObj.options.canvas_coords;
                     factoryObj.options.ctx.clearRect(0, 0, factoryObj.options.canvas.width, factoryObj.options.canvas.height);
@@ -1929,6 +1932,7 @@
         factoryObj.renderPDF = function (url, canvasContainer, options) {
             this.options.pdfOptions = options || { scale: 2 };
             factoryObj.options.toolsObj.loading.textContent = 'Wait while loading PDF file...';
+            factoryObj.history.raw_undo_list = factoryObj.options.actionListObj;
 
             PDFJS.disableWorker = false;
             PDFJS.workerSrc = factoryObj.options.pdfWorker;
@@ -2011,6 +2015,10 @@
 
                         if (scope.options.pdfworker) {
                             pdfAnnotationFactory.options.pdfWorker = scope.options.pdfworker;
+                        }
+
+                        if (scope.options.actionListObj) {
+                            pdfAnnotationFactory.options.actionListObj = scope.options.actionListObj;
                         }
                         scope.errorURL = false;
 
