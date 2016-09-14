@@ -1772,6 +1772,7 @@
                 if (!factoryObj.history.initial_canvas_url.hasOwnProperty(page)) {
                     var tmpImgObj = document.getElementById('page' + page);
                     factoryObj.history.initial_canvas_url[page] = tmpImgObj.toDataURL();
+                    factoryObj.history.undo_list[page] = tmpImgObj.toDataURL();
                     factoryObj.history.final_canvas_url[factoryObj.history.options.activePage] = factoryObj.history.initial_canvas_url[factoryObj.history.options.activePage];
                     factoryObj.options.imgURL = factoryObj.history.initial_canvas_url[factoryObj.history.options.activePage];
                 } else {
@@ -1993,6 +1994,7 @@
 
                 scope.$watch('options', function (newValue, oldValue) {
                     if (scope.options.url !== '') {
+                        pdfAnnotationFactory.options.actionListObj = [];
                         pdfAnnotationFactory.history.initial_canvas_url = [];
                         pdfAnnotationFactory.history.final_canvas_url = [];
                         pdfAnnotationFactory.history.final_canvas_url = [];
