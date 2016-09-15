@@ -34,7 +34,8 @@
                 endY: [],
                 pencilData: []
             },
-            pdfWorker: 'src/js/pdf.worker.js'
+            pdfWorker: 'src/js/pdf.worker.js',
+            actionListObj: []
         };
 
         factoryObj.history = {
@@ -85,6 +86,9 @@
                     } else {
                         factoryObj.options.toolsObj.undo.className += ' cur_disable';
                     }
+                    if(this.raw_redo_ver_list.length === 0) {
+                        this.raw_redo_ver_list[this.options.activePage] = [];
+                    }
 
                     if (this.raw_redo_ver_list[this.options.activePage].length > 0) {
                         factoryObj.options.toolsObj.redo.classList.remove('cur_disable');
@@ -129,6 +133,9 @@
                         if (this.tmp_raw_undo_list != '') {
                             var tmpData = angular.copy(this.tmp_raw_undo_list);
                             this.tmp_raw_undo_list = '';
+                            if(this.raw_undo_ver_list.length === 0){
+                                this.raw_undo_ver_list[this.options.activePage] = [];
+                            }
                             this.raw_undo_ver_list[this.options.activePage].push(tmpData);
                         }
                     }
@@ -144,6 +151,10 @@
 
                         this.raw_undo_ver_list[this.options.activePage] = [];
                         this.raw_redo_ver_list[this.options.activePage] = [];
+                    }
+
+                    if(this.raw_undo_ver_list.length === 0){
+                        this.raw_undo_ver_list[this.options.activePage] = [];
                     }
 
                     if (this.raw_undo_list[this.options.activePage].length > 0) {
@@ -402,7 +413,7 @@
                 var blob = this.dataURLtoBlob(dataurl);
 
                 if (typeof factoryObj.options.callbackFn == "function") {
-                    factoryObj.options.callbackFn({ blob: blob,flag:action });
+                    factoryObj.options.callbackFn({ blob: blob,flag:action,actionListObj: factoryObj.history.raw_undo_list });
                 } else {
                     doc.save();
                 }
@@ -1356,7 +1367,7 @@
                             if (tmpData[i].name === 'text') {
                                 this.options.currentDrawTool = factoryObj.text;
                             }
-
+                            this.options.currentDrawTool.init(factoryObj.options.canvas,factoryObj.options.ctx);
                             this.options.currentDrawTool.drawing = true;
 
                             if (this.options.movedObject == i && this.options.isResize === true) {
@@ -1771,6 +1782,7 @@
                 if (!factoryObj.history.initial_canvas_url.hasOwnProperty(page)) {
                     var tmpImgObj = document.getElementById('page' + page);
                     factoryObj.history.initial_canvas_url[page] = tmpImgObj.toDataURL();
+                    factoryObj.history.undo_list[page] = [tmpImgObj.toDataURL()];
                     factoryObj.history.final_canvas_url[factoryObj.history.options.activePage] = factoryObj.history.initial_canvas_url[factoryObj.history.options.activePage];
                     factoryObj.options.imgURL = factoryObj.history.initial_canvas_url[factoryObj.history.options.activePage];
                 } else {
@@ -1783,7 +1795,6 @@
                 var img = document.createElement("img");
                 img.src = factoryObj.options.imgURL;
                 img.onload = function () {
-
                     factoryObj.options.canvas_coords = factoryObj.options.canvas.getBoundingClientRect();
                     factoryObj.history.options.canvas_coords = factoryObj.options.canvas_coords;
                     factoryObj.options.ctx.clearRect(0, 0, factoryObj.options.canvas.width, factoryObj.options.canvas.height);
@@ -1915,6 +1926,10 @@
 
                     factoryObj.event.init(factoryObj.options.canvas, factoryObj.options.ctx);
                     factoryObj.history.setButtonStyle();
+                    if(factoryObj.options.actionListObj.length > 0) {
+                        factoryObj.move.init(factoryObj.options.canvas,factoryObj.options.ctx);
+                        factoryObj.move.redrawTool();
+                    }
                 };
             }
         };
@@ -1929,6 +1944,7 @@
         factoryObj.renderPDF = function (url, canvasContainer, options) {
             this.options.pdfOptions = options || { scale: 2 };
             factoryObj.options.toolsObj.loading.textContent = 'Wait while loading PDF file...';
+            factoryObj.history.raw_undo_list = factoryObj.options.actionListObj;
 
             PDFJS.disableWorker = false;
             PDFJS.workerSrc = factoryObj.options.pdfWorker;
@@ -1989,6 +2005,7 @@
 
                 scope.$watch('options', function (newValue, oldValue) {
                     if (scope.options.url !== '') {
+                        pdfAnnotationFactory.options.actionListObj = [];
                         pdfAnnotationFactory.history.initial_canvas_url = [];
                         pdfAnnotationFactory.history.final_canvas_url = [];
                         pdfAnnotationFactory.history.final_canvas_url = [];
@@ -2008,9 +2025,15 @@
                         pdfAnnotationFactory.options.bindFlag = '';
                         pdfAnnotationFactory.options.btnFlag = false;
                         pdfAnnotationFactory.options.bindCnt = 0;
+                        pdfAnnotationFactory.move.options.isSelectedObj = false;
+                        pdfAnnotationFactory.move.options.selectedObject = -1;
 
                         if (scope.options.pdfworker) {
                             pdfAnnotationFactory.options.pdfWorker = scope.options.pdfworker;
+                        }
+
+                        if (scope.options.actionListObj) {
+                            pdfAnnotationFactory.options.actionListObj = scope.options.actionListObj;
                         }
                         scope.errorURL = false;
 
