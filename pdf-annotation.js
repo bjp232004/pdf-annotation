@@ -99,6 +99,12 @@
                     factoryObj.options.toolsObj.undo.className += ' cur_disable';
                     factoryObj.options.toolsObj.redo.className += ' cur_disable';
                 }
+                if(this.raw_undo_list.length > 0) {
+                    var actionListObjLength = (factoryObj.options.actionListObj.length > 0) ? factoryObj.options.actionListObj[this.options.activePage].length : 0;
+                    if(this.raw_undo_list[this.options.activePage].length === actionListObjLength) {
+                        factoryObj.options.toolsObj.undo.className += ' cur_disable';
+                    }
+                }
             },
             saveState: function(canvas, list, keep_redo) {
                 keep_redo = keep_redo || false;
@@ -1944,7 +1950,7 @@
         factoryObj.renderPDF = function (url, canvasContainer, options) {
             this.options.pdfOptions = options || { scale: 2 };
             factoryObj.options.toolsObj.loading.textContent = 'Wait while loading PDF file...';
-            factoryObj.history.raw_undo_list = factoryObj.options.actionListObj;
+            factoryObj.history.raw_undo_list = angular.copy(factoryObj.options.actionListObj);
 
             PDFJS.disableWorker = false;
             PDFJS.workerSrc = factoryObj.options.pdfWorker;
