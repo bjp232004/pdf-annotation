@@ -305,7 +305,7 @@
             },
             drawingState: function(canvas, ctx, pop) {
                 if (pop[this.options.activePage].length) {
-                    var restore_state = pop[this.options.activePage][pop[this.options.activePage].length - 1];
+                    var restore_state = pop[this.options.activePage][pop[this.options.activePage].length - 2];
                     var img = document.createElement("img");
                     img.src = restore_state;
                     img.onload = function () {
@@ -363,6 +363,8 @@
                 this.canvas.addEventListener('mouseout', this.stop.bind(this));
             },
             start: function(evt) {
+                factoryObj.move.options.selectedObject = -1;
+                factoryObj.move.options.movedObject = -1;
                 if (factoryObj.history.raw_undo_list[factoryObj.history.options.activePage].length > 0) {
                     factoryObj.move.init(this.canvas, this.ctx);
                     factoryObj.move.start(evt);
@@ -479,7 +481,7 @@
                 this.canvas = canvas;
                 this.ctx = ctx;
                 this.ctx.strokeColor = this.options.stroke_color;
-                this.ctx.fillStyle = 'rgba(0,0,0,0)';
+                //this.ctx.fillStyle = 'rgba(0,0,0,0)';
                 this.drawing = false;
                 this.options.flag = true;
             },
@@ -1198,7 +1200,7 @@
                 this.hitTest();
                 if(this.options.movedObject > -1) {
                     this.options.selectedObject = this.options.movedObject;
-                    this.redrawTool();
+                    factoryObj.history.redrawState();
                 }
                 
                 if (this.options.movedObject >= 0) {
@@ -1322,7 +1324,7 @@
                         
                         if(this.options.selectedObject == i) {
                             this.options.isSelectedObj = true;
-                            this.ctx.setLineDash([5, 5]);
+                            this.ctx.setLineDash([0, 0]);
                         } else {
                             this.options.isSelectedObj = false;
                             this.ctx.setLineDash([0, 0]);
@@ -1725,7 +1727,7 @@
             },
             drawTool: function() {
                 if(factoryObj.move.options.isSelectedObj && factoryObj.move.options.isSelectedObj == true) {
-                  this.ctx.setLineDash([5, 5]);
+                  this.ctx.setLineDash([0, 0]);
                 } else {
                   this.ctx.setLineDash([0, 0]);  
                 }
