@@ -321,8 +321,8 @@
                     var img = document.createElement("img");
                     img.src = restore_state;
                     img.onload = function () {
-                        ctx.clearRect(0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
-                        ctx.drawImage(img, 0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
+                        factoryObj.move.ctx.clearRect(0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
+                        factoryObj.move.ctx.drawImage(img, 0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
 
                         if (factoryObj.history.raw_undo_list[factoryObj.history.options.activePage].length > 0) {
                             factoryObj.move.redrawTool();
@@ -744,6 +744,12 @@
                     this.drawing = false;
                 }
             },
+            calculateAspectRatioFit: function(srcWidth, srcHeight, maxWidth, maxHeight) {
+                var ratio = Math.min(maxWidth / srcWidth, maxHeight / srcHeight);
+                var rtnWidth = srcWidth*ratio;
+                var rtnHeight = srcHeight*ratio;
+                return { width: rtnWidth, height: rtnHeight };
+            },
             drawTool: function() {
                 this.ctx.beginPath();
 
@@ -752,7 +758,8 @@
                 this.options.width = parseInt(this.options.endX - this.options.startX);
                 this.options.height = parseInt(this.options.endY - this.options.startY);
 
-                this.ctx.drawImage(this.options.img, this.options.startX, this.options.startY, this.options.width, this.options.height);
+                var imgSize = this.calculateAspectRatioFit(this.options.endX, this.options.endY,  this.options.width, this.options.height);
+                this.ctx.drawImage(this.options.img, this.options.startX, this.options.startY, imgSize.width, imgSize.height);
                 this.ctx.closePath();
 
                 if (!factoryObj.event.options.isSave) {
@@ -798,6 +805,14 @@
                     factoryObj.image.drawTool();
                     factoryObj.image.ctx.closePath();
                     factoryObj.image.ctx.stroke();
+
+                    /* Add image to attachment function call */                    
+                    var tempCanvas = document.createElement('canvas');
+                    tempCanvas.width = this.width;
+                    tempCanvas.height = this.height;
+                    tempCanvas.getContext('2d').drawImage(this, 0, 0);
+                    factoryObj.options.saveAttachment({imageBlobObj :tempCanvas.toDataURL('image/png')});
+                    /** End Attachment */
 
                     factoryObj.image.drawing = false;
                     factoryObj.history.setRawData();
@@ -1324,7 +1339,7 @@
                         
                         if(this.options.selectedObject == i) {
                             this.options.isSelectedObj = true;
-                            this.ctx.setLineDash([0, 0]);
+                            this.ctx.setLineDash([5, 5]);
                         } else {
                             this.options.isSelectedObj = false;
                             this.ctx.setLineDash([0, 0]);
@@ -1415,7 +1430,10 @@
                                     tmpDiffX = this.options.diffX;
                                     tmpDiffY = this.options.diffY;
                                 }
-
+                                
+                                this.options.currentDrawTool.canvas = this.canvas;
+                                this.options.currentDrawTool.ctx = this.ctx;
+                                
                                 this.options.currentDrawTool.redrawTool(tmpData[i].finalTextInfo, tmpDiffX, tmpDiffY);
                             } else {
                                 this.options.currentDrawTool.drawTool();
@@ -1727,7 +1745,7 @@
             },
             drawTool: function() {
                 if(factoryObj.move.options.isSelectedObj && factoryObj.move.options.isSelectedObj == true) {
-                  this.ctx.setLineDash([0, 0]);
+                  this.ctx.setLineDash([5, 5]);
                 } else {
                   this.ctx.setLineDash([0, 0]);  
                 }
@@ -1962,7 +1980,8 @@
             scope: {
                 options: '=',
                 callbackFn: '&',
-                closeFn: '&'
+                closeFn: '&',
+                saveAttachment: '&'
             },
             transclude: true,
             template: '<div id="controllers"><span class="controller btn btn-icn" id="pencil" title="Freehand Drawing"></span><span class="controller btn btn-icn" id="square" title="Square"></span><span class="controller btn btn-icn hide" id="circle" title="Circle"></span><span class="controller btn btn-icn" id="ellipse" title="Ellipse"></span><span class="controller btn btn-icn" id="text" title="Text"></span><span class="controller btn btn-icn" id="arrow" title="Arrow"></span><span class="controller btn btn-icn" id="line" title="Line"></span><span class="controller btn btn-icn" id="undo" title="Undo"></span><span class="controller btn btn-icn" id="redo" title="Redo"></span><span class="controller title" id="activePage" disabled="disabled"></span>&nbsp; out of&nbsp;<span class="controller title" id="totalPage" disabled="disabled"></span><span class="controller btn" id="prevBtn"><</span> &nbsp;<input type="text" class="pagenumber" name="currentPage" id="currentPage" />&nbsp;<span class="controller btn" id="nextBtn">></span><a href="#" id="close" title="Cancel" class="controller btn  btnRight">&nbsp;Cancel</a><span class="controller btn  btnRight" id="savecsf" title="Save & Close">Save & Close</span><span class="controller btn  btnRight" id="applycsf" title="Apply">Apply</span><br /><br /><form id="frm_canvas_tool"><input name="imageupload" id="imageupload" class="input_file" type="file" accept="image/*" ><span class="controller btn hide" id="clear_image">Clear Image</span></form>    Font Size:<select id="fontsize" name="fontsize"><option value="">Select Font Size</option><option value="2">2px</option><option value="5">5px</option><option value="7">7px</option><option value="8">8px</option><option value="9">9px</option><option value="10">10px</option><option value="11">11px</option><option value="12">12px</option><option value="13">13px</option><option value="14">14px</option><option value="16">16px</option><option value="18">18px</option><option value="32">32px</option></select>    Color:<select id="fillstyle" name="fillstyle"><option>Select Color</option><option value="FF0000">Red</option><option value="00FF00">Green</option><option value="0000FF">Blue</option><option value="000000">Black</option><option value="FFFFFF">White</option></select>    Line Width:<select id="linewidth" name="linewidth"><option value="">Select Font Size</option><option value="2">2px</option><option value="5">5px</option><option value="7">7px</option><option value="8">8px</option></select><span class="controller" id="loading"></span></div><div id="canvas-container" class="canvas-container" style="visibility: hidden; height: 0px;"></div><div id="canvas-cont" class="canvas-container"><canvas id="canvas"></canvas><div id="editor_wrapper" style="display:none;"><textarea id="contenteditor"  onkeyup="textAreaAdjust(this)" style="overflow:hidden"></textarea></div></div><div ng-if="errorURL"><h1>URL not found!</h1></div>',
@@ -1996,6 +2015,7 @@
                 pdfAnnotationFactory.options.toolsObj.canvas = angular.element(document.querySelector('#canvas'))[0];
                 pdfAnnotationFactory.options.toolsObj.close = angular.element(document.querySelector('#close'))[0];
                 pdfAnnotationFactory.options.toolsObj.apply = angular.element(document.querySelector('#applycsf'))[0];
+                pdfAnnotationFactory.options.saveAttachment = scope.saveAttachment;
 
                 pdfAnnotationFactory.options.toolsObj.canvasContainer = angular.element(document.querySelector('#canvas-container'))[0];
 
