@@ -309,8 +309,8 @@
                     var img = document.createElement("img");
                     img.src = restore_state;
                     img.onload = function () {
-                        ctx.clearRect(0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
-                        ctx.drawImage(img, 0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
+                        factoryObj.event.options.activeTool.ctx.clearRect(0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
+                        factoryObj.event.options.activeTool.ctx.drawImage(img, 0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
                         factoryObj.event.options.activeTool.drawTool();
                     };
                 }
@@ -1211,11 +1211,12 @@
                 this.options.startDiffX = evt.pageX;
                 this.options.startDiffY = evt.pageY;
                 this.options.cursorStyle = 'move';
+                this.options.isClicked = true;
 
                 this.hitTest();
                 if(this.options.movedObject > -1) {
                     this.options.selectedObject = this.options.movedObject;
-                    factoryObj.history.redrawState();
+                    //factoryObj.history.redrawState();
                 }
                 
                 if (this.options.movedObject >= 0) {
@@ -1228,6 +1229,7 @@
                 this.drawing = true;
             },
             stroke: function(evt) {
+                this.options.isClicked = false;
                 if (this.drawing) {
                     var x = evt.pageX - this.canvas_coords.left;
                     var y = evt.pageY - this.canvas_coords.top;
@@ -1411,7 +1413,7 @@
                                 } else {
                                     this.options.currentDrawTool.options.endY = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].endY[0];
                                 }
-                            } else if (this.options.movedObject == i) {
+                            } else if (this.options.movedObject == i && this.options.isClicked === false) {
                                 this.options.currentDrawTool.options.startX = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].startX[0] + this.options.diffX;
                                 this.options.currentDrawTool.options.startY = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].startY[0] + this.options.diffY;
                                 this.options.currentDrawTool.options.endX = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].endX[0] + this.options.diffX;
