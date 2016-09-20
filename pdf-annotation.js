@@ -305,7 +305,7 @@
             },
             drawingState: function(canvas, ctx, pop) {
                 if (pop[this.options.activePage].length) {
-                    var restore_state = pop[this.options.activePage][pop[this.options.activePage].length - 2];
+                    var restore_state = pop[this.options.activePage][pop[this.options.activePage].length - 1];
                     var img = document.createElement("img");
                     img.src = restore_state;
                     img.onload = function () {
