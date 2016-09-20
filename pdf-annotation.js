@@ -1339,7 +1339,7 @@
                         
                         if(this.options.selectedObject == i) {
                             this.options.isSelectedObj = true;
-                            this.ctx.setLineDash([5, 5]);
+                            this.ctx.setLineDash([0, 0]);
                         } else {
                             this.options.isSelectedObj = false;
                             this.ctx.setLineDash([0, 0]);
@@ -1745,7 +1745,7 @@
             },
             drawTool: function() {
                 if(factoryObj.move.options.isSelectedObj && factoryObj.move.options.isSelectedObj == true) {
-                  this.ctx.setLineDash([5, 5]);
+                  this.ctx.setLineDash([0, 0]);
                 } else {
                   this.ctx.setLineDash([0, 0]);  
                 }
