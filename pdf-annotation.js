@@ -99,6 +99,13 @@
                     factoryObj.options.toolsObj.undo.className += ' cur_disable';
                     factoryObj.options.toolsObj.redo.className += ' cur_disable';
                 }
+                
+                if(this.raw_undo_list.length > 0) {
+                    var actionListObjLength = (factoryObj.options.actionListObj.length > 0) ? factoryObj.options.actionListObj[this.options.activePage].length : 0;
+                    if(this.raw_undo_list[this.options.activePage].length === actionListObjLength) {
+                        factoryObj.options.toolsObj.undo.className += ' cur_disable';
+                    }
+                }
             },
             saveState: function(canvas, list, keep_redo) {
                 keep_redo = keep_redo || false;
@@ -163,7 +170,7 @@
                     }
 
                     var tmpArrUndoData = angular.copy(this.options.arrData);
-
+    
                     if (tmpArrUndoData.name && tmpArrUndoData.name != '') {
                         this.raw_undo_list[this.options.activePage][this.raw_undo_list[this.options.activePage].length] = tmpArrUndoData;
                         this.options.undoFlag = true;
@@ -324,9 +331,9 @@
                         factoryObj.move.ctx.clearRect(0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
                         factoryObj.move.ctx.drawImage(img, 0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
 
-                        if (factoryObj.history.raw_undo_list[factoryObj.history.options.activePage].length > 0) {
+                        //if (factoryObj.history.raw_undo_list[factoryObj.history.options.activePage].length > 0) {
                             factoryObj.move.redrawTool();
-                        }
+                        //}
                     };
                 }
             },
@@ -453,13 +460,24 @@
                 }
             },
             removeObject: function() {
-               if(factoryObj.move.options.selectedObject > -1) { 
-                    factoryObj.history.raw_undo_list[factoryObj.history.options.activePage].splice(factoryObj.move.options.selectedObject, 1);
+               if(factoryObj.move.options.selectedObject > -1) {
+                    if(typeof(factoryObj.history.raw_undo_list[factoryObj.history.options.activePage]) == 'object') {
+                        delete factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][factoryObj.move.options.selectedObject];    
+                    } else {
+                        factoryObj.history.raw_undo_list[factoryObj.history.options.activePage].splice(factoryObj.move.options.selectedObject, 1);  
+                    }
+                    
                     factoryObj.move.options.selectedObject = -1;
                     factoryObj.move.options.isSelectedObj = false;
                     factoryObj.history.redrawState(this.canvas, this.ctx);
                     factoryObj.move.redrawTool();
-                    factoryObj.history.setRawData();
+                    factoryObj.options.optionArrData = factoryObj.history.options.arrData = {
+                        startX: [],
+                        startY: [],
+                        endX: [],
+                        endY: [],
+                        pencilData: []
+                    };
                     factoryObj.history.saveState(this.canvas);
                } 
             }
@@ -1212,11 +1230,13 @@
                 this.options.startDiffY = evt.pageY;
                 this.options.cursorStyle = 'move';
                 this.options.isClicked = true;
+                this.options.diffX = 0;
+                this.options.diffY = 0;
 
                 this.hitTest();
                 if(this.options.movedObject > -1) {
                     this.options.selectedObject = this.options.movedObject;
-                    //factoryObj.history.redrawState();
+                    factoryObj.history.redrawState();
                 }
                 
                 if (this.options.movedObject >= 0) {
@@ -1302,6 +1322,7 @@
                         endY: [],
                         pencilData: []
                     };
+                    
                     factoryObj.history.saveState(this.canvas);
                     this.options.movedObject = -1;
                     this.options.cursorStyle = 'default';
@@ -1315,6 +1336,8 @@
                         this.options.prevTool = '';
                     }
                 }
+
+                this.options.isClicked = false;
             },
             drawTool: function() {
                 this.ctx.beginPath();
@@ -1332,150 +1355,156 @@
                 this.ctx.stroke();
             },
             redrawTool: function() {
-                var tmpData = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage];
-                var cntStart = tmpData.length - 1;
+                if(factoryObj.history.raw_undo_list[factoryObj.history.options.activePage].length > 0) {
+                    var tmpData = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage];
+                    var cntStart = tmpData.length - 1;
 
-                if (cntStart >= 0) {
-                    for (i = 0; i <= cntStart; i++) {
-                        this.ctx.beginPath();
-                        
-                        if(this.options.selectedObject == i) {
-                            this.options.isSelectedObj = true;
-                            this.ctx.setLineDash([0, 0]);
-                        } else {
-                            this.options.isSelectedObj = false;
-                            this.ctx.setLineDash([0, 0]);
-                        }
-
-                        factoryObj.history.options.font_size = tmpData[i].font_size;
-                        factoryObj.history.options.fillStyle = tmpData[i].fillStyle;
-                        factoryObj.history.options.lineWidth = tmpData[i].lineWidth;
-                        factoryObj.history.setStyleElement(this.canvas, this.ctx);
-                        if (this.options.arrTool.indexOf(tmpData[i].name) > -1) {
-                            if (tmpData[i].name === 'square') {
-                                this.options.currentDrawTool = factoryObj.square;
+                    if (cntStart >= 0) {
+                        for (i = 0; i <= cntStart; i++) {
+                            if(tmpData[i] === undefined) {
+                                continue;   
+                            }
+                            this.ctx.beginPath();
+                            
+                            if(this.options.selectedObject == i) {
+                                this.options.isSelectedObj = true;
+                                this.ctx.setLineDash([5, 5]);
+                            } else {
+                                this.options.isSelectedObj = false;
+                                this.ctx.setLineDash([0, 0]);
                             }
 
-                            if (tmpData[i].name === 'circle') {
-                                this.options.currentDrawTool = factoryObj.circle;
-                            }
+                            factoryObj.history.options.font_size = tmpData[i].font_size;
+                            factoryObj.history.options.fillStyle = tmpData[i].fillStyle;
+                            factoryObj.history.options.lineWidth = tmpData[i].lineWidth;
+                            factoryObj.history.setStyleElement(this.canvas, this.ctx);
+                            if (this.options.arrTool.indexOf(tmpData[i].name) > -1) {
+                                if (tmpData[i].name === 'square') {
+                                    this.options.currentDrawTool = factoryObj.square;
+                                }
 
-                            if (tmpData[i].name === 'image') {
-                                this.options.currentDrawTool = factoryObj.image;
-                                this.options.currentDrawTool.options.img = tmpData[i].imageURL;
-                                var img = new Image();
+                                if (tmpData[i].name === 'circle') {
+                                    this.options.currentDrawTool = factoryObj.circle;
+                                }
 
-                                img.onload = function (obj) {};
+                                if (tmpData[i].name === 'image') {
+                                    this.options.currentDrawTool = factoryObj.image;
+                                    this.options.currentDrawTool.options.img = tmpData[i].imageURL;
+                                    var img = new Image();
 
-                                img.src = this.options.currentDrawTool.options.img;
-                                this.options.currentDrawTool.options.img = img;
-                            }
+                                    img.onload = function (obj) {};
 
-                            if (tmpData[i].name === 'line') {
-                                this.options.currentDrawTool = factoryObj.line;
-                            }
+                                    img.src = this.options.currentDrawTool.options.img;
+                                    this.options.currentDrawTool.options.img = img;
+                                }
 
-                            if (tmpData[i].name === 'arrow') {
-                                this.options.currentDrawTool = factoryObj.arrow;
-                            }
+                                if (tmpData[i].name === 'line') {
+                                    this.options.currentDrawTool = factoryObj.line;
+                                }
 
-                            if (tmpData[i].name === 'ellipse') {
-                                this.options.currentDrawTool = factoryObj.ellipse;
-                            }
+                                if (tmpData[i].name === 'arrow') {
+                                    this.options.currentDrawTool = factoryObj.arrow;
+                                }
 
-                            if (tmpData[i].name === 'text') {
-                                this.options.currentDrawTool = factoryObj.text;
-                            }
-                            this.options.currentDrawTool.init(factoryObj.options.canvas,factoryObj.options.ctx);
-                            this.options.currentDrawTool.drawing = true;
+                                if (tmpData[i].name === 'ellipse') {
+                                    this.options.currentDrawTool = factoryObj.ellipse;
+                                }
 
-                            if (this.options.movedObject == i && this.options.isResize === true) {
-                                if (this.options.arrResize.startX === true) {
+                                if (tmpData[i].name === 'text') {
+                                    this.options.currentDrawTool = factoryObj.text;
+                                }
+                                this.options.currentDrawTool.init(factoryObj.options.canvas,factoryObj.options.ctx);
+                                this.options.currentDrawTool.drawing = true;
+
+                                if (this.options.movedObject == i && this.options.isResize === true) {
+                                    if (this.options.arrResize.startX === true) {
+                                        this.options.currentDrawTool.options.startX = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].startX[0] + this.options.diffX;
+                                    } else {
+                                        this.options.currentDrawTool.options.startX = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].startX[0];
+                                    }
+
+                                    if (this.options.arrResize.startY === true) {
+                                        this.options.currentDrawTool.options.startY = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].startY[0] + this.options.diffY;
+                                    } else {
+                                        this.options.currentDrawTool.options.startY = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].startY[0];
+                                    }
+
+                                    if (this.options.arrResize.endX === true) {
+                                        this.options.currentDrawTool.options.endX = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].endX[0] + this.options.diffX;
+                                    } else {
+                                        this.options.currentDrawTool.options.endX = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].endX[0];
+                                    }
+
+                                    if (this.options.arrResize.endY === true) {
+                                        this.options.currentDrawTool.options.endY = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].endY[0] + this.options.diffY;
+                                    } else {
+                                        this.options.currentDrawTool.options.endY = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].endY[0];
+                                    }
+                                } else if (this.options.movedObject == i && this.options.isClicked === false) {
                                     this.options.currentDrawTool.options.startX = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].startX[0] + this.options.diffX;
-                                } else {
-                                    this.options.currentDrawTool.options.startX = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].startX[0];
-                                }
-
-                                if (this.options.arrResize.startY === true) {
                                     this.options.currentDrawTool.options.startY = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].startY[0] + this.options.diffY;
-                                } else {
-                                    this.options.currentDrawTool.options.startY = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].startY[0];
-                                }
-
-                                if (this.options.arrResize.endX === true) {
                                     this.options.currentDrawTool.options.endX = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].endX[0] + this.options.diffX;
-                                } else {
-                                    this.options.currentDrawTool.options.endX = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].endX[0];
-                                }
-
-                                if (this.options.arrResize.endY === true) {
                                     this.options.currentDrawTool.options.endY = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].endY[0] + this.options.diffY;
                                 } else {
-                                    this.options.currentDrawTool.options.endY = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].endY[0];
+                                    this.options.currentDrawTool.options.startX = tmpData[i].startX[0];
+                                    this.options.currentDrawTool.options.startY = tmpData[i].startY[0];
+                                    this.options.currentDrawTool.options.endX = tmpData[i].endX[0];
+                                    this.options.currentDrawTool.options.endY = tmpData[i].endY[0];
                                 }
-                            } else if (this.options.movedObject == i && this.options.isClicked === false) {
-                                this.options.currentDrawTool.options.startX = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].startX[0] + this.options.diffX;
-                                this.options.currentDrawTool.options.startY = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].startY[0] + this.options.diffY;
-                                this.options.currentDrawTool.options.endX = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].endX[0] + this.options.diffX;
-                                this.options.currentDrawTool.options.endY = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.movedObject].endY[0] + this.options.diffY;
-                            } else {
-                                this.options.currentDrawTool.options.startX = tmpData[i].startX[0];
-                                this.options.currentDrawTool.options.startY = tmpData[i].startY[0];
-                                this.options.currentDrawTool.options.endX = tmpData[i].endX[0];
-                                this.options.currentDrawTool.options.endY = tmpData[i].endY[0];
-                            }
 
-                            if (tmpData[i].name === 'text') {
-                                var tmpDiffX = 0;
-                                var tmpDiffY = 0;
-                                if (this.options.movedObject === i) {
-                                    tmpDiffX = this.options.diffX;
-                                    tmpDiffY = this.options.diffY;
-                                }
-                                
-                                this.options.currentDrawTool.canvas = this.canvas;
-                                this.options.currentDrawTool.ctx = this.ctx;
-                                
-                                this.options.currentDrawTool.redrawTool(tmpData[i].finalTextInfo, tmpDiffX, tmpDiffY);
-                            } else {
-                                this.options.currentDrawTool.drawTool();
-                            }
-                            this.options.currentDrawTool.drawing = false;
-                        } else {
-                            if (tmpData[i].name === 'pencil') {
-                                this.options.currentDrawTool = factoryObj.pencil;
-                                this.options.currentDrawTool.options.pencilData = tmpData[i].pencilData;
-                                if (this.options.movedObject == i) {
-                                    this.options.currentDrawTool.options.diffX = this.options.endX - this.options.startX;
-                                    this.options.currentDrawTool.options.diffY = this.options.endY - this.options.startY;
-                                } else {
-                                    this.options.currentDrawTool.options.diffX = 0;
-                                    this.options.currentDrawTool.options.diffY = 0;
-                                }
-                            }
-
-                            if (this.options.currentDrawTool) {
-                                this.options.currentDrawTool.drawing = true;
-                                if (tmpData[i].name === 'pencil') {
-                                    this.options.currentDrawTool.redrawTool();
+                                if (tmpData[i].name === 'text') {
+                                    var tmpDiffX = 0;
+                                    var tmpDiffY = 0;
+                                    if (this.options.movedObject === i) {
+                                        tmpDiffX = this.options.diffX;
+                                        tmpDiffY = this.options.diffY;
+                                    }
+                                    
+                                    this.options.currentDrawTool.canvas = this.canvas;
+                                    this.options.currentDrawTool.ctx = this.ctx;
+                                    
+                                    this.options.currentDrawTool.redrawTool(tmpData[i].finalTextInfo, tmpDiffX, tmpDiffY);
                                 } else {
                                     this.options.currentDrawTool.drawTool();
                                 }
                                 this.options.currentDrawTool.drawing = false;
+                            } else {
+                                if (tmpData[i].name === 'pencil') {
+                                    this.options.currentDrawTool = factoryObj.pencil;
+                                    this.options.currentDrawTool.options.pencilData = tmpData[i].pencilData;
+                                    if (this.options.movedObject == i) {
+                                        this.options.currentDrawTool.options.diffX = this.options.endX - this.options.startX;
+                                        this.options.currentDrawTool.options.diffY = this.options.endY - this.options.startY;
+                                    } else {
+                                        this.options.currentDrawTool.options.diffX = 0;
+                                        this.options.currentDrawTool.options.diffY = 0;
+                                    }
+                                }
+
+                                if (this.options.currentDrawTool) {
+                                    this.options.currentDrawTool.drawing = true;
+                                    if (tmpData[i].name === 'pencil') {
+                                        this.options.currentDrawTool.redrawTool();
+                                    } else {
+                                        this.options.currentDrawTool.drawTool();
+                                    }
+                                    this.options.currentDrawTool.drawing = false;
+                                }
                             }
+                            this.ctx.stroke();
                         }
-                        this.ctx.stroke();
-                    }
 
-                    var canvasData = this.canvas.toDataURL();
-
-                    if (!factoryObj.event.options.isSave) {
-                        factoryObj.history.undo_list[factoryObj.history.options.activePage][0] = canvasData;
-                    } else {
-                        factoryObj.history.final_canvas_url[factoryObj.history.options.activePage] = canvasData;
+                        
                     }
-                    factoryObj.history.resetStyleElement();
                 }
+                var canvasData = this.canvas.toDataURL();
+
+                if (!factoryObj.event.options.isSave) {
+                    factoryObj.history.undo_list[factoryObj.history.options.activePage][0] = canvasData;
+                } else {
+                    factoryObj.history.final_canvas_url[factoryObj.history.options.activePage] = canvasData;
+                }
+                factoryObj.history.resetStyleElement();
             },
             resizeCheck: function(startX, startY, endX, endY) {
                 if (this.options.startX >= startX && this.options.startX <= startX + this.options.resizeMargin && this.options.startY >= startY && this.options.startY <= startY + this.options.resizeMargin) {
@@ -1544,6 +1573,9 @@
                 for (i = cntStart; i >= 0; i--) {
                     if (this.options.movedObject > -1) {
                         break;
+                    }
+                    if(tmpData[i] === undefined) {
+                        continue;   
                     }
                     factoryObj.history.options.arrData = tmpData[i];
 
@@ -1747,7 +1779,7 @@
             },
             drawTool: function() {
                 if(factoryObj.move.options.isSelectedObj && factoryObj.move.options.isSelectedObj == true) {
-                  this.ctx.setLineDash([0, 0]);
+                  this.ctx.setLineDash([5, 5]);
                 } else {
                   this.ctx.setLineDash([0, 0]);  
                 }
@@ -1966,7 +1998,7 @@
         factoryObj.renderPDF = function (url, canvasContainer, options) {
             this.options.pdfOptions = options || { scale: 2 };
             factoryObj.options.toolsObj.loading.textContent = 'Wait while loading PDF file...';
-            factoryObj.history.raw_undo_list = factoryObj.options.actionListObj;
+            factoryObj.history.raw_undo_list = angular.copy(factoryObj.options.actionListObj);
 
             PDFJS.disableWorker = false;
             PDFJS.workerSrc = factoryObj.options.pdfWorker;
