@@ -370,8 +370,6 @@
                 this.canvas.addEventListener('mouseout', this.stop.bind(this));
             },
             start: function(evt) {
-                factoryObj.move.options.selectedObject = -1;
-                factoryObj.move.options.movedObject = -1;
                 if (factoryObj.history.raw_undo_list[factoryObj.history.options.activePage].length > 0) {
                     factoryObj.move.init(this.canvas, this.ctx);
                     factoryObj.move.start(evt);
@@ -461,6 +459,7 @@
             },
             removeObject: function() {
                if(factoryObj.move.options.selectedObject > -1) {
+                    factoryObj.history.saveState(this.canvas);
                     if(typeof(factoryObj.history.raw_undo_list[factoryObj.history.options.activePage]) == 'object') {
                         delete factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][factoryObj.move.options.selectedObject];    
                     } else {
@@ -470,7 +469,6 @@
                     factoryObj.move.options.selectedObject = -1;
                     factoryObj.move.options.isSelectedObj = false;
                     factoryObj.history.redrawState(this.canvas, this.ctx);
-                    factoryObj.move.redrawTool();
                     factoryObj.options.optionArrData = factoryObj.history.options.arrData = {
                         startX: [],
                         startY: [],
@@ -478,7 +476,6 @@
                         endY: [],
                         pencilData: []
                     };
-                    factoryObj.history.saveState(this.canvas);
                } 
             }
         };
@@ -776,7 +773,7 @@
                 this.options.width = parseInt(this.options.endX - this.options.startX);
                 this.options.height = parseInt(this.options.endY - this.options.startY);
 
-                var imgSize = this.calculateAspectRatioFit(this.options.endX, this.options.endY,  this.options.width, this.options.height);
+                var imgSize = this.calculateAspectRatioFit(this.options.srcWidth, this.options.srcHeight,  this.options.width, this.options.height);
                 this.ctx.drawImage(this.options.img, this.options.startX, this.options.startY, imgSize.width, imgSize.height);
                 this.ctx.closePath();
 
@@ -792,17 +789,17 @@
                     this.ctx.beginPath();
                     this.ctx.lineWidth = 1;
                     this.ctx.fillStyle = '#FFFFFF';
-                    factoryObj.image.options.endX = factoryObj.image.options.startX + factoryObj.image.options.width;
-                    factoryObj.image.options.endY = factoryObj.image.options.startY + factoryObj.image.options.height;
+                    factoryObj.image.options.endX = factoryObj.image.options.startX + imgSize.width;
+                    factoryObj.image.options.endY = factoryObj.image.options.startY + imgSize.height;
                     this.ctx.rect(factoryObj.image.options.startX, factoryObj.image.options.startY, 8, 8);
                     this.ctx.rect(factoryObj.image.options.startX, factoryObj.image.options.endY - 8, 8, 8);
                     this.ctx.rect(factoryObj.image.options.endX - 8, factoryObj.image.options.endY - 8, 8, 8);
                     this.ctx.rect(factoryObj.image.options.endX - 8, factoryObj.image.options.startY, 8, 8);
 
-                    this.ctx.rect(factoryObj.image.options.endX - factoryObj.image.options.width, factoryObj.image.options.endY - parseInt(factoryObj.image.options.height / 2) - 8, 8, 8);
-                    this.ctx.rect(factoryObj.image.options.endX - 8, factoryObj.image.options.endY - parseInt(factoryObj.image.options.height / 2) - 8, 8, 8);
-                    this.ctx.rect(factoryObj.image.options.endX - parseInt(factoryObj.image.options.width / 2) - 8, factoryObj.image.options.endY - 8, 8, 8);
-                    this.ctx.rect(factoryObj.image.options.endX - parseInt(factoryObj.image.options.width / 2) - 8, factoryObj.image.options.endY - factoryObj.image.options.height, 8, 8);
+                    this.ctx.rect(factoryObj.image.options.endX - imgSize.width, factoryObj.image.options.endY - parseInt(imgSize.height / 2) - 8, 8, 8);
+                    this.ctx.rect(factoryObj.image.options.endX - 8, factoryObj.image.options.endY - parseInt(imgSize.height / 2) - 8, 8, 8);
+                    this.ctx.rect(factoryObj.image.options.endX - parseInt(imgSize.width / 2) - 8, factoryObj.image.options.endY - 8, 8, 8);
+                    this.ctx.rect(factoryObj.image.options.endX - parseInt(imgSize.width / 2) - 8, factoryObj.image.options.endY - imgSize.height, 8, 8);
 
                     this.ctx.fill();
                     this.ctx.stroke();
@@ -817,6 +814,8 @@
                     factoryObj.image.options.startY = 10;
                     factoryObj.image.options.endX = this.width;
                     factoryObj.image.options.endY = this.height;
+                    factoryObj.image.options.srcWidth = this.width;
+                    factoryObj.image.options.srcHeight = this.height;
                     factoryObj.image.ctx.beginPath();
                     factoryObj.image.drawing = true;
                     factoryObj.history.drawingState(factoryObj.image.canvas, factoryObj.image.ctx, factoryObj.history.undo_list);
@@ -1230,15 +1229,24 @@
                 this.options.startDiffY = evt.pageY;
                 this.options.cursorStyle = 'move';
                 this.options.isClicked = true;
+                
                 this.options.diffX = 0;
                 this.options.diffY = 0;
 
+                if(this.options.selectedObject > -1) {
+                    this.options.selectedObject = -1;
+                    this.options.movedObject = -1;
+                    this.options.isSelectedObj = false;
+                    this.redrawTool();
+                }
+                
+                //factoryObj.history.redrawState();
                 this.hitTest();
                 if(this.options.movedObject > -1) {
                     this.options.selectedObject = this.options.movedObject;
                     factoryObj.history.redrawState();
                 }
-                
+
                 if (this.options.movedObject >= 0) {
                     this.options.prevTool = factoryObj.event.options.activeTool;
                     factoryObj.event.options.activeTool = factoryObj.move;
@@ -1778,11 +1786,6 @@
                 this.ctx.stroke();
             },
             drawTool: function() {
-                if(factoryObj.move.options.isSelectedObj && factoryObj.move.options.isSelectedObj == true) {
-                  this.ctx.setLineDash([5, 5]);
-                } else {
-                  this.ctx.setLineDash([0, 0]);  
-                }
                 lineP1 = { x: this.options.startX, y: this.options.startY, r: 0 };
                 lineP2 = { x: this.options.startX, y: this.options.endY, r: 0 };
                 lineP3 = { x: this.options.endX, y: this.options.endY, r: 0 };
