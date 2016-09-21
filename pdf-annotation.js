@@ -776,8 +776,8 @@
                 this.options.width = parseInt(this.options.endX - this.options.startX);
                 this.options.height = parseInt(this.options.endY - this.options.startY);
 
-                var imgSize = this.calculateAspectRatioFit(this.options.endX, this.options.endY,  this.options.width, this.options.height);
-                this.ctx.drawImage(this.options.img, this.options.startX, this.options.startY, imgSize.width, imgSize.height);
+                //var imgSize = this.calculateAspectRatioFit(this.options.endX, this.options.endY,  this.options.width, this.options.height);
+                this.ctx.drawImage(this.options.img, this.options.startX, this.options.startY, this.options.width, this.options.height);
                 this.ctx.closePath();
 
                 if (!factoryObj.event.options.isSave) {
@@ -1236,7 +1236,7 @@
                 this.hitTest();
                 if(this.options.movedObject > -1) {
                     this.options.selectedObject = this.options.movedObject;
-                    factoryObj.history.redrawState();
+                    //factoryObj.history.redrawState();
                 }
                 
                 if (this.options.movedObject >= 0) {
@@ -1368,7 +1368,7 @@
                             
                             if(this.options.selectedObject == i) {
                                 this.options.isSelectedObj = true;
-                                this.ctx.setLineDash([5, 5]);
+                                this.ctx.setLineDash([0, 0]);
                             } else {
                                 this.options.isSelectedObj = false;
                                 this.ctx.setLineDash([0, 0]);
@@ -1779,7 +1779,7 @@
             },
             drawTool: function() {
                 if(factoryObj.move.options.isSelectedObj && factoryObj.move.options.isSelectedObj == true) {
-                  this.ctx.setLineDash([5, 5]);
+                  this.ctx.setLineDash([0, 0]);
                 } else {
                   this.ctx.setLineDash([0, 0]);  
                 }
