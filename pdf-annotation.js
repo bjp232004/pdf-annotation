@@ -781,7 +781,7 @@
                     this.ctx.beginPath();
                     this.ctx.lineWidth = 3;
                     this.ctx.strokeStyle = '#000000';
-                    this.ctx.rect(this.options.startX + 2, this.options.startY + 2, this.options.width - 4, this.options.height - 4);
+                    this.ctx.rect(this.options.startX + 2, this.options.startY + 2, imgSize.width - 4,imgSize.height - 4);
                     this.ctx.stroke();
 
                     this.ctx.closePath();
