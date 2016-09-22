@@ -1331,7 +1331,9 @@
                         pencilData: []
                     };
                     
-                    factoryObj.history.saveState(this.canvas);
+                    if(this.options.isClicked === false) {
+                        factoryObj.history.saveState(this.canvas);
+                    }
                     this.options.movedObject = -1;
                     this.options.cursorStyle = 'default';
                     factoryObj.options.toolsObj.canvas.style.cursor = this.options.cursorStyle;
