@@ -1972,7 +1972,7 @@
                         
                         document.addEventListener('keydown', function(e) {
                             if(factoryObj.options.toolsObj.canvas) {
-                              if(e.keyCode == 8) {
+                              if(e.keyCode == 8 || e.keyCode == 46) {
                                   factoryObj.event.removeObject();
                               }
                             }
