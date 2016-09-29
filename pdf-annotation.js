@@ -67,6 +67,7 @@
             raw_redo_list: [],
             raw_undo_ver_list: [],
             raw_redo_ver_list: [],
+            deletedAttachmentArr: [],
             tmp_raw_undo_list: '',
             setStyleElement: function(canvas, ctx) {
                 ctx.fillStyle = '#' + this.options.fillStyle.replace('#', '');
@@ -202,6 +203,7 @@
 
                 if (factoryObj.options.optionArrData.name === "image") {
                     factoryObj.options.optionArrData.imageURL = factoryObj.event.options.activeTool.options.uploadedImage[factoryObj.event.options.activeTool.options.uploadedImage.length - 1];
+                    factoryObj.options.optionArrData.attachmentURL = factoryObj.event.options.activeTool.options.attachmentURL;   
                 }
 
                 if (factoryObj.options.optionArrData.name === "circle") {
@@ -420,7 +422,7 @@
                 var blob = this.dataURLtoBlob(dataurl);
 
                 if (typeof factoryObj.options.callbackFn == "function") {
-                    factoryObj.options.callbackFn({ blob: blob,flag:action,actionListObj: factoryObj.history.raw_undo_list });
+                    factoryObj.options.callbackFn({ blob: blob,flag:action,actionListObj: factoryObj.history.raw_undo_list, deletedAttachment: factoryObj.history.deletedAttachmentArr });
                 } else {
                     doc.save();
                 }
@@ -460,6 +462,9 @@
             removeObject: function() {
                if(factoryObj.move.options.selectedObject > -1) {
                     factoryObj.history.saveState(this.canvas);
+                    if(factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][factoryObj.move.options.selectedObject].name === 'image') {
+                        factoryObj.history.deletedAttachmentArr.push(factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][factoryObj.move.options.selectedObject].attachmentURL);      
+                    }
                     if(typeof(factoryObj.history.raw_undo_list[factoryObj.history.options.activePage]) == 'object') {
                         delete factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][factoryObj.move.options.selectedObject];    
                     } else {
@@ -702,6 +707,7 @@
             name: 'image',
             options: {
                 activeImage: '',
+                attachmentURL: '',
                 uploadedImage: [],
                 width: '',
                 height: '',
@@ -828,13 +834,14 @@
                     tempCanvas.width = this.width;
                     tempCanvas.height = this.height;
                     tempCanvas.getContext('2d').drawImage(this, 0, 0);
-                    factoryObj.options.saveAttachment({imageBlobObj :tempCanvas.toDataURL('image/png')});
                     /** End Attachment */
-
-                    factoryObj.image.drawing = false;
-                    factoryObj.history.setRawData();
-                    factoryObj.history.saveState(factoryObj.image.canvas);
-                    factoryObj.options.toolsObj.frm_canvas_tool.reset();
+                    factoryObj.options.saveAttachment({imageBlobObj :tempCanvas.toDataURL('image/png'), callback: function(url){
+                        factoryObj.image.options.attachmentURL = url;
+                        factoryObj.image.drawing = false;
+                        factoryObj.history.setRawData();
+                        factoryObj.history.saveState(factoryObj.image.canvas);
+                        factoryObj.options.toolsObj.frm_canvas_tool.reset();
+                    }});
                 };
 
                 img.src = URL.createObjectURL(frmData);
@@ -2076,6 +2083,7 @@
                         pdfAnnotationFactory.history.raw_redo_list = [];
                         pdfAnnotationFactory.history.raw_undo_ver_list = [];
                         pdfAnnotationFactory.history.raw_redo_ver_list = [];
+                        pdfAnnotationFactory.history.deletedAttachmentArr = [];
                         pdfAnnotationFactory.history.tmp_raw_undo_list = '';
                         pdfAnnotationFactory.history.options.activePage = 0;
                         pdfAnnotationFactory.history.manageActiveBtn('');
