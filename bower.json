@@ -1,13 +1,13 @@
 {
   "name": "pdf-annotation",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "main": [
     "dist/pdf-annotation.js",
     "dist/css/style.css"
   ],
   "homepage": "https://github.com/bjp232004/pdf-annotation",
   "authors": [
-    "Bhargav <bjp232004@gmail.com>"
+    "Bhargav Patel"
   ],
   "description": "PDF Annotation using canvas image rendering tool.",
   "keywords": [
