@@ -473,6 +473,7 @@
                     
                     factoryObj.move.options.selectedObject = -1;
                     factoryObj.move.options.isSelectedObj = false;
+                    this.ctx.setLineDash([0, 0]);
                     factoryObj.history.redrawState(this.canvas, this.ctx);
                     factoryObj.options.optionArrData = factoryObj.history.options.arrData = {
                         startX: [],
@@ -834,6 +835,8 @@
                     tempCanvas.width = this.width;
                     tempCanvas.height = this.height;
                     tempCanvas.getContext('2d').drawImage(this, 0, 0);
+                    factoryObj.image.options.imageURL = tempCanvas.toDataURL('image/png');
+                    factoryObj.image.options.uploadedImage.push(factoryObj.image.options.imageURL);
                     /** End Attachment */
                     factoryObj.options.saveAttachment({imageBlobObj :tempCanvas.toDataURL('image/png'), callback: function(url){
                         factoryObj.image.options.attachmentURL = url;
@@ -845,7 +848,7 @@
                 };
 
                 img.src = URL.createObjectURL(frmData);
-                this.options.uploadedImage.push(URL.createObjectURL(frmData));
+
                 this.options.img = img;
             },
             resetImage: function() {
@@ -1378,7 +1381,7 @@
 
                     if (cntStart >= 0) {
                         for (i = 0; i <= cntStart; i++) {
-                            if(tmpData[i] === undefined) {
+                            if(tmpData[i] === undefined || tmpData[i] === null) {
                                 continue;   
                             }
                             this.ctx.beginPath();
@@ -1500,6 +1503,8 @@
 
                                 if (this.options.currentDrawTool) {
                                     this.options.currentDrawTool.drawing = true;
+                                    this.options.currentDrawTool.canvas = this.canvas;
+                                    this.options.currentDrawTool.ctx = this.ctx;
                                     if (tmpData[i].name === 'pencil') {
                                         this.options.currentDrawTool.redrawTool();
                                     } else {
