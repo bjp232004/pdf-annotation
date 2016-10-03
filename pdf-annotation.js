@@ -1596,7 +1596,7 @@
                     if (this.options.movedObject > -1) {
                         break;
                     }
-                    if(tmpData[i] === undefined) {
+                    if(tmpData[i] === undefined || tmpData[i] === null) {
                         continue;   
                     }
                     factoryObj.history.options.arrData = tmpData[i];
