@@ -824,11 +824,11 @@
                     factoryObj.image.options.srcWidth = this.width;
                     factoryObj.image.options.srcHeight = this.height;
                     factoryObj.image.ctx.beginPath();
-                    factoryObj.image.drawing = true;
+                    //factoryObj.image.drawing = true;
                     factoryObj.history.drawingState(factoryObj.image.canvas, factoryObj.image.ctx, factoryObj.history.undo_list);
                     factoryObj.image.drawTool();
                     factoryObj.image.ctx.closePath();
-                    factoryObj.image.ctx.stroke();
+                   // factoryObj.image.ctx.stroke();
 
                     /* Add image to attachment function call */                    
                     var tempCanvas = document.createElement('canvas');
