@@ -100,7 +100,7 @@
                     factoryObj.options.toolsObj.undo.className += ' cur_disable';
                     factoryObj.options.toolsObj.redo.className += ' cur_disable';
                 }
-                
+
                 if(this.raw_undo_list.length > 0) {
                     var actionListObjLength = (factoryObj.options.actionListObj.length > 0) ? factoryObj.options.actionListObj[this.options.activePage].length : 0;
                     if(this.raw_undo_list[this.options.activePage].length === actionListObjLength) {
@@ -171,7 +171,7 @@
                     }
 
                     var tmpArrUndoData = angular.copy(this.options.arrData);
-    
+
                     if (tmpArrUndoData.name && tmpArrUndoData.name != '') {
                         this.raw_undo_list[this.options.activePage][this.raw_undo_list[this.options.activePage].length] = tmpArrUndoData;
                         this.options.undoFlag = true;
@@ -203,7 +203,9 @@
 
                 if (factoryObj.options.optionArrData.name === "image") {
                     factoryObj.options.optionArrData.imageURL = factoryObj.event.options.activeTool.options.uploadedImage[factoryObj.event.options.activeTool.options.uploadedImage.length - 1];
-                    factoryObj.options.optionArrData.attachmentURL = factoryObj.event.options.activeTool.options.attachmentURL;   
+                    factoryObj.options.optionArrData.attachmentURL = factoryObj.event.options.activeTool.options.attachmentURL;
+                    factoryObj.options.optionArrData.srcWidth = factoryObj.event.options.activeTool.options.srcWidth;
+                    factoryObj.options.optionArrData.srcHeight = factoryObj.event.options.activeTool.options.srcHeight;
                 }
 
                 if (factoryObj.options.optionArrData.name === "circle") {
@@ -334,7 +336,7 @@
                         factoryObj.move.ctx.drawImage(img, 0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
 
                         //if (factoryObj.history.raw_undo_list[factoryObj.history.options.activePage].length > 0) {
-                            factoryObj.move.redrawTool();
+                        factoryObj.move.redrawTool();
                         //}
                     };
                 }
@@ -460,17 +462,17 @@
                 }
             },
             removeObject: function() {
-               if(factoryObj.move.options.selectedObject > -1) {
+                if(factoryObj.move.options.selectedObject > -1) {
                     factoryObj.history.saveState(this.canvas);
                     if(factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][factoryObj.move.options.selectedObject].name === 'image') {
-                        factoryObj.history.deletedAttachmentArr.push(factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][factoryObj.move.options.selectedObject].attachmentURL);      
+                        factoryObj.history.deletedAttachmentArr.push(factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][factoryObj.move.options.selectedObject].attachmentURL);
                     }
                     if(typeof(factoryObj.history.raw_undo_list[factoryObj.history.options.activePage]) == 'object') {
-                        delete factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][factoryObj.move.options.selectedObject];    
+                        delete factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][factoryObj.move.options.selectedObject];
                     } else {
-                        factoryObj.history.raw_undo_list[factoryObj.history.options.activePage].splice(factoryObj.move.options.selectedObject, 1);  
+                        factoryObj.history.raw_undo_list[factoryObj.history.options.activePage].splice(factoryObj.move.options.selectedObject, 1);
                     }
-                    
+
                     factoryObj.move.options.selectedObject = -1;
                     factoryObj.move.options.isSelectedObj = false;
                     this.ctx.setLineDash([0, 0]);
@@ -482,7 +484,7 @@
                         endY: [],
                         pencilData: []
                     };
-               } 
+                }
             }
         };
 
@@ -713,7 +715,9 @@
                 width: '',
                 height: '',
                 wdthHghtRatio: '',
-                img: ''
+                img: '',
+                srcWidth:'',
+                srcHeight:''
             },
             init: function(canvas, ctx) {
                 this.canvas = canvas;
@@ -776,7 +780,6 @@
                 this.ctx.beginPath();
 
                 factoryObj.history.setStyleElement(this.canvas, this.ctx);
-
                 this.options.width = parseInt(this.options.endX - this.options.startX);
                 this.options.height = parseInt(this.options.endY - this.options.startY);
 
@@ -788,7 +791,7 @@
                     this.ctx.beginPath();
                     this.ctx.lineWidth = 3;
                     this.ctx.strokeStyle = '#000000';
-                    this.ctx.rect(this.options.startX + 2, this.options.startY + 2, imgSize.width - 4,imgSize.height - 4);
+                    this.ctx.rect(this.options.startX + 2, this.options.startY + 2, imgSize.width - 4,imgSize.height - 4);
                     this.ctx.stroke();
 
                     this.ctx.closePath();
@@ -819,8 +822,8 @@
                 img.onload = function (obj) {
                     factoryObj.image.options.startX = 10;
                     factoryObj.image.options.startY = 10;
-                    factoryObj.image.options.endX = this.width;
-                    factoryObj.image.options.endY = this.height;
+                    factoryObj.image.options.endX = this.width + 10;
+                    factoryObj.image.options.endY = this.height + 10;
                     factoryObj.image.options.srcWidth = this.width;
                     factoryObj.image.options.srcHeight = this.height;
                     factoryObj.image.ctx.beginPath();
@@ -828,12 +831,14 @@
                     factoryObj.history.drawingState(factoryObj.image.canvas, factoryObj.image.ctx, factoryObj.history.undo_list);
                     factoryObj.image.drawTool();
                     factoryObj.image.ctx.closePath();
-                   // factoryObj.image.ctx.stroke();
+                    //factoryObj.image.ctx.stroke();
 
-                    /* Add image to attachment function call */                    
+                    /* Add image to attachment function call */
                     var tempCanvas = document.createElement('canvas');
                     tempCanvas.width = this.width;
                     tempCanvas.height = this.height;
+                    tempCanvas.srcWidth = this.width;
+                    tempCanvas.srcHeight = this.height;
                     tempCanvas.getContext('2d').drawImage(this, 0, 0);
                     factoryObj.image.options.imageURL = tempCanvas.toDataURL('image/png');
                     factoryObj.image.options.uploadedImage.push(factoryObj.image.options.imageURL);
@@ -1239,7 +1244,7 @@
                 this.options.startDiffY = evt.pageY;
                 this.options.cursorStyle = 'move';
                 this.options.isClicked = true;
-                
+
                 this.options.diffX = 0;
                 this.options.diffY = 0;
 
@@ -1249,7 +1254,7 @@
                     this.options.isSelectedObj = false;
                     this.redrawTool();
                 }
-                
+
                 //factoryObj.history.redrawState();
                 this.hitTest();
                 if(this.options.movedObject > -1) {
@@ -1340,7 +1345,7 @@
                         endY: [],
                         pencilData: []
                     };
-                    
+
                     if(this.options.isClicked === false) {
                         factoryObj.history.saveState(this.canvas);
                     }
@@ -1382,10 +1387,10 @@
                     if (cntStart >= 0) {
                         for (i = 0; i <= cntStart; i++) {
                             if(tmpData[i] === undefined || tmpData[i] === null) {
-                                continue;   
+                                continue;
                             }
                             this.ctx.beginPath();
-                            
+
                             if(this.options.selectedObject == i) {
                                 this.options.isSelectedObj = true;
                                 this.ctx.setLineDash([5, 5]);
@@ -1410,6 +1415,8 @@
                                 if (tmpData[i].name === 'image') {
                                     this.options.currentDrawTool = factoryObj.image;
                                     this.options.currentDrawTool.options.img = tmpData[i].imageURL;
+                                    this.options.currentDrawTool.options.srcWidth = tmpData[i].srcWidth;
+                                    this.options.currentDrawTool.options.srcHeight = tmpData[i].srcHeight;
                                     var img = new Image();
 
                                     img.onload = function (obj) {};
@@ -1479,10 +1486,10 @@
                                         tmpDiffX = this.options.diffX;
                                         tmpDiffY = this.options.diffY;
                                     }
-                                    
+
                                     this.options.currentDrawTool.canvas = this.canvas;
                                     this.options.currentDrawTool.ctx = this.ctx;
-                                    
+
                                     this.options.currentDrawTool.redrawTool(tmpData[i].finalTextInfo, tmpDiffX, tmpDiffY);
                                 } else {
                                     this.options.currentDrawTool.drawTool();
@@ -1516,7 +1523,7 @@
                             this.ctx.stroke();
                         }
 
-                        
+
                     }
                 }
                 var canvasData = this.canvas.toDataURL();
@@ -1597,7 +1604,7 @@
                         break;
                     }
                     if(tmpData[i] === undefined || tmpData[i] === null) {
-                        continue;   
+                        continue;
                     }
                     factoryObj.history.options.arrData = tmpData[i];
 
@@ -1925,10 +1932,17 @@
                         });
 
                         factoryObj.options.toolsObj.imageupload.addEventListener('change', function () {
-                            factoryObj.image.uploadImage(this.files[0]);
-                            factoryObj.event.options.activeTool = factoryObj.image;
-                            factoryObj.history.manageActiveBtn('clear_image');
-                            factoryObj.image.init(factoryObj.options.canvas, factoryObj.options.ctx);
+                            if(this.files[0] && this.files[0].size < 2*1024*1024 ){
+                                factoryObj.image.uploadImage(this.files[0]);
+                                factoryObj.event.options.activeTool = factoryObj.image;
+                                factoryObj.history.manageActiveBtn('clear_image');
+                                factoryObj.image.init(factoryObj.options.canvas, factoryObj.options.ctx);
+                                $("#imagesize").addClass('hide');
+                            }
+                            else{
+                                $("#imagesize").removeClass('hide');
+                            }
+
                         });
 
                         factoryObj.options.toolsObj.clear_image.addEventListener('click', function () {
@@ -1981,12 +1995,12 @@
                                 factoryObj.bindEvent(parseInt(factoryObj.history.options.activePage + 1));
                             }
                         });
-                        
+
                         document.addEventListener('keydown', function(e) {
                             if(factoryObj.options.toolsObj.canvas) {
-                              if(e.keyCode == 8 || e.keyCode == 46) {
-                                  factoryObj.event.removeObject();
-                              }
+                                if(e.keyCode == 8 || e.keyCode == 46) {
+                                    factoryObj.event.removeObject();
+                                }
                             }
                         }, false);
 
@@ -2035,7 +2049,7 @@
                 saveAttachment: '&'
             },
             transclude: true,
-            template: '<div id="controllers"><span class="controller btn btn-icn" id="pencil" title="Freehand Drawing"></span><span class="controller btn btn-icn" id="square" title="Square"></span><span class="controller btn btn-icn hide" id="circle" title="Circle"></span><span class="controller btn btn-icn" id="ellipse" title="Ellipse"></span><span class="controller btn btn-icn" id="text" title="Text"></span><span class="controller btn btn-icn" id="arrow" title="Arrow"></span><span class="controller btn btn-icn" id="line" title="Line"></span><span class="controller btn btn-icn" id="undo" title="Undo"></span><span class="controller btn btn-icn" id="redo" title="Redo"></span><span class="controller title" id="activePage" disabled="disabled"></span>&nbsp; out of&nbsp;<span class="controller title" id="totalPage" disabled="disabled"></span><span class="controller btn" id="prevBtn"><</span> &nbsp;<input type="text" class="pagenumber" name="currentPage" id="currentPage" />&nbsp;<span class="controller btn" id="nextBtn">></span><a href="#" id="close" title="Cancel" class="controller btn  btnRight">&nbsp;Cancel</a><span class="controller btn  btnRight" id="savecsf" title="Save & Close">Save & Close</span><span class="controller btn  btnRight" id="applycsf" title="Apply">Apply</span><br /><br /><form id="frm_canvas_tool"><input name="imageupload" id="imageupload" class="input_file" type="file" accept="image/*" ><span class="controller btn hide" id="clear_image">Clear Image</span></form>    Font Size:<select id="fontsize" name="fontsize"><option value="">Select Font Size</option><option value="2">2px</option><option value="5">5px</option><option value="7">7px</option><option value="8">8px</option><option value="9">9px</option><option value="10">10px</option><option value="11">11px</option><option value="12">12px</option><option value="13">13px</option><option value="14">14px</option><option value="16">16px</option><option value="18">18px</option><option value="32">32px</option></select>    Color:<select id="fillstyle" name="fillstyle"><option>Select Color</option><option value="FF0000">Red</option><option value="00FF00">Green</option><option value="0000FF">Blue</option><option value="000000">Black</option><option value="FFFFFF">White</option></select>    Line Width:<select id="linewidth" name="linewidth"><option value="">Select Line Width</option><option value="2">2px</option><option value="5">5px</option><option value="7">7px</option><option value="8">8px</option></select><span class="controller" id="loading"></span></div><div id="canvas-container" class="canvas-container" style="visibility: hidden; height: 0px;"></div><div id="canvas-cont" class="canvas-container"><canvas id="canvas"></canvas><div id="editor_wrapper" style="display:none;"><textarea id="contenteditor"  onkeyup="textAreaAdjust(this)" style="overflow:hidden"></textarea></div></div><div ng-if="errorURL"><h1>URL not found!</h1></div>',
+            template: '<div id="controllers"><span class="controller btn btn-icn" id="pencil" title="Freehand Drawing"></span><span class="controller btn btn-icn" id="square" title="Square"></span><span class="controller btn btn-icn hide" id="circle" title="Circle"></span><span class="controller btn btn-icn" id="ellipse" title="Ellipse"></span><span class="controller btn btn-icn" id="text" title="Text"></span><span class="controller btn btn-icn" id="arrow" title="Arrow"></span><span class="controller btn btn-icn" id="line" title="Line"></span><span class="controller btn btn-icn" id="undo" title="Undo"></span><span class="controller btn btn-icn" id="redo" title="Redo"></span><span class="controller title" id="activePage" disabled="disabled"></span>&nbsp; out of&nbsp;<span class="controller title" id="totalPage" disabled="disabled"></span><span class="controller btn" id="prevBtn"><</span> &nbsp;<input type="text" class="pagenumber" name="currentPage" id="currentPage" />&nbsp;<span class="controller btn" id="nextBtn">></span><span id="imagesize" class="hide">Please upload image below 2MB size.</span><a href="#" id="close" title="Cancel" class="controller btn  btnRight">&nbsp;Cancel</a><span class="controller btn  btnRight" id="savecsf" title="Save & Close">Save & Close</span><span class="controller btn  btnRight" id="applycsf" title="Apply">Apply</span><br /><br /><form id="frm_canvas_tool"><input name="imageupload" id="imageupload" class="input_file" type="file" accept="image/*" ><span class="controller btn hide" id="clear_image">Clear Image</span></form>    Font Size:<select id="fontsize" name="fontsize"><option value="">Select Font Size</option><option value="2">2px</option><option value="5">5px</option><option value="7">7px</option><option value="8">8px</option><option value="9">9px</option><option value="10">10px</option><option value="11">11px</option><option value="12">12px</option><option value="13">13px</option><option value="14">14px</option><option value="16">16px</option><option value="18">18px</option><option value="32">32px</option></select>    Color:<select id="fillstyle" name="fillstyle"><option>Select Color</option><option value="FF0000">Red</option><option value="00FF00">Green</option><option value="0000FF">Blue</option><option value="000000">Black</option><option value="FFFFFF">White</option></select>    Line Width:<select id="linewidth" name="linewidth"><option value="">Select Line Width</option><option value="2">2px</option><option value="5">5px</option><option value="7">7px</option><option value="8">8px</option></select><span class="controller" id="loading"></span></div><div id="canvas-container" class="canvas-container" style="visibility: hidden; height: 0px;"></div><div id="canvas-cont" class="canvas-container"><canvas id="canvas"></canvas><div id="editor_wrapper" style="display:none;"><textarea id="contenteditor"  onkeyup="textAreaAdjust(this)" style="overflow:hidden"></textarea></div></div><div ng-if="errorURL"><h1>URL not found!</h1></div>',
             link: function link(scope, element, attrs, ctrl) {
                 pdfAnnotationFactory.options.closeFn = scope.closeFn;
                 pdfAnnotationFactory.options.callbackFn = scope.callbackFn;

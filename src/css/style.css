@@ -151,3 +151,8 @@
   margin: 1px;
   background: linear-gradient(to right, #0A0947, #0E86E2);
 }
+
+#imagesize{
+  color:#FF0000;
+  font-family: bold;
+}
