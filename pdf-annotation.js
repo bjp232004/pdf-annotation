@@ -134,18 +134,21 @@
                     list[this.options.activePage][0] = canvasData;
                 } else {
                     this.undo_list[this.options.activePage][0] = canvasData;
-
-                    if (factoryObj.event.options.activeTool && factoryObj.event.options.activeTool.name !== 'move') {
-                        this.saveRawData();
-                    } else {
-                        if (this.tmp_raw_undo_list != '') {
-                            var tmpData = angular.copy(this.tmp_raw_undo_list);
-                            this.tmp_raw_undo_list = '';
-                            if(this.raw_undo_ver_list.length === 0){
-                                this.raw_undo_ver_list[this.options.activePage] = [];
+                    if (factoryObj.event.options.activeTool && factoryObj.event.options.activeTool.name == 'move' ) {
+                        if(factoryObj.text.options.isEditText == true) {
+                            this.saveRawData();    
+                        } else {
+                            if (this.tmp_raw_undo_list != '') {
+                                var tmpData = angular.copy(this.tmp_raw_undo_list);
+                                this.tmp_raw_undo_list = '';
+                                if(this.raw_undo_ver_list.length === 0){
+                                    this.raw_undo_ver_list[this.options.activePage] = [];
+                                }
+                                this.raw_undo_ver_list[this.options.activePage].push(tmpData);
                             }
-                            this.raw_undo_ver_list[this.options.activePage].push(tmpData);
                         }
+                    } else {
+                        this.saveRawData();
                     }
                 }
                 this.setButtonStyle();
@@ -173,7 +176,11 @@
                     var tmpArrUndoData = angular.copy(this.options.arrData);
 
                     if (tmpArrUndoData.name && tmpArrUndoData.name != '') {
-                        this.raw_undo_list[this.options.activePage][this.raw_undo_list[this.options.activePage].length] = tmpArrUndoData;
+                        if(factoryObj.text.options.isEditText == true && factoryObj.text.options.selectedObject >= 0) {
+                          this.raw_undo_list[this.options.activePage][factoryObj.text.options.selectedObject] = tmpArrUndoData;  
+                        } else {
+                          this.raw_undo_list[this.options.activePage][this.raw_undo_list[this.options.activePage].length] = tmpArrUndoData;
+                        }
                         this.options.undoFlag = true;
                     }
 
@@ -332,6 +339,7 @@
                     var img = document.createElement("img");
                     img.src = restore_state;
                     img.onload = function () {
+                        //factoryObj.move.init(factoryObj.options.canvas, factoryObj.options.ctx)
                         factoryObj.move.ctx.clearRect(0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
                         factoryObj.move.ctx.drawImage(img, 0, 0, factoryObj.history.options.canvas_width, factoryObj.history.options.canvas_height);
 
@@ -377,6 +385,7 @@
                 if (factoryObj.history.raw_undo_list[factoryObj.history.options.activePage].length > 0) {
                     factoryObj.move.init(this.canvas, this.ctx);
                     factoryObj.move.start(evt);
+                    factoryObj.move.drawing = true;
                 }
 
                 if (factoryObj.move.options.movedObject == -1) {
@@ -386,7 +395,7 @@
                 }
             },
             stroke: function(evt) {
-                if (this.options.activeTool !== '' && this.options.activeTool !== undefined && this.options.activeTool.drawing === true) {
+                if ((this.options.activeTool !== '' && this.options.activeTool !== undefined && this.options.activeTool.drawing === true) || this.options.activeTool.name == 'move') {
                     this.options.activeTool.stroke(evt);
                 }
             },
@@ -501,15 +510,19 @@
                 height: 250
             },
             init: function(canvas, ctx) {
+                if(this.options.isEditText) return ;
                 this.canvas = canvas;
                 this.ctx = ctx;
                 this.ctx.strokeColor = this.options.stroke_color;
                 //this.ctx.fillStyle = 'rgba(0,0,0,0)';
+                
                 this.drawing = false;
                 this.options.flag = true;
             },
             start: function(evt) {
                 if (!this.options.flag) return;
+                this.options.selectedObject = -1;
+                
                 this.canvas_coords = this.canvas.getBoundingClientRect();
                 var x = evt.pageX - this.canvas_coords.left;
                 var y = evt.pageY - this.canvas_coords.top;
@@ -554,11 +567,23 @@
                  }*/
             },
             drawTool: function() {
-                factoryObj.history.setStyleElement(this.canvas, this.ctx);
-                factoryObj.options.toolsObj.contenteditor.style.fontSize = factoryObj.history.options.font_size;
-                factoryObj.options.toolsObj.contenteditor.style.lineHeight = factoryObj.history.options.font_size + 'px';
-                factoryObj.options.toolsObj.contenteditor.style.height = factoryObj.options.toolsObj.contenteditor.scrollHeight + "px";
+                if(this.options.isEditText == true) {
+                  this.options.startX = this.options.tmpTextData.startX[0];
+                  this.options.startY = this.options.tmpTextData.startY[0];
+
+                  this.options.endX = this.options.tmpTextData.endX[0];
+                  this.options.endY = this.options.tmpTextData.endY[0];
+
+                  this.ctx.fillStyle = this.options.tmpTextData.fillStyle;
+                  this.ctx.font = this.options.tmpTextData.font_size;
+                  this.options.width = this.options.tmpTextData.endX[0] - this.options.tmpTextData.startX[0]; 
+                } else {
+                  factoryObj.history.setStyleElement(this.canvas, this.ctx);
+                  factoryObj.options.toolsObj.contenteditor.style.fontSize = factoryObj.history.options.font_size;
+                  factoryObj.options.toolsObj.contenteditor.style.lineHeight = factoryObj.history.options.font_size + 'px';
+                  factoryObj.options.toolsObj.contenteditor.style.height = factoryObj.options.toolsObj.contenteditor.scrollHeight + "px";
                 /*factoryObj.options.toolsObj.contenteditor.style.width = this.options.width + "px";*/
+                }
 
                 var contenttext = factoryObj.options.toolsObj.contenteditor.value;
                 var enteredTextEncoded = escape(contenttext);
@@ -581,6 +606,34 @@
                     this.drawStyledText(textObj);
                 }
                 this.options.flag = true;
+                
+            },
+            editText: function() {
+                //factoryObj.history.setRawData();
+                //factoryObj.history.saveState(this.canvas);
+                factoryObj.event.options.activeTool = factoryObj.text;
+                this.options.selectedObject = factoryObj.move.options.selectedObject;
+                
+                this.options.tmpTextData = angular.copy(factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.selectedObject]);
+                this.options.startX = this.options.tmpTextData.startX[0];
+                this.options.startY = this.options.tmpTextData.startY[0];
+
+                this.options.endX = this.options.tmpTextData.endX[0];
+                this.options.endY = this.options.tmpTextData.endY[0];
+                
+                this.options.width = this.options.tmpTextData.endX[0] - this.options.tmpTextData.startX[0];
+
+                this.ctx.fillStyle = this.options.tmpTextData.fillStyle;
+                this.ctx.font = this.options.tmpTextData.font_size;
+                
+                factoryObj.options.toolsObj.contenteditor.value = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.selectedObject].textInfo.text;
+                //factoryObj.history.redrawState(this.canvas, this.ctx);
+
+                this.ctx.beginPath();
+                this.options.isEditText = true;
+                this.drawing = true;
+                this.stop();
+                
             },
             drawStyledText: function(textInfo) {
                 this.options.textInfo = textInfo;
@@ -669,14 +722,22 @@
                 factoryObj.square.options.endY = y + 10;
                 factoryObj.square.drawTool();
 
-                this.options.startX = this.options.startX;
-                this.options.startY = this.options.startY;
+                //this.options.startX = this.options.startX;
+                //this.options.startY = this.options.startY;
                 this.options.endX = this.options.startX + parseInt(factoryObj.options.toolsObj.contenteditor.style.width);
                 this.options.endY = y + 10;
 
                 this.ctx.stroke();
+                factoryObj.event.options.activeTool.name = 'text';
+                factoryObj.event.options.activeTool.options.finalTextInfo = this.options.finalTextInfo;
                 factoryObj.history.setRawData();
                 factoryObj.history.saveState(this.canvas);
+                if(this.options.isEditText == true) {
+                  this.options.isEditText = false;
+                  this.options.selectedObject = -1;
+                  factoryObj.history.redrawState();
+                  this.options.flag = false;
+                }
             },
             redrawTool: function(obj, diffX, diffY) {
                 for (var k = 0; k < obj.length; k++) {
@@ -1268,6 +1329,7 @@
                 } else {
                     return true;
                 }
+
                 factoryObj.options.toolsObj.canvas.style.cursor = this.options.cursorStyle;
                 this.drawing = true;
             },
@@ -1440,7 +1502,7 @@
                                 if (tmpData[i].name === 'text') {
                                     this.options.currentDrawTool = factoryObj.text;
                                 }
-                                this.options.currentDrawTool.init(factoryObj.options.canvas,factoryObj.options.ctx);
+                                //this.options.currentDrawTool.init(factoryObj.options.canvas,factoryObj.options.ctx);
                                 this.options.currentDrawTool.drawing = true;
 
                                 if (this.options.movedObject == i && this.options.isResize === true) {
@@ -1480,6 +1542,7 @@
                                 }
 
                                 if (tmpData[i].name === 'text') {
+                                    
                                     var tmpDiffX = 0;
                                     var tmpDiffY = 0;
                                     if (this.options.movedObject === i) {
@@ -1598,6 +1661,7 @@
                 var tmpData = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage];
                 var cntStart = tmpData.length - 1;
                 this.options.movedObject = -1;
+                this.options.selectedTool = '';
 
                 for (i = cntStart; i >= 0; i--) {
                     if (this.options.movedObject > -1) {
@@ -1626,6 +1690,7 @@
                     if (factoryObj.history.options.arrData.name === 'text') {
                         if (this.options.startX >= factoryObj.history.options.arrData.startX[0] && this.options.startX <= factoryObj.history.options.arrData.endX[0] && this.options.startY >= factoryObj.history.options.arrData.startY[0] && this.options.startY <= factoryObj.history.options.arrData.endY[0]) {
                             this.options.movedObject = i;
+                            this.options.selectedTool = 'text';
                             break;
                         }
                     }
@@ -1914,7 +1979,8 @@
                             factoryObj.text.init(factoryObj.options.canvas, factoryObj.options.ctx);
                         });
 
-                        factoryObj.options.toolsObj.contenteditor.addEventListener('blur', function () {
+                        factoryObj.options.toolsObj.contenteditor.addEventListener('blur', function (evt) {
+                            evt.stopPropagation();
                             factoryObj.options.toolsObj.editor_wrapper.style.display = 'none';
                             factoryObj.text.drawTool();
                         });
@@ -2000,6 +2066,13 @@
                             if(factoryObj.options.toolsObj.canvas) {
                                 if(e.keyCode == 8 || e.keyCode == 46) {
                                     factoryObj.event.removeObject();
+                                }
+                                
+                                if(e.keyCode == 13) {
+                                    if(factoryObj.move.options.selectedTool == 'text' && factoryObj.move.options.selectedObject >= 0) {
+                                      factoryObj.text.editText();    
+                                    }
+                                    
                                 }
                             }
                         }, false);
@@ -2124,8 +2197,24 @@
                             pdfAnnotationFactory.options.actionListObj = scope.options.actionListObj;
                         }
                         scope.errorURL = false;
-
-                        pdfAnnotationFactory.renderPDF(scope.options.url, pdfAnnotationFactory.options.toolsObj.canvasContainer);
+                        
+                        //code for image support
+                        /*var imageExt, fileExt, fileName;
+                        imageExt = ['png', 'jpg', 'jpeg'];
+                        fileName = scope.options.url;
+                        fileExt = fileName.split('.').pop();
+                        console.log(imageExt.indexOf(fileExt));
+                        if(imageExt.indexOf(fileExt) >= 0) {
+                            var img = new Image();
+                            img.src = scope.options.url;
+                            console.log('before onload')
+                            img.onload = function() {console.log('inside onload')
+                                pdfAnnotationFactory.renderPage(img, this);    
+                            }
+                        } else {*/
+                            pdfAnnotationFactory.renderPDF(scope.options.url, pdfAnnotationFactory.options.toolsObj.canvasContainer);    
+                        //}
+                        
                     } else {
                         scope.errorURL = true;
                     }
