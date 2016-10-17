@@ -372,7 +372,9 @@
                 this.canvas_coords = this.canvas.getBoundingClientRect();
                 this.ctx = ctx;
                 this.ctx.strokeColor = this.options.stroke_color;
-                this.paging();
+                if(factoryObj.options.fileType === 'pdf') {
+                    this.paging();
+                }
                 this.addCanvasEvents();
             },
             addCanvasEvents: function() {
@@ -409,27 +411,35 @@
             },
             savepdf: function(action) {
                 var page = 0;
-                var doc = new jsPDF('p', 'mm', 'a4');
-                for (page = 0; page < parseInt(factoryObj.history.options.totalPage); page++) {
-                    if (page < 2) {
-                        this.options.isSave = true;
-                        factoryObj.move.init(this.canvas, this.ctx);
-                        factoryObj.move.redrawTool();
-                        if (factoryObj.history.final_canvas_url.hasOwnProperty(page)) {
-                            var imgData = factoryObj.history.final_canvas_url[page];
-                        } else {
-                            var imgData = document.getElementById("page" + page).toDataURL("image/png");
-                        }
-                        doc.addImage(imgData, 'PNG', 0, 0, 200, 250, null, 'SLOW');
-                        if (page < parseInt(factoryObj.history.options.totalPage - 1)) {
-                            doc.addPage();
-                        }
+                if(factoryObj.options.fileType === 'pdf') {
+                    var doc = new jsPDF('p', 'mm', 'a4');
+                    for (page = 0; page < parseInt(factoryObj.history.options.totalPage); page++) {
+                        if (page < 2) {
+                            this.options.isSave = true;
+                            factoryObj.move.init(this.canvas, this.ctx);
+                            factoryObj.move.redrawTool();
+                            if (factoryObj.history.final_canvas_url.hasOwnProperty(page)) {
+                                var imgData = factoryObj.history.final_canvas_url[page];
+                            } else {
+                                var imgData = document.getElementById("page" + page).toDataURL("image/png");
+                            }
+                            doc.addImage(imgData, 'PNG', 0, 0, 200, 250, null, 'SLOW');
+                            if (page < parseInt(factoryObj.history.options.totalPage - 1)) {
+                                doc.addPage();
+                            }
 
-                        this.options.isSave = false;
+                            this.options.isSave = false;
+                        }
+                    }
+
+                    var dataurl = doc.output('datauristring');
+                } else {
+                    if (factoryObj.history.final_canvas_url.hasOwnProperty(page)) {
+                        var dataurl = factoryObj.history.final_canvas_url[page];
+                    } else {
+                        var dataurl = document.getElementById("page" + page).toDataURL("image/png");
                     }
                 }
-
-                var dataurl = doc.output('datauristring');
                 var blob = this.dataURLtoBlob(dataurl);
 
                 if (typeof factoryObj.options.callbackFn == "function") {
@@ -1914,6 +1924,25 @@
             });
         };
 
+        factoryObj.renderImage = function(url) {
+            var canvas_rand = document.createElement('canvas');
+            var ctx_rand = canvas_rand.getContext('2d');
+            canvas_rand.setAttribute('id', 'page0');
+            var img = new Image();
+            img.setAttribute('crossOrigin', 'anonymous');
+            img.onload = function () {
+                canvas_rand.height = img.height;
+                canvas_rand.width = img.width;
+                ctx_rand.drawImage(img, 0, 0, img.width, img.height);
+                factoryObj.history.options.canvas_width = img.width;
+                factoryObj.history.options.canvas_height = img.height;
+                factoryObj.options.toolsObj.canvasContainer.appendChild(canvas_rand);
+                factoryObj.bindEvent(0);
+            }
+            img.src = url;
+            factoryObj.options.url = url;
+        },
+
         factoryObj.bindEvent = function (page) {
             if (factoryObj.options.bindFlag == '') {
                 factoryObj.options.bindFlag = 'true';
@@ -2099,14 +2128,14 @@
             }
         };
 
-        factoryObj.renderPDF = function (url, canvasContainer, options) {
+        factoryObj.renderPDF = function (url, fileType, canvasContainer, options) {
             this.options.pdfOptions = options || { scale: 2 };
             factoryObj.options.toolsObj.loading.textContent = 'Wait while loading PDF file...';
             factoryObj.history.raw_undo_list = angular.copy(factoryObj.options.actionListObj);
 
             PDFJS.disableWorker = false;
             PDFJS.workerSrc = factoryObj.options.pdfWorker;
-            PDFJS.getDocument(url).then(factoryObj.renderPages);
+            (fileType === 'pdf') ? PDFJS.getDocument(url).then(factoryObj.renderPages) : factoryObj.renderImage(url);
         };
 
         return factoryObj;
@@ -2197,23 +2226,9 @@
                             pdfAnnotationFactory.options.actionListObj = scope.options.actionListObj;
                         }
                         scope.errorURL = false;
+                        pdfAnnotationFactory.options.fileType = scope.options.fileType; 
+                        pdfAnnotationFactory.renderPDF(scope.options.url, scope.options.fileType, pdfAnnotationFactory.options.toolsObj.canvasContainer);    
                         
-                        //code for image support
-                        /*var imageExt, fileExt, fileName;
-                        imageExt = ['png', 'jpg', 'jpeg'];
-                        fileName = scope.options.url;
-                        fileExt = fileName.split('.').pop();
-                        console.log(imageExt.indexOf(fileExt));
-                        if(imageExt.indexOf(fileExt) >= 0) {
-                            var img = new Image();
-                            img.src = scope.options.url;
-                            console.log('before onload')
-                            img.onload = function() {console.log('inside onload')
-                                pdfAnnotationFactory.renderPage(img, this);    
-                            }
-                        } else {*/
-                            pdfAnnotationFactory.renderPDF(scope.options.url, pdfAnnotationFactory.options.toolsObj.canvasContainer);    
-                        //}
                         
                     } else {
                         scope.errorURL = true;
