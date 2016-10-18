@@ -2096,12 +2096,13 @@
                                 if(e.keyCode == 8 || e.keyCode == 46) {
                                     factoryObj.event.removeObject();
                                 }
-                                
-                                if(e.keyCode == 13) {
-                                    if(factoryObj.move.options.selectedTool == 'text' && factoryObj.move.options.selectedObject >= 0) {
-                                      factoryObj.text.editText();    
-                                    }
-                                    
+                            }
+                        }, false);
+
+                        document.addEventListener('dblclick', function(e) {
+                            if(factoryObj.options.toolsObj.canvas) {
+                                if(factoryObj.move.options.selectedTool == 'text' && factoryObj.move.options.selectedObject >= 0) {
+                                  factoryObj.text.editText();
                                 }
                             }
                         }, false);
