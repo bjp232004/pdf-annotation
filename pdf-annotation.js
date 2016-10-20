@@ -626,7 +626,7 @@
                 this.ctx.fillStyle = this.options.tmpTextData.fillStyle;
                 this.ctx.font = this.options.tmpTextData.font_size;
                 
-                factoryObj.options.toolsObj.contenteditor.value = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.selectedObject].textInfo.text;
+                factoryObj.options.toolsObj.contenteditor.value = factoryObj.history.raw_undo_list[factoryObj.history.options.activePage][this.options.selectedObject].textInfo.text.replace(/<br\s?\/?>/g,"\n");
                 //factoryObj.history.redrawState(this.canvas, this.ctx);
 
                 this.ctx.beginPath();
