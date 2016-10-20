@@ -1565,6 +1565,9 @@
 
                                     this.options.currentDrawTool.redrawTool(tmpData[i].finalTextInfo, tmpDiffX, tmpDiffY);
                                 } else {
+                                    this.options.currentDrawTool.canvas = this.canvas;
+                                    this.options.currentDrawTool.ctx = this.ctx;
+                                    
                                     this.options.currentDrawTool.drawTool();
                                 }
                                 this.options.currentDrawTool.drawing = false;
