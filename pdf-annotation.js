@@ -434,11 +434,15 @@
 
                     var dataurl = doc.output('datauristring');
                 } else {
+                    this.options.isSave = true;
+                    factoryObj.move.init(this.canvas, this.ctx);
+                    factoryObj.move.redrawTool();
                     if (factoryObj.history.final_canvas_url.hasOwnProperty(page)) {
                         var dataurl = factoryObj.history.final_canvas_url[page];
                     } else {
                         var dataurl = document.getElementById("page" + page).toDataURL("image/png");
                     }
+                    this.options.isSave = false;
                 }
                 var blob = this.dataURLtoBlob(dataurl);
 
